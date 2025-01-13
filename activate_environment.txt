@@ -1,0 +1,16 @@
+C:\> <venv>\Scripts\activate.bat
+
+PS C:\> <venv>\Scripts\Activate.ps1
+
+It's not clear to me whether one or both are necessary.
+
+After running the second the aoc24 tag appeared
+at the left of the shell.
+
+https://docs.python.org/3/library/venv.html
+
+
+You might have to change the execution policy
+had to open an external PowerShell as an Administrator.
+
+https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4
