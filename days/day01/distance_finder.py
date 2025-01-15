@@ -1,7 +1,16 @@
-def import_data(file_name):
+def import_data(file_name: str) -> list:
     """
     Takes in a file_name and returns two arrays of ints.
     Must be run in the same directory as the data.
+
+    Assumes that each line of the file corresponds to the entries
+    of all the individual lists, separated by spaces.
+
+    Args:
+        file_name (str): name of file containing list of location ints
+
+    Returns:
+        list: A list of the location int lists
     """
     file = open(file_name, "r")
     numbers_all = []
@@ -18,12 +27,34 @@ def import_data(file_name):
     return data
 
 def calc_difference(list_a: list[int], list_b: list[int]) -> int:
-    # assume that the lists are already sorted
+    """Return the summed distance between elements.
+    
+    This assumes both lists are sorted.
+    
+    distance is defined to be the difference between the two numbers.
+    
+    Args:
+        list_a (list[int]): sorted location ints
+        list_b (list[ing]): sorted location ints
+    
+    Returns:
+        int: pair-wise sum of elements
+    """
     diff_ab = [abs(i - j) for (i,j) in zip(list_a, list_b)]
 
     return sum(diff_ab)
 
 def calc_similiarity(list_a: list[int], list_b: list[int]) -> int:
+    """Calculate similiarity of two lists of ints, as defined by
+    frequency_in_list2 * value * frequency_in_list_1
+    
+    Args:
+        list_a (list[int]): location ints
+        list_b (list[int]): location ints
+        
+    Returns:
+        int: pair-wise sume of elements
+    """
     weighted_score = [ num * list_b.count(num) for num in list_a ]
     return sum(weighted_score)
 
