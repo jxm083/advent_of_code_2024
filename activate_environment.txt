@@ -1,12 +1,9 @@
-C:\> <venv>\Scripts\activate.bat
-
 PS C:\> <venv>\Scripts\Activate.ps1
 
-It's not clear to me whether one or both are necessary.
+An alternate method may be:
+C:\> <venv>\Scripts\activate.bat
 
-After running the second the aoc24 tag appeared
-at the left of the shell.
-
+More info here:
 https://docs.python.org/3/library/venv.html
 
 
