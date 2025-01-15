@@ -17,23 +17,28 @@ def import_data(file_name):
 
     return data
 
-def sorted_list_difference(a, b):
-    sorted_a = sorted(a)
-    sorted_b = sorted(b)
+def calc_difference(list_a: list[int], list_b: list[int]) -> int:
+    # assume that the lists are already sorted
+    diff_ab = [abs(i - j) for (i,j) in zip(list_a, list_b)]
 
-    dif_ab = [abs(i - j) for (i,j) in zip(sorted_a, sorted_b)]
-
-    return sum(dif_ab)
-
-def calc_difference(file_name):
-    data = import_data(file_name)
-    diff = sorted_list_difference(data[0], data[1])
-    return diff
+    return sum(diff_ab)
 
 def calc_similiarity(file_name):
     data = import_data(file_name)
     weighted_score = [ num * data[1].count(num) for num in data[0] ]
     return sum(weighted_score)
 
-print(f"List total difference: {calc_difference("numbers01.csv")}")
-print(f"List similiarity: {calc_similiarity("numbers01.csv")}")
+def exercise_one(file_name: str | None = "numbers01.csv") -> int:
+    # Pull the data in from the file
+    data = import_data(file_name)
+
+    # sort the lists
+    list_a = sorted(data[0])
+    list_b = sorted(data[1])
+
+    # calculate the difference
+    return calc_difference(list_a, list_b)
+
+if __name__ == "__main__":
+    print(f"List total difference: {exercise_one()}")
+    print(f"List similiarity: {calc_similiarity("numbers01.csv")}")
