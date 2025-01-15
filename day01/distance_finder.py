@@ -1,9 +1,7 @@
-import os
-print(os.getcwd())
-
 def import_data(file_name):
     """
     Takes in a file_name and returns two arrays of ints.
+    Must be run in the same directory as the data.
     """
     file = open(file_name, "r")
     numbers_all = []
@@ -18,10 +16,6 @@ def import_data(file_name):
     data = [[nums[i] for nums in numbers_all] for i in range(len(numbers_all[0]))]
 
     return data
-
-
-list_a = [3, 4, 2, 1, 3, 3]
-list_b = [4, 3, 5, 3, 9, 3]
 
 def sorted_list_difference(a, b):
     sorted_a = sorted(a)
@@ -41,8 +35,5 @@ def calc_similiarity(file_name):
     weighted_score = [ num * data[1].count(num) for num in data[0] ]
     return sum(weighted_score)
 
-
-print(import_data("numbers00.csv"))
-print(sorted_list_difference(list_a, list_b))
-print(calc_difference("numbers01.csv"))
-print(calc_similiarity("numbers01.csv"))
+print(f"List total difference: {calc_difference("numbers01.csv")}")
+print(f"List similiarity: {calc_similiarity("numbers01.csv")}")
