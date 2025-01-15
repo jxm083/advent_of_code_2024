@@ -33,5 +33,9 @@ def sorted_list_difference(a, b):
 
 def calc_difference(file_name):
     data = import_data(file_name)
+    diff = sorted_list_difference(data[0], data[1])
+    return diff
+
 print(import_data("numbers00.csv"))
 print(sorted_list_difference(list_a, list_b))
+print(calc_difference("numbers01.csv"))
