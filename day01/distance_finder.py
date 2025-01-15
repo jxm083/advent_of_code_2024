@@ -36,6 +36,13 @@ def calc_difference(file_name):
     diff = sorted_list_difference(data[0], data[1])
     return diff
 
+def calc_similiarity(file_name):
+    data = import_data(file_name)
+    weighted_score = [ num * data[1].count(num) for num in data[0] ]
+    return sum(weighted_score)
+
+
 print(import_data("numbers00.csv"))
 print(sorted_list_difference(list_a, list_b))
 print(calc_difference("numbers01.csv"))
+print(calc_similiarity("numbers01.csv"))
