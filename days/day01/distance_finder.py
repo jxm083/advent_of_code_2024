@@ -23,9 +23,8 @@ def calc_difference(list_a: list[int], list_b: list[int]) -> int:
 
     return sum(diff_ab)
 
-def calc_similiarity(file_name):
-    data = import_data(file_name)
-    weighted_score = [ num * data[1].count(num) for num in data[0] ]
+def calc_similiarity(list_a: list[int], list_b: list[int]) -> int:
+    weighted_score = [ num * list_b.count(num) for num in list_a ]
     return sum(weighted_score)
 
 def exercise_one(file_name: str | None = "numbers01.csv") -> int:
@@ -39,6 +38,12 @@ def exercise_one(file_name: str | None = "numbers01.csv") -> int:
     # calculate the difference
     return calc_difference(list_a, list_b)
 
+def exercise_two(file_name: str | None = "numbers01.csv") -> int:
+    # Pull the data from the file
+    data = import_data(file_name)
+
+    return calc_similiarity(data[0], data[1])
+
 if __name__ == "__main__":
     print(f"List total difference: {exercise_one()}")
-    print(f"List similiarity: {calc_similiarity("numbers01.csv")}")
+    print(f"List similiarity: {exercise_two()}")
