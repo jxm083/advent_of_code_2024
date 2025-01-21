@@ -1,0 +1,19 @@
+[project]
+name = "days_twenty_four"
+version = "0.0.1"
+authors = [
+  { name="Joseph D. Murphree", email="joseph.murphree@protonmail.com" },
+]
+description = "Package for Advent of Code 2024"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/jxm083/advent_of_code_2024"
+Issues = "https://github.com/pypa/sampleproject/issues"

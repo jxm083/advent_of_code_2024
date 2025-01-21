@@ -2,7 +2,7 @@ import pytest
 import sys
 print(sys.path)
 
-from .days.day01.main import (
+from days_twenty_four.day01.main import (
     exercise_one
 )
 from pathlib import Path
