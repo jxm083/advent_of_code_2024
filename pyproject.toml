@@ -16,4 +16,3 @@ license-files = ["LICEN[CS]E*"]
 
 [project.urls]
 Homepage = "https://github.com/jxm083/advent_of_code_2024"
-Issues = "https://github.com/pypa/sampleproject/issues"
