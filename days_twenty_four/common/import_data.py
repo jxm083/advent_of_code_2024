@@ -16,7 +16,6 @@ def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
     Returns:
         list: A list of the location int lists
     """
-    print(file_dir)
     file_path = file_dir / Path(file_name)
     data = []
 
