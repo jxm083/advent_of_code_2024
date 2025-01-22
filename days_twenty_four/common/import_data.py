@@ -1,4 +1,7 @@
-def import_data(file_name: str) -> list:
+from pathlib import Path
+import os
+
+def import_data(file_name: str, file_path: Path = Path(os.getcwd())) -> list:
     """
     Takes in a file_name and returns two arrays of ints.
     Must be run in the same directory as the data.
@@ -8,10 +11,12 @@ def import_data(file_name: str) -> list:
 
     Args:
         file_name (str): name of file containing list of location ints
+        file_path (Path): a path object specifying the directory containing the file; defaults to current working directory
 
     Returns:
         list: A list of the location int lists
     """
+    print(file_path)
     file = open(file_name, "r")
     numbers_all = []
 
