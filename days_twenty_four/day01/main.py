@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from days_twenty_four.common.import_data import import_data
 
 def calc_difference(list_a: list[int], list_b: list[int]) -> int:
@@ -32,9 +34,11 @@ def calc_similiarity(list_a: list[int], list_b: list[int]) -> int:
     weighted_score = [ num * list_b.count(num) for num in list_a ]
     return sum(weighted_score)
 
+DATA_DIR = Path(__file__).parents[0]
+
 def exercise_one(file_name: str | None = "numbers01.csv") -> int:
     # Pull the data in from the file
-    data = import_data(file_name)
+    data = import_data(file_name, file_dir = DATA_DIR)
 
     # sort the lists
     list_a = sorted(data[0])
@@ -45,7 +49,7 @@ def exercise_one(file_name: str | None = "numbers01.csv") -> int:
 
 def exercise_two(file_name: str | None = "numbers01.csv") -> int:
     # Pull the data from the file
-    data = import_data(file_name)
+    data = import_data(file_name, file_dir = DATA_DIR)
 
     return calc_similiarity(data[0], data[1])
 
