@@ -32,3 +32,22 @@ def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
     data = [[nums[i] for nums in numbers_all] for i in range(len(numbers_all[0]))]
 
     return data
+
+def transpose_data(data: list):
+    """
+    Transposes two dimensional lists, e.g.
+
+    [[a, b, c], [d, e, f]]
+
+    becomes
+
+    [[a, d], [b, e], [c, f]] .
+
+    Assumes lists of depth two, each nested list being of the same dimension
+
+    Args:
+        data (list): A depth-two list
+
+    Returns:
+        list: the list with the axes swapped
+    """
