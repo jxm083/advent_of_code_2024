@@ -2,8 +2,7 @@ import pytest
 
 from days_twenty_four.day01.main import (
     calc_difference,    
-    calc_similiarity,
-    exercise_one
+    calc_similiarity
 )
 from pathlib import Path
 
