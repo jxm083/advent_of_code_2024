@@ -18,7 +18,7 @@ def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
     """
     print(file_dir)
     file_path = file_dir / Path(file_name)
-    numbers_all = []
+    data = []
 
     with file_path.open() as file:
 
@@ -26,10 +26,7 @@ def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
             line.strip() # remove leading and trailing spaces
             nums = line.split(" ")
             nums_clean = [int(num.strip()) for num in nums if num != '']
-            numbers_all.append(nums_clean)
-        
-    # Reshape so that each element of data is a column of the original file
-    data = [[nums[i] for nums in numbers_all] for i in range(len(numbers_all[0]))]
+            data.append(nums_clean)
 
     return data
 
@@ -51,3 +48,5 @@ def transpose_data(data: list):
     Returns:
         list: the list with the axes swapped
     """
+    # Reshape so that each element of data is a column of the original file
+    return [[nums[i] for nums in data] for i in range(len(data[0]))]
