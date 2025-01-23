@@ -49,7 +49,7 @@ def is_safe(level_list: list[int]):
 
 
 def exercise_one():
-    data = import_data("data00.csv", DATA_DIR)
+    data = import_data("data01.csv", DATA_DIR)
 
     safe_levels = 0
 
