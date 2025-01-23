@@ -50,28 +50,22 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
     # between adjacent levels
     for num, level in enumerate(level_list[1:]):
         diff = previous_level - level
-        print(f"num: {num}, level: {level}")
         if is_safe_diff(diff, previous_diff):
             previous_level = level
             previous_diff = diff
-            if bad_level_cnt > 0:
-                print(f"{num} with diff {diff} and level {level}")
 
         elif dampner and bad_level_cnt == 0:
             bad_level_cnt += 1
-            print(f"dampner triggered at {num}")
 
-            if num == 1:
+            if num == 1 or num == 0:
                 l = level_list
                 if is_safe_diff(l[2] - l[3], l[1] - l[2]):
                     previous_level = l[1]
                     previous_diff = l[1] - l[2]
-                    print("l0 is bad")
 
                 elif is_safe_diff(l[2] - l[3], l[0] - l[2]):
                     previous_level = l[0]
                     previous_diff = l[0] - l[2]
-                    print("l1 is bad")
 
                 else:
                     AssertionError("Unforseen problem")
