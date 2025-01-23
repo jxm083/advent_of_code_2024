@@ -54,7 +54,7 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
             previous_level = level
             previous_diff = diff
 
-        elif num == 0:
+        elif num == 0 and dampner:
             bad_level_cnt += 1
             previous_level = level
             previous_diff = diff
@@ -62,7 +62,6 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
         # If it is the first bad level with the dampner on, note it and continue
         elif bad_level_cnt == 0 and dampner:
             bad_level_cnt += 1
-            print(f"Unsafe level: {level}")
 
         else:
             safe = False
