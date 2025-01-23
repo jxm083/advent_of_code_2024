@@ -76,6 +76,11 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
 
     return safe
 
+def is_safe_w_dampner(level_list: list[int]) -> bool:
+    """
+    """
+    
+
 
 def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
     data = import_data(file_name, file_dir)
@@ -94,8 +99,16 @@ def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = D
     safe_levels = 0
 
     for levels in data:
-        if is_safe(levels, dampner = True):
+        if is_safe(levels):
             safe_levels += 1
+        else:
+            safe_w_dampner = False
+            for n, _ in enumerate(levels):
+                levels_temp = levels
+                levels_temp.pop(n)
+                if is_safe(levels_temp) and not safe_w_dampner:
+                    safe_levels += 1
+                    safe_w_dampner = True
 
     return safe_levels
 
@@ -111,5 +124,5 @@ if __name__ == "__main__":
     for id, case, in enumerate(edge_cases):
         print(f"{id} is safe: {is_safe(case, dampner=True)}")
     
-#    print(f"Number of safe levels: {exercise_one()}") # 341
-#    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 386 
+    print(f"Number of safe levels: {exercise_one()}") # 341
+    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 507
