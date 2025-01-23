@@ -95,4 +95,4 @@ def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = D
 
 if __name__ == "__main__":
     print(f"Number of safe levels: {exercise_one()}") # 341
-    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 386 too low
+    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 386 
