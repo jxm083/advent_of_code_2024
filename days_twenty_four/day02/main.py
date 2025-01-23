@@ -92,6 +92,17 @@ def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = D
 
     return safe_levels
 
+edge_cases = [
+    [3,2,3,4,5],
+    [1,5,6,7,8],
+    [1,2,3,4,8],
+    [1,2,3,4,3],
+    [1,2,3,4,5]
+]
+
 if __name__ == "__main__":
+    for id, case, in enumerate(edge_cases):
+        print(f"{id} is safe: {is_safe(case, dampner=True)}")
+
     print(f"Number of safe levels: {exercise_one()}") # 341
     print(f"Number of safe levels w/ dampner: {exercise_two()}") # 386 
