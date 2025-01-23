@@ -4,6 +4,21 @@ from days_twenty_four.common.import_data import import_data
 
 DATA_DIR = Path(__file__).parents[0]
 
+def is_safe_diff(difference: int, previous_difference: int) -> bool:
+    """
+    Looks at the difference between two levels and the difference between
+    the previous two levels and indicates whether the differences are safe,
+    as defined by
+    (a) the current and previous differences are of the same sign
+    (b) the current difference is at least one and at most three
+    """
+    max_diff = 3
+    min_diff = 1
+
+    return (abs(difference) >= min_diff and 
+            abs(difference) <= max_diff and
+            difference * previous_difference > 0)
+
 def is_safe(level_list: list[int], dampner: bool = False) -> bool:
     """
     Takes in a list of levels and deems it safe if
@@ -33,13 +48,14 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
 
     # Starting with the second level, find the differences
     # between adjacent levels
-    for level in level_list[1:]:
+    for num, level in enumerate(level_list[1:]):
         diff = previous_level - level
-        if (
-            abs(diff) <= max_diff and
-            abs(diff) >= min_diff and
-            diff * previous_diff > 0
-        ):
+        if is_safe_diff(diff, previous_diff):
+            previous_level = level
+            previous_diff = diff
+
+        elif num == 0:
+            bad_level_cnt += 1
             previous_level = level
             previous_diff = diff
 
@@ -79,4 +95,4 @@ def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = D
 
 if __name__ == "__main__":
     print(f"Number of safe levels: {exercise_one()}") # 341
-    print(f"Number of safe levels w/ dampner: {exercise_two("data00.csv")}") # 378
+    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 386 too low
