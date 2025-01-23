@@ -1,6 +1,10 @@
 from pathlib import Path
-import os
 
-path = os.path.dirname(os.path.realpath(__file__))
+from days_twenty_four.common.import_data import import_data
 
-print(Path(os.getcwd()))
+DATA_DIR = Path(__file__).parents[0]
+
+
+
+if __name__ == "__main__":
+    pass
