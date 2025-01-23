@@ -125,4 +125,4 @@ if __name__ == "__main__":
         print(f"{id} is safe: {is_safe(case, dampner=True)}")
     
     print(f"Number of safe levels: {exercise_one()}") # 341
-    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 507
+    print(f"Number of safe levels w/ dampner: {exercise_two()}") # 404
