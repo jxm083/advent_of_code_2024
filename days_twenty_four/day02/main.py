@@ -79,7 +79,7 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
 def is_safe_w_dampner(level_list: list[int]) -> bool:
     """
     """
-    
+
 
 
 def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
@@ -104,7 +104,7 @@ def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = D
         else:
             safe_w_dampner = False
             for n, _ in enumerate(levels):
-                levels_temp = levels
+                levels_temp = levels.copy()
                 levels_temp.pop(n)
                 if is_safe(levels_temp) and not safe_w_dampner:
                     safe_levels += 1
