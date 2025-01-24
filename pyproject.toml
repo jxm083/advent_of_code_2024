@@ -2,9 +2,12 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.envs.aoc24]
+type = "virtual"
+
 [project]
 name = "days_twenty_four"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Joseph D. Murphree", email="joseph.murphree@protonmail.com" },
 ]
