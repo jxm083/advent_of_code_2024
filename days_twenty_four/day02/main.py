@@ -78,22 +78,18 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
 def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
     data = import_data(file_name, file_dir)
 
-    safe_levels = 0
+    safe_levels_list = [is_safe(levels) for levels in data]
 
-    for levels in data:
-        if is_safe(levels):
-            safe_levels += 1
-    
+    safe_levels = sum(safe_levels_list)
+
     return safe_levels
 
 def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
     data = import_data(file_name, file_dir)
 
-    safe_levels = 0
+    safe_levels_list = [is_safe(levels, dampner=True) for levels in data]
 
-    for levels in data:
-        if is_safe(levels, dampner=True):
-            safe_levels += 1
+    safe_levels = sum(safe_levels_list)
 
     return safe_levels
 
