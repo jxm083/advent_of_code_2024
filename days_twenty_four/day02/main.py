@@ -19,7 +19,7 @@ def is_safe_diff(difference: int, previous_difference: int) -> bool:
             abs(difference) <= max_diff and
             difference * previous_difference > 0)
 
-def is_safe(level_list: list[int], dampner: bool = False) -> bool:
+def is_safe_basic(level_list: list[int]) -> bool:
     """
     Takes in a list of levels and deems it safe if
     (a) the levels are all increasing or all decreasing, and
@@ -29,7 +29,6 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
 
     Args:
         level_list (list[int]): the list of levels
-        dampner (bool): indicates if the dampner is engaged
 
     Returns:
         bool: whether the levels are safe or not
@@ -54,31 +53,31 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
             previous_level = level
             previous_diff = diff
 
-        elif dampner and bad_level_cnt == 0:
-            bad_level_cnt += 1
-
-            if num == 1 or num == 0:
-                l = level_list
-                if is_safe_diff(l[2] - l[3], l[1] - l[2]):
-                    previous_level = l[1]
-                    previous_diff = l[1] - l[2]
-
-                elif is_safe_diff(l[2] - l[3], l[0] - l[2]):
-                    previous_level = l[0]
-                    previous_diff = l[0] - l[2]
-
-                else:
-                    AssertionError("Unforseen problem")
-
         else:
             safe = False
             break
 
     return safe
 
-def is_safe_w_dampner(level_list: list[int]) -> bool:
+def is_safe(level_list: list[int], dampner: bool = False) -> bool:
     """
     """
+    safe = False
+    if dampner and not is_safe_basic(level_list):
+        for n, _ in enumerate(level_list):
+            level_list_temp = level_list.copy()
+            level_list_temp.pop(n)
+            if is_safe_basic(level_list_temp):
+                safe = True
+
+    else:
+        safe = is_safe_basic(level_list)
+
+    return safe
+
+
+
+
 
 
 
