@@ -1,4 +1,4 @@
-from days_twenty_four.day02.main import (
+from advent.advent_of_code_2024.day02.main import (
     exercise_one,
     exercise_two
 )

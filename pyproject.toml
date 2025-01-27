@@ -7,7 +7,9 @@ authors = [
     { name = "Joseph D. Murphree", email = "joseph.murphree@protonmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pytest>=8.3.4",
+]
 
 [project.scripts]
 advent-of-code-2024 = "advent_of_code_2024:main"
