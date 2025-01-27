@@ -36,18 +36,14 @@ def is_safe_basic(level_list: list[int]) -> bool:
     # Check that the level_list has at least two elements.
     assert len(level_list) > 1
 
-    max_diff = 3
-    min_diff = 1
-
     previous_level = level_list[0]
     previous_diff = level_list[0] - level_list[1]
 
     safe = True
-    bad_level_cnt = 0
 
     # Starting with the second level, find the differences
     # between adjacent levels
-    for num, level in enumerate(level_list[1:]):
+    for _, level in enumerate(level_list[1:]):
         diff = previous_level - level
         if is_safe_diff(diff, previous_diff):
             previous_level = level
