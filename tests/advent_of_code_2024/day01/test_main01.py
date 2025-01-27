@@ -1,10 +1,7 @@
-import pytest
-
 from advent.advent_of_code_2024.day01.main import (
     calc_difference,    
     calc_similiarity
 )
-from pathlib import Path
 
 TEST_DATA_FILE = "numbers00.csv"
 
@@ -20,9 +17,3 @@ def test_calc_difference():
 
 def test_calc_similiarity():
     assert calc_similiarity(TEST_LIST_A, TEST_LIST_B) == 31
-
-#def test_exercise_one():
-#    assert exercise_one(TEST_DATA_FILE) == 11
-
-#def test_exercise_two():
-#   assert exercise_two(TEST_DATA_FILE) == 31
