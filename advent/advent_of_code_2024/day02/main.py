@@ -72,7 +72,7 @@ def is_safe(level_list: list[int], dampner: bool = False) -> bool:
     return safe
 
 def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
-    data = import_data(file_name, file_dir)
+    data = import_data(file_name, file_dir) # type: ignore  
 
     safe_levels_list = [is_safe(levels) for levels in data]
 
@@ -81,7 +81,7 @@ def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = D
     return safe_levels
 
 def exercise_two(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
-    data = import_data(file_name, file_dir)
+    data = import_data(file_name, file_dir) # type: ignore
 
     safe_levels_list = [is_safe(levels, dampner=True) for levels in data]
 

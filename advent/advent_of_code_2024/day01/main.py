@@ -38,7 +38,7 @@ DATA_DIR = Path(__file__).parents[0]
 
 def exercise_one(file_name: str | None = "numbers01.csv") -> int:
     # Pull the data in from the file
-    data = import_data(file_name, file_dir = DATA_DIR)
+    data = import_data(file_name, file_dir = DATA_DIR) # type: ignore
     data = transpose_data(data)
 
     # sort the lists
@@ -50,7 +50,7 @@ def exercise_one(file_name: str | None = "numbers01.csv") -> int:
 
 def exercise_two(file_name: str | None = "numbers01.csv") -> int:
     # Pull the data from the file
-    data = import_data(file_name, file_dir = DATA_DIR)
+    data = import_data(file_name, file_dir = DATA_DIR) # type: ignore
     data = transpose_data(data)
 
     return calc_similiarity(data[0], data[1])
