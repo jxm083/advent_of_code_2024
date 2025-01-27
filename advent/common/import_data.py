@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 
-def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
+def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list[list[int]]:
     """
     Takes in a file_name and returns two arrays of ints.
     Must be run in the same directory as the data.
@@ -17,19 +17,19 @@ def import_data(file_name: str, file_dir: Path = Path(os.getcwd())) -> list:
         list: A list of the location int lists
     """
     file_path = file_dir / Path(file_name)
-    data = []
+    data: list[list[int]] = []
 
     with file_path.open() as file:
 
         for line in file.readlines():
             line.strip() # remove leading and trailing spaces
             nums = line.split(" ")
-            nums_clean = [int(num.strip()) for num in nums if num != '']
+            nums_clean: list[int] = [int(num.strip()) for num in nums if num != '']
             data.append(nums_clean)
 
     return data
 
-def transpose_data(data: list):
+def transpose_data(data: list[list[int]]):
     """
     Transposes two dimensional lists, e.g.
     [[a, b, c], [d, e, f]]
