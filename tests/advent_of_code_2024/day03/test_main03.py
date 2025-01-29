@@ -45,4 +45,4 @@ print("directory:")
 print(DATA_DIR)
 
 def test_exercise_one():
-    assert exercise_one() == 161
+    assert exercise_one("data00.txt", file_dir = DATA_DIR) == 161

@@ -45,8 +45,22 @@ def evaluate_func_str(func_str: str, func = int.__mul__) -> int:
 
 DATA_DIR = Path(__file__).parent
 
-def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
-    pass
+def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = DATA_DIR):
+    file_path = DATA_DIR / Path(file_name)
+
+    func_strs: list[str] = []
+
+    with file_path.open() as file:
+
+        for line in file.readlines():
+            func_strs += line_to_funcs(line)
+    
+    evaluated_funcs: list[int] = [
+        evaluate_func_str(func_str) for func_str in func_strs
+    ]
+
+    return sum(evaluated_funcs)
+
 
 if __name__ == "__main__":
-    print(f"Sum of products: {exercise_one()}")
+    print(f"Sum of products: {exercise_one("data00.txt")}")
