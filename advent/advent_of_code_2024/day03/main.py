@@ -63,4 +63,4 @@ def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = D
 
 
 if __name__ == "__main__":
-    print(f"Sum of products: {exercise_one("data00.txt")}")
+    print(f"Sum of products: {exercise_one()}")
