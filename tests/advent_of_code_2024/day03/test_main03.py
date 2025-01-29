@@ -2,7 +2,8 @@ import pytest
 
 from advent.advent_of_code_2024.day03.main import (
     exercise_one,
-    line_to_funcs
+    line_to_funcs,
+    evaluate_func_str
 ) 
 
 from pathlib import Path
@@ -32,6 +33,9 @@ def test_line_to_funcs(test_line: str):
         "mul(8,5)"
     ]
     assert line_to_funcs(test_line) == answer
+
+def test_evaluate_func_str():
+    assert evaluate_func_str("mul(2,4)") == 8
 
 def test_exercise_one():
     assert exercise_one() == 161
