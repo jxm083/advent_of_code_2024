@@ -1,4 +1,7 @@
 import re
+from pathlib import Path
+
+from advent.common.import_data import import_data
 
 def line_to_funcs(line: str, func_names: list[str] | None = ["mul"]) -> list[str]:
     """
@@ -40,12 +43,10 @@ def evaluate_func_str(func_str: str, func = int.__mul__) -> int:
 
     return func(args[0], args[1])
 
-def exercise_one():
+DATA_DIR = Path(__file__).parent
+
+def exercise_one(file_name: str | None = "data01.csv", file_dir: Path | None = DATA_DIR):
     pass
 
-TEST_LINE = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
-
 if __name__ == "__main__":
-    print("test:")
-    print(line_to_funcs(TEST_LINE))
-    print(2 * 2)
+    print(f"Sum of products: {exercise_one()}")

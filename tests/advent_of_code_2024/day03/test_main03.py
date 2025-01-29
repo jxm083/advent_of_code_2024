@@ -37,5 +37,12 @@ def test_line_to_funcs(test_line: str):
 def test_evaluate_func_str():
     assert evaluate_func_str("mul(2,4)") == 8
 
+PACKAGE_ROOT_LEVEL = 3
+ROOT_PACKAGE_DIR = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
+DATA_DIR = ROOT_PACKAGE_DIR / "advent_of_code_2024" / "day03"
+
+print("directory:")
+print(DATA_DIR)
+
 def test_exercise_one():
     assert exercise_one() == 161
