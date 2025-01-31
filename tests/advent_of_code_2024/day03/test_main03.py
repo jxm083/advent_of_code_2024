@@ -14,6 +14,11 @@ def test_line() -> str:
     return line
 
 @pytest.fixture
+def test_logic_line() -> str:
+    line = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
+    return line
+
+@pytest.fixture
 def test_data_file(
         test_line: str,
         tmp_path: Path
@@ -33,6 +38,12 @@ def test_line_to_funcs(test_line: str):
         "mul(8,5)"
     ]
     assert line_to_funcs(test_line) == answer
+
+    logic_answer: list[str] = [
+
+    ]
+
+    assert (line_to_funcs(test_logic_line, func_forms)) == logic_answer
 
 def test_evaluate_func_str():
     assert evaluate_func_str("mul(2,4)") == 8
