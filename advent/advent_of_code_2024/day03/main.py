@@ -45,7 +45,7 @@ def evaluate_mul_str(func_str: str) -> int: # type: ignore
     Returns:
         int: the result of the evaluation
     """
-    arg_pattern = re.compile('[\d]{1,3}') # type: ignore
+    arg_pattern = re.compile('[\\d]{1,3}')
 
     args = [int(x) for x in arg_pattern.findall(func_str)] # type: ignore
 
