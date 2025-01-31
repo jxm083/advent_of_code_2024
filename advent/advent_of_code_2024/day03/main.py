@@ -1,13 +1,11 @@
 import re
 from pathlib import Path
 
-from advent.common.import_data import import_data
-
 # A list of regular expressions describing all of the functions
 FUNC_PATTERNS: list[str] = [
-'mul\([\d]{1,3},[\d]{1,3}\)',
-'do\(\)',
-"don't\(\)"
+'mul\\([\\d]{1,3},[\\d]{1,3}\\)',
+'do\\(\\)',
+"don't\\(\\)"
 ]
 
 def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) -> list[str]:
@@ -25,18 +23,16 @@ def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) ->
         list[str]: a list containing the strings of all valid functions
     """
     separator: str = "|"
-    func_patterns_all: str = separator.join(func_patterns)
-
-    print(func_patterns_all)
+    func_patterns_all: str = separator.join(func_patterns) # type: ignore
 
     funcs: list[str] = []
 
     pattern = re.compile(func_patterns_all) # type: ignore
-    funcs = pattern.findall(line)
+    funcs = pattern.findall(line) # type: ignore
 
     return funcs
 
-def evaluate_func_str(func_str: str, func = int.__mul__) -> int:
+def evaluate_func_str(func_str: str, func = int.__mul__) -> int: # type: ignore
     """
     Takes a string expressing a function and evaluates the function.
     
@@ -58,7 +54,7 @@ def evaluate_func_str(func_str: str, func = int.__mul__) -> int:
 DATA_DIR = Path(__file__).parent
 
 def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = DATA_DIR):
-    file_path = DATA_DIR / Path(file_name)
+    file_path = DATA_DIR / Path(file_name) # type: ignore
 
     func_strs: list[str] = []
 
