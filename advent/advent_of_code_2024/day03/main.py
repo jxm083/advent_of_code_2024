@@ -3,7 +3,14 @@ from pathlib import Path
 
 from advent.common.import_data import import_data
 
-def line_to_funcs(line: str, func_names: list[str] | None = ["mul"]) -> list[str]:
+# A list of regular expressions describing all of the functions
+FUNC_PATTERNS: list[str] = [
+'mul\([\d]{1,3},[\d]{1,3}\)',
+'do\(\)',
+"don't\(\)"
+]
+
+def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) -> list[str]:
     """
     Takes a line of corrupted code and returns
     a list of correct instructions. Defaults to the "mul" function.
@@ -12,14 +19,19 @@ def line_to_funcs(line: str, func_names: list[str] | None = ["mul"]) -> list[str
 
     Args:
         line (str): a string of corrupt code
-        func_names (list[str]): a list of valid function names, defaults to ["mul"]
+        func_patterns (list[str]): a list of valid function patterns
 
     Returns:
         list[str]: a list containing the strings of all valid functions
     """
+    separator: str = "|"
+    func_patterns_all: str = separator.join(func_patterns)
+
+    print(func_patterns_all)
+
     funcs: list[str] = []
 
-    pattern = re.compile('mul\([\d]{1,3},[\d]{1,3}\)') # type: ignore
+    pattern = re.compile(func_patterns_all) # type: ignore
     funcs = pattern.findall(line)
 
     return funcs

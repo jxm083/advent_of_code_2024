@@ -30,7 +30,7 @@ def test_data_file(
 
     return fake_path
 
-def test_line_to_funcs(test_line: str):
+def test_line_to_funcs(test_line: str, test_logic_line: str):
     answer: list[str] = [
         "mul(2,4)",
         "mul(5,5)",
@@ -40,10 +40,15 @@ def test_line_to_funcs(test_line: str):
     assert line_to_funcs(test_line) == answer
 
     logic_answer: list[str] = [
-
+        "mul(2,4)",
+        "don't()",
+        "mul(5,5)",
+        "mul(11,8)",
+        "do()",
+        "mul(8,5)"
     ]
 
-    assert (line_to_funcs(test_logic_line, func_forms)) == logic_answer
+    assert line_to_funcs(test_logic_line) == logic_answer
 
 def test_evaluate_func_str():
     assert evaluate_func_str("mul(2,4)") == 8
