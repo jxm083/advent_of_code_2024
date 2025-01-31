@@ -32,7 +32,7 @@ def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) ->
 
     return funcs
 
-def evaluate_func_str(func_str: str, func = int.__mul__) -> int: # type: ignore
+def evaluate_mul_str(func_str: str) -> int: # type: ignore
     """
     Takes a string expressing a function and evaluates the function.
     
@@ -49,7 +49,7 @@ def evaluate_func_str(func_str: str, func = int.__mul__) -> int: # type: ignore
 
     args = [int(x) for x in arg_pattern.findall(func_str)] # type: ignore
 
-    return func(args[0], args[1])
+    return args[0] * args[1]
 
 DATA_DIR = Path(__file__).parent
 
@@ -61,14 +61,39 @@ def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = D
     with file_path.open() as file:
 
         for line in file.readlines():
-            func_strs += line_to_funcs(line)
+            # Pull only mul(arg0, arg1) functions out of the line
+            func_strs += line_to_funcs(line, func_patterns = [FUNC_PATTERNS[0]])
     
     evaluated_funcs: list[int] = [
-        evaluate_func_str(func_str) for func_str in func_strs
+        evaluate_mul_str(func_str) for func_str in func_strs
     ]
 
     return sum(evaluated_funcs)
 
+def exercise_two(file_name: str | None = "data01.txt", file_dir: Path | None = DATA_DIR):
+    file_path = DATA_DIR / Path(file_name) # type: ignore
+
+    func_strs: list[str] = []
+
+    with file_path.open() as file:
+
+        for line in file.readlines():
+            func_strs += line_to_funcs(line)
+
+    last_logic_bit: int = 1
+    total: int = 0
+
+    for func_str in func_strs:
+        if func_str == "do()":
+            last_logic_bit = 1
+        elif func_str == "don't()":
+            last_logic_bit = 0
+        else:
+            total += last_logic_bit * evaluate_mul_str(func_str)
+
+    return total
+
 
 if __name__ == "__main__":
     print(f"Sum of products: {exercise_one()}")
+    print(f"ibid w/ logic: {exercise_two()}")

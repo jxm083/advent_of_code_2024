@@ -2,8 +2,9 @@ import pytest
 
 from advent.advent_of_code_2024.day03.main import (
     exercise_one,
+    exercise_two,
     line_to_funcs,
-    evaluate_func_str
+    evaluate_mul_str
 ) 
 
 from pathlib import Path
@@ -50,8 +51,8 @@ def test_line_to_funcs(test_line: str, test_logic_line: str):
 
     assert line_to_funcs(test_logic_line) == logic_answer
 
-def test_evaluate_func_str():
-    assert evaluate_func_str("mul(2,4)") == 8
+def test_evaluate_mul_str():
+    assert evaluate_mul_str("mul(2,4)") == 8
 
 PACKAGE_ROOT_LEVEL = 3
 ROOT_PACKAGE_DIR = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
@@ -64,3 +65,8 @@ def test_exercise_one():
     assert exercise_one("data00.txt", file_dir = DATA_DIR) == 161
 
     assert exercise_one("data01.txt", file_dir = DATA_DIR) == 166630675
+
+def test_exercise_two():
+    assert exercise_two("data00.txt", file_dir = DATA_DIR) == 48
+
+    assert exercise_two("data01.txt", file_dir = DATA_DIR) <= 166630675
