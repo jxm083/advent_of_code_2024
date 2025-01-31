@@ -69,4 +69,4 @@ def test_exercise_one():
 def test_exercise_two():
     assert exercise_two("data00b.txt", file_dir = DATA_DIR) == 48
 
-    assert exercise_two("data01.txt", file_dir = DATA_DIR) <= 166630675
+    assert exercise_two("data01.txt", file_dir = DATA_DIR) == 93465710
