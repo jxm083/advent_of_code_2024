@@ -64,9 +64,9 @@ print(DATA_DIR)
 def test_exercise_one():
     assert exercise_one("data00.txt", file_dir = DATA_DIR) == 161
 
-    assert exercise_one("data01.txt", file_dir = DATA_DIR) == 166630675
+    assert exercise_one() == 166630675
 
 def test_exercise_two():
     assert exercise_two("data00b.txt", file_dir = DATA_DIR) == 48
 
-    assert exercise_two("data01.txt", file_dir = DATA_DIR) == 93465710
+    assert exercise_two() == 93465710

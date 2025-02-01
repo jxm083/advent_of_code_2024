@@ -3,8 +3,8 @@ from pathlib import Path
 
 # A list of regular expressions describing all of the functions
 FUNC_PATTERNS: list[str] = [
-'mul\\([\\d]{1,3},[\\d]{1,3}\\)',
-'do\\(\\)',
+'mul\\([\\d]{1,3},[\\d]{1,3}\\)', # CHANGE to raw string
+'do\\(\\)', # LOOK AT CAPTURE GROUPS
 "don't\\(\\)"
 ]
 
