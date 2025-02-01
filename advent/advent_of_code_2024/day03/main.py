@@ -8,7 +8,7 @@ FUNC_PATTERNS: list[str] = [
 "don't\\(\\)"
 ]
 
-def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) -> list[str]:
+def line_to_funcs(line: str, func_patterns: list[str] = FUNC_PATTERNS) -> list[str]:
     """
     Takes a line of corrupted code and returns
     a list of correct instructions. Defaults to the "mul" function.
@@ -23,16 +23,16 @@ def line_to_funcs(line: str, func_patterns: list[str] | None = FUNC_PATTERNS) ->
         list[str]: a list containing the strings of all valid functions
     """
     separator: str = "|"
-    func_patterns_all: str = separator.join(func_patterns) # type: ignore
+    func_patterns_all: str = separator.join(func_patterns) 
 
     funcs: list[str] = []
 
-    pattern = re.compile(func_patterns_all) # type: ignore
-    funcs = pattern.findall(line) # type: ignore
+    pattern = re.compile(func_patterns_all) 
+    funcs = pattern.findall(line) 
 
     return funcs
 
-def evaluate_mul_str(func_str: str) -> int: # type: ignore
+def evaluate_mul_str(func_str: str) -> int: 
     """
     Takes a string expressing a function and evaluates the function.
     
@@ -47,14 +47,14 @@ def evaluate_mul_str(func_str: str) -> int: # type: ignore
     """
     arg_pattern = re.compile('[\\d]{1,3}')
 
-    args = [int(x) for x in arg_pattern.findall(func_str)] # type: ignore
+    args = [int(x) for x in arg_pattern.findall(func_str)] 
 
     return args[0] * args[1]
 
 DATA_DIR = Path(__file__).parent
 
-def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = DATA_DIR):
-    file_path = DATA_DIR / Path(file_name) # type: ignore
+def exercise_one(file_name: str = "data01.txt", file_dir: Path = DATA_DIR):
+    file_path = DATA_DIR / Path(file_name) 
 
     func_strs: list[str] = []
 
@@ -70,8 +70,8 @@ def exercise_one(file_name: str | None = "data01.txt", file_dir: Path | None = D
 
     return sum(evaluated_funcs)
 
-def exercise_two(file_name: str | None = "data01.txt", file_dir: Path | None = DATA_DIR):
-    file_path = DATA_DIR / Path(file_name) # type: ignore
+def exercise_two(file_name: str = "data01.txt", file_dir: Path = DATA_DIR):
+    file_path = DATA_DIR / Path(file_name)
 
     func_strs: list[str] = []
 
