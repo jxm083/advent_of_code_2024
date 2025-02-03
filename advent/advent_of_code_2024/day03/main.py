@@ -3,9 +3,9 @@ from pathlib import Path
 
 # A list of regular expressions describing all of the functions
 FUNC_PATTERNS: list[str] = [
-'mul\\([\\d]{1,3},[\\d]{1,3}\\)', # CHANGE to raw string
-'do\\(\\)', # LOOK AT CAPTURE GROUPS
-"don't\\(\\)"
+r"mul\([\d]{1,3},[\d]{1,3}\)",
+r"do\(\)", # LOOK AT CAPTURE GROUPS
+r"don't\(\)"
 ]
 
 def line_to_funcs(line: str, func_patterns: list[str] = FUNC_PATTERNS) -> list[str]:
