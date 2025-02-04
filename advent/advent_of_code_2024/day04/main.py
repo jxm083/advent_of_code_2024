@@ -25,6 +25,15 @@ def generate_text_block(file_path: Path, lin_count: int) -> list[str]:
 
     return data
     
+def convert_lines_to_grid(lines: list[str]) -> list[list[str]]:
+    grid: list[list[str]] = []
+
+    for line in lines:
+        letters = [letter for letter in line]
+        grid.append(letters.copy())
+
+    return grid
+
 
 
 
