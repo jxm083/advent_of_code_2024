@@ -5,7 +5,8 @@ from pathlib import Path
 from advent.advent_of_code_2024.day04.main import (
     generate_text_block,
     exercise_one,
-    convert_lines_to_grid
+    convert_lines_to_grid,
+    cut_line_from_grid
 )
 
 PACKAGE_ROOT_LEVEL = 3
@@ -24,17 +25,29 @@ def fake_text_lines() -> list[str]:
         "GHI"
     ]
 
-def test_convert_lines_to_grid(fake_text_lines: list[str]):
+@pytest.fixture
+def fake_grid() -> list[list[str]]:
     grid = [
-        ["A", "B", "C"],
-        ["D", "E", "F"],
-        ["G", "H", "I"]
-    ]
+            ["A", "B", "C"],
+            ["D", "E", "F"],
+            ["G", "H", "I"]
+        ]
+    return grid
 
-    assert convert_lines_to_grid(fake_text_lines) == grid
+def test_convert_lines_to_grid(fake_text_lines: list[str]):
+    assert convert_lines_to_grid(fake_text_lines) == fake_grid()
+
+def test_cut_line_from_grid(fake_grid: list[list[str]]) -> str:
+    length: int = 3
+    direct: tuple[int, int] = (-1, -1)
+    assert cut_line_from_grid(fake_grid, length, direct) == ["AEI"]
+    for x_dir in [-1, 0, 1]:
+        for y_dir in [-1, 0, 1]:
+            direct: tuple[int, int] = (x_dir, y_dir)
+            
 
 def test_exercise_one_example():
     assert exercise_one(DATA_DIR / "data00.txt") == 18
 
 if __name__ == "__main__":
-    print(DATA_TEST.exists)
+    test_cut_line_from_grid(fake_grid())
