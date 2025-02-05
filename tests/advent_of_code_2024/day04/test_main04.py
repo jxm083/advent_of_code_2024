@@ -39,15 +39,16 @@ def test_convert_lines_to_grid(fake_text_lines: list[str]):
 
 def test_cut_line_from_grid(fake_grid: list[list[str]]):
     length: int = 3
-    direct: tuple[int, int] = (-1, -1)
+    direct: tuple[int, int] = (1, -1)
     assert cut_line_from_grid(fake_grid, length, direct) == ["A", "E", "I"]
 
     direct = (0, -1)
     center: tuple[int, int] = (1, 0)
     assert cut_line_from_grid(fake_grid, length, direct, center=center) == ["B", "E", "H"]
-    for x_dir in [-1, 0, 1]:
-        for y_dir in [-1, 0, 1]:
-            direct: tuple[int, int] = (x_dir, y_dir)
+
+    direct = (-1, 0)
+    center = (2, 0)
+    assert cut_line_from_grid(fake_grid, length, direct, center=center) == ["C", "B", "A"]
             
 
 def test_exercise_one_example():

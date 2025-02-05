@@ -38,7 +38,7 @@ def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, in
     letters: list[str] = []
 
     for delta in range(length):
-            x_ind = -1 * direct[0] * delta + center[0]
+            x_ind = direct[0] * delta + center[0]
             y_ind = -1 * direct[1] * delta + center[1]
             letter: str = grid[y_ind][x_ind]
             letters.append(letter)
@@ -48,9 +48,20 @@ def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, in
 
 
 def exercise_one(file_path: Path = DATA_P1) -> int:
+    buffer: list[str] = []
+    buffer_grid: list[list[str]] = []
+    word_count: int = 0
+
     with file_path.open() as file:
-        for line in file.readlines():
-            print(line)
+        for line_num, line in enumerate(file.readlines()):
+            buffer.append(line.rstrip())
+            if line_num >= len(TARGET_STR) - 1:
+                buffer_grid = convert_lines_to_grid(buffer)
+
+                print(buffer_grid)
+                del buffer[0]
+
+            print(line_num, line)
 
 if __name__ == "__main__":
     print(generate_text_block(DATA_TEST, 2))
