@@ -6,7 +6,8 @@ from advent.advent_of_code_2024.day04.main import (
     generate_text_block,
     exercise_one,
     convert_lines_to_grid,
-    cut_line_from_grid
+    cut_line_from_grid,
+    cuts_at_letter
 )
 
 PACKAGE_ROOT_LEVEL = 3
@@ -49,6 +50,19 @@ def test_cut_line_from_grid(fake_grid: list[list[str]]):
     direct = (-1, 0)
     center = (2, 0)
     assert cut_line_from_grid(fake_grid, length, direct, center=center) == ["C", "B", "A"]
+
+def test_cuts_at_letter(fake_grid: list[list[str]]):
+    assert cuts_at_letter(fake_grid, 0, 3) == [
+        ["A", "B", "C"],
+        ["A", "E", "I"],
+        ["A", "D", "G"]
+    ]
+
+    assert cuts_at_letter(fake_grid, 2, 3) == [
+        ["C", "F", "I"],
+        ["C", "E", "G"]
+    ]
+
             
 
 def test_exercise_one_example():
