@@ -34,11 +34,13 @@ def convert_lines_to_grid(lines: list[str]) -> list[list[str]]:
 
     return grid
 
-def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, int]) -> list[str]:
+def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, int], center: tuple[int, int] = (0, 0)) -> list[str]:
     letters: list[str] = []
 
     for delta in range(length):
-            letter: str = grid[-1 * direct[0] * delta][-1 * direct[1] * delta]
+            x_ind = -1 * direct[0] * delta + center[0]
+            y_ind = -1 * direct[1] * delta + center[1]
+            letter: str = grid[y_ind][x_ind]
             letters.append(letter)
 
     return letters

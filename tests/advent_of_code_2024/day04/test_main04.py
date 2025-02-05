@@ -41,6 +41,10 @@ def test_cut_line_from_grid(fake_grid: list[list[str]]):
     length: int = 3
     direct: tuple[int, int] = (-1, -1)
     assert cut_line_from_grid(fake_grid, length, direct) == ["A", "E", "I"]
+
+    direct = (0, -1)
+    center: tuple[int, int] = (1, 0)
+    assert cut_line_from_grid(fake_grid, length, direct, center=center) == ["B", "E", "H"]
     for x_dir in [-1, 0, 1]:
         for y_dir in [-1, 0, 1]:
             direct: tuple[int, int] = (x_dir, y_dir)
