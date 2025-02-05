@@ -63,14 +63,8 @@ def test_cuts_at_letter(fake_grid: list[list[str]]):
         ["C", "E", "G"]
     ]
 
-            
-
 def test_exercise_one_example():
     assert exercise_one(DATA_DIR / "data00.txt") == 18
 
 def test_exercise_one_real():
-    assert exercise_one() > 18
-    assert exercise_one() < 5069 # 5518 w/ last buffer
-
-if __name__ == "__main__":
-    pass
+    assert exercise_one() == 2639

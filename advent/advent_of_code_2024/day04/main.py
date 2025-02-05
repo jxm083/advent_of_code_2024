@@ -99,20 +99,14 @@ def exercise_one(file_path: Path = DATA_P1) -> int:
                     buffer_grid,
                     target=TARGET_STR
                 )
+                del buffer[0]
         # Need to search the remainder of the buffer
-        for buf_line in buffer_grid[1:]:
-            for letter_num, letter in enumerate(buf_line[:]):
-                if letter in [TARGET_STR[0], TARGET_STR[-1]]:
-                    if letter_num + len(TARGET_STR) < len(buf_line):
-                        direct = (1, 0)
-                        cut = cut_line_from_grid(
-                            [buf_line],
-                            len(TARGET_STR),
-                            direct,
-                            center = (letter_num, 0)
-                        )
-                        if str().join(cut) in [TARGET_STR, TARGET_STR[::-1]]:
-                            word_count += 1
+
+    for ind in range(len(buffer_grid) - 1):
+        word_count += count_matches_from_grid_line(
+            buffer_grid[ind + 1:],
+            target=TARGET_STR
+        )
     
     return word_count
 
