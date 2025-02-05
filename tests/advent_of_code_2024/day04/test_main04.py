@@ -54,5 +54,9 @@ def test_cut_line_from_grid(fake_grid: list[list[str]]):
 def test_exercise_one_example():
     assert exercise_one(DATA_DIR / "data00.txt") == 18
 
+def test_exercise_one_real():
+    assert exercise_one() > 18
+    assert exercise_one() < 5518
+
 if __name__ == "__main__":
     pass

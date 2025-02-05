@@ -51,18 +51,49 @@ def exercise_one(file_path: Path = DATA_P1) -> int:
     buffer: list[str] = []
     buffer_grid: list[list[str]] = []
     word_count: int = 0
+    # directions we would want to cut in the buffer include
+    # (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0)
+    # (-1, 0) is taken care of by including the reverse word in the search
 
     with file_path.open() as file:
         for line_num, line in enumerate(file.readlines()):
             buffer.append(line.rstrip())
             if line_num >= len(TARGET_STR) - 1:
                 buffer_grid = convert_lines_to_grid(buffer)
-
-                print(buffer_grid)
-                del buffer[0]
-
-            print(line_num, line)
+                for letter_num, letter in enumerate(buffer_grid[0][:]):
+                    if letter in [TARGET_STR[0] , TARGET_STR[-1]]:
+                        directs: list[tuple[int, int]] = [(0, -1)]
+                        if letter_num + len(TARGET_STR) < len(buffer_grid[0]):
+                            directs.append((1, 0))
+                            directs.append((1, -1))
+                        if letter_num + 1 >= len(TARGET_STR):
+                            directs.append((-1, -1))
+                        for direct in directs:
+                            cut = cut_line_from_grid(
+                                buffer_grid, 
+                                len(TARGET_STR), 
+                                direct, 
+                                center=(letter_num, 0)
+                                )
+                            if str().join(cut) in [TARGET_STR , TARGET_STR[::-1]]:
+                                word_count += 1
+                        del directs
+        # Need to search the remainder of the buffer
+        for buf_line in buffer_grid[1:]:
+            for letter_num, letter in enumerate(buf_line[:]):
+                if letter in [TARGET_STR[0], TARGET_STR[-1]]:
+                    if letter_num + len(TARGET_STR) < len(buf_line):
+                        direct = (1, 0)
+                        cut = cut_line_from_grid(
+                            [buf_line],
+                            len(TARGET_STR),
+                            direct,
+                            center = (letter_num, 0)
+                        )
+                        if str().join(cut) in [TARGET_STR, TARGET_STR[::-1]]:
+                                word_count += 1
+    
+    return word_count
 
 if __name__ == "__main__":
-    print(generate_text_block(DATA_TEST, 2))
-    exercise_one(DATA_TEST)
+    print(f"Number of matches {exercise_one()}")
