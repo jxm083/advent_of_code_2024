@@ -56,7 +56,7 @@ def test_exercise_one_example():
 
 def test_exercise_one_real():
     assert exercise_one() > 18
-    assert exercise_one() < 5518
+    assert exercise_one() < 5069
 
 if __name__ == "__main__":
     pass
