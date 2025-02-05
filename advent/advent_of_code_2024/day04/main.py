@@ -6,15 +6,6 @@ DATA_P1 = DATA_DIR / "data01.txt"
 
 TARGET_STR = "XMAS"
 
-def text_line(
-        data: list[str], 
-        position: tuple[int, int],
-        direction: tuple[int, int], 
-        length: int
-    ) -> str:
-
-    pass
-
 def generate_text_block(file_path: Path, lin_count: int) -> list[str]:
     data: list[str] = []
     count = 0
