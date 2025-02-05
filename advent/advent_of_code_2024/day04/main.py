@@ -37,8 +37,26 @@ def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, in
 
     return letters
 
-def count_matches_in_grid_line(grid: list[list[str]], target: str = TARGET_STR) -> int:
-    pass
+def count_matches_from_grid_line(
+        grid: list[list[str]], 
+        target: str = TARGET_STR
+        ) -> int:
+    
+    match_count: int = 0
+
+    for letter_num, letter in enumerate(grid[0][:]):
+        if letter in [target[0], target[-1]]:
+            cuts = cuts_at_letter(
+                grid,
+                letter_num,
+                len(target)
+            )
+            cuts_counter = Counter([str().join(cut) for cut in cuts])
+            match_count += cuts_counter[target] + cuts_counter[target[::-1]]
+    
+    return match_count
+
+        
 
 def cuts_at_letter(grid: list[list[str]], pos: int, length: int) -> list[list[str]]:
     """
@@ -67,27 +85,20 @@ def cuts_at_letter(grid: list[list[str]], pos: int, length: int) -> list[list[st
 
     return cuts
 
-
-
 def exercise_one(file_path: Path = DATA_P1) -> int:
     buffer: list[str] = []
     buffer_grid: list[list[str]] = []
     word_count: int = 0
-    # directions we would want to cut in the buffer include
-    # (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0)
-    # (-1, 0) is taken care of by including the reverse word in the search
 
     with file_path.open() as file:
         for line_num, line in enumerate(file.readlines()):
             buffer.append(line.rstrip())
             if line_num >= len(TARGET_STR) - 1:
                 buffer_grid = convert_lines_to_grid(buffer)
-                for letter_num, letter in enumerate(buffer_grid[0][:]):
-                    if letter in [TARGET_STR[0] , TARGET_STR[-1]]:
-                        cuts = cuts_at_letter(buffer_grid, letter_num, len(TARGET_STR))
-                        cuts_count = Counter([str().join(cut) for cut in cuts])
-                        word_count += cuts_count[TARGET_STR]
-                        word_count += cuts_count[TARGET_STR[::-1]]
+                word_count += count_matches_from_grid_line(
+                    buffer_grid,
+                    target=TARGET_STR
+                )
         # Need to search the remainder of the buffer
         for buf_line in buffer_grid[1:]:
             for letter_num, letter in enumerate(buf_line[:]):
