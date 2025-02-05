@@ -30,11 +30,20 @@ def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, in
 
     for delta in range(length):
             x_ind = direct[0] * delta + center[0]
-            y_ind = -1 * direct[1] * delta + center[1]
+            y_ind = direct[1] * delta + center[1]
             letter: str = grid[y_ind][x_ind]
             letters.append(letter)
 
     return letters
+
+def count_matches_in_grid_line(grid: list[list[str]], target: str = TARGET_STR) -> int:
+    pass
+
+def cuts_at_letter(grid: list[list[str]], pos: tuple[int, int], target: str = TARGET_STR) -> list[list[str]]:
+    pass
+
+
+
 
 
 
@@ -53,12 +62,12 @@ def exercise_one(file_path: Path = DATA_P1) -> int:
                 buffer_grid = convert_lines_to_grid(buffer)
                 for letter_num, letter in enumerate(buffer_grid[0][:]):
                     if letter in [TARGET_STR[0] , TARGET_STR[-1]]:
-                        directs: list[tuple[int, int]] = [(0, -1)]
+                        directs: list[tuple[int, int]] = [(0, 1)]
                         if letter_num + len(TARGET_STR) < len(buffer_grid[0]):
                             directs.append((1, 0))
-                            directs.append((1, -1))
+                            directs.append((1, 1))
                         if letter_num + 1 >= len(TARGET_STR):
-                            directs.append((-1, -1))
+                            directs.append((-1, 1))
                         for direct in directs:
                             cut = cut_line_from_grid(
                                 buffer_grid, 
@@ -82,7 +91,7 @@ def exercise_one(file_path: Path = DATA_P1) -> int:
                             center = (letter_num, 0)
                         )
                         if str().join(cut) in [TARGET_STR, TARGET_STR[::-1]]:
-                                word_count += 1
+                            word_count += 1
     
     return word_count
 

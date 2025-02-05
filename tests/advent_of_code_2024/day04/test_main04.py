@@ -34,15 +34,15 @@ def fake_grid() -> list[list[str]]:
         ]
     return grid
 
-def test_convert_lines_to_grid(fake_text_lines: list[str]):
-    assert convert_lines_to_grid(fake_text_lines) == fake_grid()
+def test_convert_lines_to_grid(fake_text_lines: list[str], fake_grid: list[list[str]]):
+    assert convert_lines_to_grid(fake_text_lines) == fake_grid
 
 def test_cut_line_from_grid(fake_grid: list[list[str]]):
     length: int = 3
-    direct: tuple[int, int] = (1, -1)
+    direct: tuple[int, int] = (1, 1)
     assert cut_line_from_grid(fake_grid, length, direct) == ["A", "E", "I"]
 
-    direct = (0, -1)
+    direct = (0, 1)
     center: tuple[int, int] = (1, 0)
     assert cut_line_from_grid(fake_grid, length, direct, center=center) == ["B", "E", "H"]
 
@@ -56,7 +56,7 @@ def test_exercise_one_example():
 
 def test_exercise_one_real():
     assert exercise_one() > 18
-    assert exercise_one() < 5069
+    assert exercise_one() < 5069 # 5518 w/ last buffer
 
 if __name__ == "__main__":
     pass
