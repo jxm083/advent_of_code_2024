@@ -1,5 +1,6 @@
 from pathlib import Path
 from collections import Counter
+from typing import Callable
 
 DATA_DIR = Path(__file__).parent
 DATA_TEST = DATA_DIR / "data00.txt"
@@ -37,6 +38,36 @@ def cut_line_from_grid(grid: list[list[str]], length: int, direct: tuple[int, in
 
     return letters
 
+def cut_x_from_grid(grid: list[list[str]], length: int, center: tuple[int, int] = (0, 0)) -> list[list[str]]:
+    # the x is composed of two strokes
+    # one starts at the top left and goes down, the other
+    # starts at the top right and goes down
+    stroke_one = cut_line_from_grid(grid, length, (1, 1), center=center)
+    stroke_two = cut_line_from_grid(
+        grid,
+        length,
+        (-1, 1)
+        center=(center[0] + length - 1, center[1])
+        )
+
+    return [stroke_one, stroke_two]
+
+def count_x_matches_from_grid_line(
+        grid: list[list[str]],
+        target: str 
+) -> int:
+
+    match_count: int = 0
+
+    for letter_num, letter in enumerate(grid[0][:-len(target)]):
+        if letter in [target[0], target[-1]]:
+            strokes = cut_x_from_grid(grid, len(target), center = (letter_num, 0))
+            count = Counter([str().join(stroke) for stroke in strokes])
+            if sum([count[word] for word in [target, target[::-1]]]) == 2:
+                match_count += 1
+
+    return match_count
+
 def count_matches_from_grid_line(
         grid: list[list[str]], 
         target: str = TARGET_STR
@@ -55,8 +86,6 @@ def count_matches_from_grid_line(
             match_count += cuts_counter[target] + cuts_counter[target[::-1]]
     
     return match_count
-
-        
 
 def cuts_at_letter(grid: list[list[str]], pos: int, length: int) -> list[list[str]]:
     """
@@ -85,6 +114,36 @@ def cuts_at_letter(grid: list[list[str]], pos: int, length: int) -> list[list[st
 
     return cuts
 
+def count_matches_in_file(
+        line_match_counter,
+        target: str = TARGET_STR,
+        file_path: Path = DATA_P1
+        ) -> int:
+
+        match_count: int = 0
+        buffer: list[str] = []
+        buffer_grid: list[list[str]] = []
+
+        with file_path.open() as file:
+            for line_num, line in enumerate(file.readlines()):
+                if line_num >= len(target) - 1:
+                    buffer_grid = convert_lines_to_grid(buffer)
+                    match_count += line_match_counter(
+                        buffer_grid,
+                        target
+                    )
+                    del buffer[0]
+        
+        for ind in range(len(buffer_grid) - 1):
+            match_count += line_match_counter(
+                buffer_grid[ind + 1:],
+                target
+            )
+        
+        return match_count
+
+
+
 def exercise_one(file_path: Path = DATA_P1) -> int:
     buffer: list[str] = []
     buffer_grid: list[list[str]] = []
@@ -109,6 +168,10 @@ def exercise_one(file_path: Path = DATA_P1) -> int:
         )
     
     return word_count
+
+def exercise_two(file_path: Path = DATA_P1) -> int:
+    buffer: list[str] = []
+
 
 if __name__ == "__main__":
     print(f"Number of matches {exercise_one()}")

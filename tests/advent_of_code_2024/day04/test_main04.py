@@ -7,7 +7,8 @@ from advent.advent_of_code_2024.day04.main import (
     exercise_one,
     convert_lines_to_grid,
     cut_line_from_grid,
-    cuts_at_letter
+    cuts_at_letter,
+    exercise_two
 )
 
 PACKAGE_ROOT_LEVEL = 3
@@ -68,3 +69,6 @@ def test_exercise_one_example():
 
 def test_exercise_one_real():
     assert exercise_one() == 2639
+
+def test_exercise_two_example():
+    assert exercise_two(DATA_DIR / "data00.txt") == 9
