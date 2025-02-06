@@ -46,7 +46,7 @@ def cut_x_from_grid(grid: list[list[str]], length: int, center: tuple[int, int] 
     stroke_two = cut_line_from_grid(
         grid,
         length,
-        (-1, 1)
+        (-1, 1),
         center=(center[0] + length - 1, center[1])
         )
 
@@ -115,8 +115,9 @@ def cuts_at_letter(grid: list[list[str]], pos: int, length: int) -> list[list[st
     return cuts
 
 def count_matches_in_file(
-        line_match_counter,
+        line_match_counter: Callable[[list[list[str]], str], int],
         target: str = TARGET_STR,
+        target_depth: int = 1,
         file_path: Path = DATA_P1
         ) -> int:
 
@@ -126,6 +127,7 @@ def count_matches_in_file(
 
         with file_path.open() as file:
             for line_num, line in enumerate(file.readlines()):
+                buffer.append(line.rstrip())
                 if line_num >= len(target) - 1:
                     buffer_grid = convert_lines_to_grid(buffer)
                     match_count += line_match_counter(
@@ -134,7 +136,7 @@ def count_matches_in_file(
                     )
                     del buffer[0]
         
-        for ind in range(len(buffer_grid) - 1):
+        for ind in range(len(buffer_grid) - target_depth):
             match_count += line_match_counter(
                 buffer_grid[ind + 1:],
                 target
@@ -142,36 +144,24 @@ def count_matches_in_file(
         
         return match_count
 
-
-
 def exercise_one(file_path: Path = DATA_P1) -> int:
-    buffer: list[str] = []
-    buffer_grid: list[list[str]] = []
-    word_count: int = 0
-
-    with file_path.open() as file:
-        for line_num, line in enumerate(file.readlines()):
-            buffer.append(line.rstrip())
-            if line_num >= len(TARGET_STR) - 1:
-                buffer_grid = convert_lines_to_grid(buffer)
-                word_count += count_matches_from_grid_line(
-                    buffer_grid,
-                    target=TARGET_STR
-                )
-                del buffer[0]
-        # Need to search the remainder of the buffer
-
-    for ind in range(len(buffer_grid) - 1):
-        word_count += count_matches_from_grid_line(
-            buffer_grid[ind + 1:],
-            target=TARGET_STR
-        )
+    word_count = count_matches_in_file(
+        count_matches_from_grid_line,
+        file_path = file_path
+    )
     
     return word_count
 
 def exercise_two(file_path: Path = DATA_P1) -> int:
-    buffer: list[str] = []
+    word_count = count_matches_in_file(
+        count_x_matches_from_grid_line,
+        target="MAS",
+        target_depth=3,
+        file_path = file_path
+    )
 
+    return word_count
 
 if __name__ == "__main__":
     print(f"Number of matches {exercise_one()}")
+    print(f"Number of x matches {exercise_two()}")
