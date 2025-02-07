@@ -59,7 +59,7 @@ def count_x_matches_from_grid_line(
 
     match_count: int = 0
 
-    for letter_num, letter in enumerate(grid[0][:-len(target)]):
+    for letter_num, letter in enumerate(grid[0][:-(len(target) - 1)]):
         if letter in [target[0], target[-1]]:
             strokes = cut_x_from_grid(grid, len(target), center = (letter_num, 0))
             count = Counter([str().join(stroke) for stroke in strokes])
