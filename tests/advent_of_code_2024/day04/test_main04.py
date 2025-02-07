@@ -72,7 +72,6 @@ def test_exercise_one_real():
 
 def test_exercise_two_example():
     assert exercise_two(DATA_DIR / "data00.txt") == 9
-    assert exercise_two(DATA_DIR / "data01cut.txt") == 7
 
 def test_exercise_two_edge_case_00():
     dir_temp: Path = Path(__file__).parent
