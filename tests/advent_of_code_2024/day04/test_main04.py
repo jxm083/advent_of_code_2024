@@ -79,4 +79,4 @@ def test_exercise_two_edge_case_00():
     assert exercise_two(dir_temp / "data_exes_00.txt") == 5
 
 def test_exercise_two_real():
-    assert exercise_two() > 1978
+    assert exercise_two() == 2005
