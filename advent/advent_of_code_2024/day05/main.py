@@ -59,7 +59,7 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
     return valid_list
 
 def exercise_one(file_path: Path = DATA_01) -> int:
-    mid_num_sum = 0
+    mid_num_sum: int = 0
 
     page_lists: list[list[int]] = import_page_lists(file_path)
     rules: dict[int, list[int]] = import_rules(file_path)
@@ -67,6 +67,11 @@ def exercise_one(file_path: Path = DATA_01) -> int:
     for pages in page_lists:
         if valid_page_list(pages, rules):
             mid_num_sum += pages[len(pages)//2]
+
+    return mid_num_sum
+
+def exercise_two(file_path: Path = DATA_01) -> int:
+    mid_num_sum: int = 0
 
     return mid_num_sum
 

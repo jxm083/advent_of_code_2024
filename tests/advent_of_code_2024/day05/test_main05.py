@@ -7,7 +7,8 @@ from advent.advent_of_code_2024.day05.main import (
     import_rules,
     import_page_lists,
     parse_rule,
-    valid_page_list
+    valid_page_list,
+    exercise_two
 )
 
 PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
@@ -79,3 +80,6 @@ def test_exercise_one_example():
 
 def test_exercise_one_real():
     assert exercise_one() == 5129
+
+def test_exercise_two_example():
+    assert exercise_two(DATA_EXAMPLE_ONE) == 123
