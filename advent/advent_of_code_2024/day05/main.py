@@ -30,17 +30,33 @@ def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
 
     return rules
 
-def import_draft_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
-    draft_page_lists: list[list[int]] = []
+def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
+    page_lists: list[list[int]] = []
 
     with file_path.open() as f:
         for line in f.readlines():
             print(line)
             count = line.count
             if count(",") >= 1:
-                draft_page_lists.append([int(num) for num in line.split(",")])
+                page_lists.append([int(num) for num in line.split(",")])
 
-    return draft_page_lists
+    return page_lists
+
+def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
+    """
+    returns Boolean indicating whether list is valid
+    """
+    excluded_pages: list[int] = []
+    valid_list: bool = True
+
+    for page in page_list:
+        if page in excluded_pages:
+            valid_list = False
+        else:
+            if page in list(rules):
+                excluded_pages.extend(rules[page])
+
+    return valid_list
 
 def exercise_one(file_path: Path = DATA_01) -> int:
     pass

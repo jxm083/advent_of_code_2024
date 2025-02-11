@@ -5,8 +5,9 @@ from pathlib import Path
 from advent.advent_of_code_2024.day05.main import (
     exercise_one,
     import_rules,
-    import_draft_page_lists,
-    parse_rule
+    import_page_lists,
+    parse_rule,
+    valid_page_list
 )
 
 PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
@@ -38,7 +39,7 @@ def example_one_rules() -> dict[int, list[int]]:
 
 
 @pytest.fixture
-def example_one_draft_page_lists() -> list[list[int]]:
+def example_one_page_lists() -> list[list[int]]:
     return [
         [75, 47, 61, 53, 29],
         [97, 61, 53, 29, 13],
@@ -48,14 +49,30 @@ def example_one_draft_page_lists() -> list[list[int]]:
         [97, 13, 75, 29, 47]
     ]
 
+@pytest.fixture
+def example_one_valid_lists() -> list[bool]:
+    return [True, True, True, False, False, False]
+
+def test_valid_page_list(
+    example_one_rules: dict[int, list[int]],
+    example_one_page_lists: list[list[int]],
+    example_one_valid_lists: list[bool]
+    ):
+
+    valid_list_check: list[bool] = [
+        valid_page_list(pages, example_one_rules) for pages in example_one_page_lists
+    ]
+
+    assert valid_list_check == example_one_valid_lists
+
 def test_parse_rule():
     assert parse_rule("47|53") == (47, 53)
 
 def test_import_rules(example_one_rules: dict[int, list[int]]):
     assert import_rules(DATA_EXAMPLE_ONE) == example_one_rules
 
-def test_import_draft_page_lists(example_one_draft_page_lists: list[list[int]]):
-    assert import_draft_page_lists(DATA_EXAMPLE_ONE) == example_one_draft_page_lists
+def test_import_page_lists(example_one_page_lists: list[list[int]]):
+    assert import_page_lists(DATA_EXAMPLE_ONE) == example_one_page_lists
 
 def test_exercise_one_example():
     assert exercise_one(DATA_EXAMPLE_ONE) == 143
