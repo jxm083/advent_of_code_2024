@@ -6,7 +6,7 @@ DATA_01: Path = DATA_DIR / "data_01.txt"
 
 def parse_rule(line: str) -> tuple[int, int]:
     first, last = line.split("|")
-    return int(first), int(last)
+    return int(first), int(last) # TODO: functional paradigm
 
 
 def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
