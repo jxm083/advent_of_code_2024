@@ -14,16 +14,28 @@ ROOT_PACKAGE_DIR: Path = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
 DATA_DIR = ROOT_PACKAGE_DIR / "advent" / "advent_of_code_2024" / "day05"
 DATA_EXAMPLE_ONE = DATA_DIR / "data_example_1.txt"
 
+#@pytest.fixture
+#def example_one_rules() -> dict[int, list[int]]:
+    #return {
+        #47: [53, 13, 61, 29],
+        #97: [13, 61, 47, 29, 53, 75],
+        #75: [29, 53, 47, 61, 13],
+        #61: [13, 53, 29],
+        #29: [13],
+        #53: [29, 13]
+    #}
+
 @pytest.fixture
 def example_one_rules() -> dict[int, list[int]]:
     return {
-        47: [53, 13, 61, 29],
-        97: [13, 61, 47, 29, 53, 75],
-        75: [29, 53, 47, 61, 13],
-        61: [13, 53, 29],
-        29: [13],
-        53: [29, 13]
+        53: [47, 75, 61, 97],
+        13: [97, 61, 29, 47, 75, 53],
+        61: [97, 47, 75],
+        47: [97, 75],
+        29: [75, 97, 53, 61, 47],
+        75: [97]
     }
+
 
 @pytest.fixture
 def example_one_draft_page_lists() -> list[list[int]]:

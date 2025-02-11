@@ -10,6 +10,12 @@ def parse_rule(line: str) -> tuple[int, int]:
 
 
 def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
+    """
+    file_path (Path): the file path to the rules and page lists
+    
+    returns dict[int, list[int]]: a dictionary of entries of the form
+    if KEY is in the page list, then none of the page numbers in
+    VALUE's list may follow it."""
     rules: dict[int, list[int]] = dict()
 
     with file_path.open() as f:
@@ -17,10 +23,10 @@ def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
             count = line.count
             if count("|") == 1:
                 first_num, last_num = parse_rule(line)
-                if first_num in rules.keys():
-                    rules[first_num].append(last_num)
+                if last_num in rules.keys():
+                    rules[last_num].append(first_num)
                 else:
-                    rules[first_num] = [last_num]
+                    rules[last_num] = [first_num]
 
     return rules
 
