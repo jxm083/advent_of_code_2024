@@ -5,7 +5,8 @@ from pathlib import Path
 from advent.advent_of_code_2024.day05.main import (
     exercise_one,
     import_rules,
-    import_draft_page_lists
+    import_draft_page_lists,
+    parse_rule
 )
 
 PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
@@ -16,9 +17,9 @@ DATA_EXAMPLE_ONE = DATA_DIR / "data_example_1.txt"
 @pytest.fixture
 def example_one_rules() -> dict[int, list[int]]:
     return {
-        47: [53, 13, 61, 29, 61],
+        47: [53, 13, 61, 29],
         97: [13, 61, 47, 29, 53, 75],
-        75: [29, 47, 13, 61],
+        75: [29, 53, 47, 61, 13],
         61: [13, 53, 29],
         29: [13],
         53: [29, 13]
@@ -34,6 +35,9 @@ def example_one_draft_page_lists() -> list[list[int]]:
         [61, 13, 29],
         [97, 13, 75, 29, 47]
     ]
+
+def test_parse_rule():
+    assert parse_rule("47|53") == (47, 53)
 
 def test_import_rules(example_one_rules: dict[int, list[int]]):
     assert import_rules(DATA_EXAMPLE_ONE) == example_one_rules
