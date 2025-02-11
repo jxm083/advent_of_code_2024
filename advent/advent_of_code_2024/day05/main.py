@@ -71,4 +71,4 @@ def exercise_one(file_path: Path = DATA_01) -> int:
     return mid_num_sum
 
 if __name__ == "__main__":
-    pass
+    print(f"Exercise one: {exercise_one()}")

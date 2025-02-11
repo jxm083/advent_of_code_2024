@@ -76,3 +76,6 @@ def test_import_page_lists(example_one_page_lists: list[list[int]]):
 
 def test_exercise_one_example():
     assert exercise_one(DATA_EXAMPLE_ONE) == 143
+
+def test_exercise_one_real():
+    assert exercise_one() == 5129
