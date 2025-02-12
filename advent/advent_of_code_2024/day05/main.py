@@ -76,10 +76,22 @@ def exercise_one(file_path: Path = DATA_01) -> int:
     return mid_num_sum
 
 def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
-    for ind, page in enumerate(pages):
-        if not valid_page(page, pages[ind:], rules):
-            pass
+    new_pages: list[int] = pages
 
+    for ind, page in enumerate(pages):
+        if page in list(rules) and not valid_page_list(pages[ind:], rules):
+            predecessor_inds: list[int] = []
+            for predecessor in rules[page]:
+                if predecessor in pages[ind + 1:]:
+                    predecessor_inds.append(pages.index(predecessor))
+            
+            if predecessor_inds:
+                last_predecessor_ind: int = max(predecessor_inds)
+
+                new_pages.insert(last_predecessor_ind + 1, page)
+                new_pages.pop(ind)
+
+    return new_pages
 
 def exercise_two(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
@@ -88,14 +100,10 @@ def exercise_two(file_path: Path = DATA_01) -> int:
     rules: dict[int, list[int]] = import_rules(file_path)
 
     for ind, pages in enumerate(page_lists):
-        print(f"Evaluating {ind} / {len(page_lists)}")
+        print(f"Evaluating {ind + 1} / {len(page_lists)}")
         if not valid_page_list(pages, rules):
-            page_perm = permutations(pages)
-            
-            for perm in page_perm:
-                if valid_page_list(list(perm), rules):
-                    mid_num_sum += perm[len(perm) // 2]
-                    break
+            new_pages: list[int] = reorder_pages(pages, rules)
+            mid_num_sum += new_pages[len(new_pages) // 2]
 
     return mid_num_sum
 

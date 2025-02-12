@@ -8,7 +8,8 @@ from advent.advent_of_code_2024.day05.main import (
     import_page_lists,
     parse_rule,
     valid_page_list,
-    exercise_two
+    exercise_two,
+    reorder_pages
 )
 
 PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
@@ -86,6 +87,20 @@ def test_exercise_one_example():
 
 def test_exercise_one_real():
     assert exercise_one() == 5129
+
+def test_reorder_pages(
+    example_one_page_lists: list[list[int]],
+    example_one_rules: dict[int, list[int]]
+):
+    reordered_pages: list[int] = [97, 75, 47, 61, 53]
+    bad_pages = example_one_page_lists[3]
+
+    assert reorder_pages(bad_pages, example_one_rules) == reordered_pages
+
+    bad_pages = example_one_page_lists[4]
+    reordered_pages = [61, 29, 13]
+
+    assert reorder_pages(bad_pages, example_one_rules) == reordered_pages
 
 def test_exercise_two_example():
     assert exercise_two(DATA_EXAMPLE_ONE) == 123
