@@ -1,4 +1,5 @@
 from pathlib import Path
+from itertools import permutations
 
 DATA_DIR: Path = Path(__file__).parent
 DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"
@@ -35,12 +36,16 @@ def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
 
     with file_path.open() as f:
         for line in f.readlines():
-            print(line)
             count = line.count
             if count(",") >= 1:
                 page_lists.append([int(num) for num in line.split(",")])
 
     return page_lists
+
+def valid_page(page: int, list_rest: list[int], rules: dict[int, list[int]]) -> bool:
+    valid: bool = True
+
+    return valid
 
 def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
     """
@@ -70,10 +75,30 @@ def exercise_one(file_path: Path = DATA_01) -> int:
 
     return mid_num_sum
 
+def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
+    for ind, page in enumerate(pages):
+        if not valid_page(page, pages[ind:], rules):
+            pass
+
+
 def exercise_two(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
+
+    page_lists: list[list[int]] = import_page_lists(file_path)
+    rules: dict[int, list[int]] = import_rules(file_path)
+
+    for ind, pages in enumerate(page_lists):
+        print(f"Evaluating {ind} / {len(page_lists)}")
+        if not valid_page_list(pages, rules):
+            page_perm = permutations(pages)
+            
+            for perm in page_perm:
+                if valid_page_list(list(perm), rules):
+                    mid_num_sum += perm[len(perm) // 2]
+                    break
 
     return mid_num_sum
 
 if __name__ == "__main__":
     print(f"Exercise one: {exercise_one()}")
+    print(f"Exercise two {exercise_two()}")

@@ -54,6 +54,12 @@ def example_one_page_lists() -> list[list[int]]:
 def example_one_valid_lists() -> list[bool]:
     return [True, True, True, False, False, False]
 
+def test_valid_page(example_one_page_lists: list[list[int]]):
+    pages: list[int] = example_one_page_lists[0]
+
+    for ind, page in enumerate(pages):
+        pass
+
 def test_valid_page_list(
     example_one_rules: dict[int, list[int]],
     example_one_page_lists: list[list[int]],
@@ -64,7 +70,7 @@ def test_valid_page_list(
         valid_page_list(pages, example_one_rules) for pages in example_one_page_lists
     ]
 
-    assert valid_list_check == example_one_valid_lists
+    assert valid_list_check == example_one_valid_lists # TODO: check comparing boolean lists
 
 def test_parse_rule():
     assert parse_rule("47|53") == (47, 53)
