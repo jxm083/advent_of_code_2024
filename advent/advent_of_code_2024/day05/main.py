@@ -1,5 +1,4 @@
 from pathlib import Path
-from itertools import permutations
 
 DATA_DIR: Path = Path(__file__).parent
 DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"

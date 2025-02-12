@@ -55,12 +55,6 @@ def example_one_page_lists() -> list[list[int]]:
 def example_one_valid_lists() -> list[bool]:
     return [True, True, True, False, False, False]
 
-def test_valid_page(example_one_page_lists: list[list[int]]):
-    pages: list[int] = example_one_page_lists[0]
-
-    for ind, page in enumerate(pages):
-        pass
-
 def test_valid_page_list(
     example_one_rules: dict[int, list[int]],
     example_one_page_lists: list[list[int]],
