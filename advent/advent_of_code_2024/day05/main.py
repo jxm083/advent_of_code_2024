@@ -75,7 +75,7 @@ def exercise_one(file_path: Path = DATA_01) -> int:
 
     return mid_num_sum
 
-def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
+def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     new_pages: list[int] = pages
 
     for ind, page in enumerate(pages):
@@ -93,20 +93,29 @@ def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
 
     return new_pages
 
+def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
+    new_pages: list[int] = pages
+
+    while not valid_page_list(new_pages, rules):
+        new_pages = reorder_pages_pass(new_pages, rules)
+
+    return new_pages
+
 def exercise_two(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
 
     page_lists: list[list[int]] = import_page_lists(file_path)
     rules: dict[int, list[int]] = import_rules(file_path)
 
-    for ind, pages in enumerate(page_lists):
-        print(f"Evaluating {ind + 1} / {len(page_lists)}")
+    for pages in page_lists:
         if not valid_page_list(pages, rules):
-            new_pages: list[int] = reorder_pages(pages, rules)
+            new_pages = reorder_pages(pages, rules)
+            if not valid_page_list(new_pages, rules):
+                print(pages)
             mid_num_sum += new_pages[len(new_pages) // 2]
 
     return mid_num_sum
 
 if __name__ == "__main__":
     print(f"Exercise one: {exercise_one()}")
-    print(f"Exercise two {exercise_two()}")
+    print(f"Exercise two: {exercise_two()}")

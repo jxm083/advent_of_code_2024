@@ -92,15 +92,17 @@ def test_reorder_pages(
     example_one_page_lists: list[list[int]],
     example_one_rules: dict[int, list[int]]
 ):
-    reordered_pages: list[int] = [97, 75, 47, 61, 53]
-    bad_pages = example_one_page_lists[3]
+    reordered_pages_list: list[list[int]] = [
+        [97, 75, 47, 61, 53],
+        [61, 29, 13],
+        [97, 75, 47, 29, 13]
+    ]
 
-    assert reorder_pages(bad_pages, example_one_rules) == reordered_pages
-
-    bad_pages = example_one_page_lists[4]
-    reordered_pages = [61, 29, 13]
-
-    assert reorder_pages(bad_pages, example_one_rules) == reordered_pages
+    for ps_good, ps_bad in zip(reordered_pages_list, example_one_page_lists[3:]):
+        assert reorder_pages(ps_bad, example_one_rules) == ps_good
 
 def test_exercise_two_example():
     assert exercise_two(DATA_EXAMPLE_ONE) == 123
+
+def test_exercise_two_real():
+    assert exercise_two() == 4077
