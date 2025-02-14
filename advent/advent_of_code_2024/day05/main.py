@@ -24,8 +24,17 @@ def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Gen
         g = match.groups()
         yield (int(g[0]), int(g[1]))
     
+def compile_rule_dict(rule_stream: Generator[tuple[int, int], None, None]) -> dict[int, list[int]]:
+    rule_dict:  dict[int, list[int]] = dict()
 
+    for pred, post in rule_stream:
+        if post in rule_dict.keys():
+            rule_dict[post].append(pred)
 
+        else:
+            rule_dict[post] = [pred]
+
+    return rule_dict
 
 def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
     """
