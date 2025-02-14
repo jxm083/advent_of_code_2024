@@ -1,12 +1,30 @@
 from pathlib import Path
+import re
+from typing import Generator
 
 DATA_DIR: Path = Path(__file__).parent
 DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"
 DATA_01: Path = DATA_DIR / "data_01.txt"
 
-def parse_rule(line: str) -> tuple[int, int]:
-    first, last = line.split("|")
-    return int(first), int(last) # TODO: functional paradigm
+RULE_PATTERN = re.compile(r"(\d+)\| ?(\d+)")
+
+def parse_rule(line: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> tuple[int, int] | None:
+    result = rule_pattern.search(line)
+    if result is None:
+        return None
+    else:
+        return int(result.group(1)), int(result.group(2))
+
+#def parse_rule(line: str) -> tuple[int, int]:
+    #first, last = line.split("|")
+    #return int(first), int(last) # TODO: functional paradigm
+
+def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Generator[tuple[int, int], None, None]:
+    for match in re.finditer(rule_pattern, data):
+        g = match.groups()
+        yield (int(g[0]), int(g[1]))
+    
+
 
 
 def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
@@ -20,13 +38,13 @@ def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
 
     with file_path.open() as f:
         while line := f.readline().rstrip():
-            count = line.count
-            if count("|") == 1:
-                first_num, last_num = parse_rule(line)
-                if last_num in rules.keys():
-                    rules[last_num].append(first_num)
+            nums: tuple[int, int] | None = parse_rule(line)
+
+            if nums is not None:
+                if nums[1] in rules.keys():
+                    rules[nums[1]].append(nums[0])
                 else:
-                    rules[last_num] = [first_num]
+                    rules[nums[1]] = [nums[0]]
 
     return rules
 
@@ -116,5 +134,6 @@ def exercise_two(file_path: Path = DATA_01) -> int:
     return mid_num_sum
 
 if __name__ == "__main__":
+    print(parse_rule("47|53"))
     print(f"Exercise one: {exercise_one()}")
     print(f"Exercise two: {exercise_two()}")
