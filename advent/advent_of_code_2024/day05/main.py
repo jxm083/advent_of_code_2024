@@ -2,6 +2,8 @@ from pathlib import Path
 import re
 from typing import Generator
 
+from advent.common.data_stream import stream_lines_from_file
+
 DATA_DIR: Path = Path(__file__).parent
 DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"
 DATA_01: Path = DATA_DIR / "data_01.txt"
@@ -24,10 +26,13 @@ def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Gen
         g = match.groups()
         yield (int(g[0]), int(g[1]))
     
-def compile_rule_dict(rule_stream: Generator[tuple[int, int], None, None]) -> dict[int, list[int]]:
+def compile_rule_dict(file_path: Path = DATA_01) -> dict[int, list[int]]:
     rule_dict:  dict[int, list[int]] = dict()
 
-    for pred, post in rule_stream:
+    data_stream = stream_rules(file_path.read_text())
+
+    for pred, post in data_stream:
+
         if post in rule_dict.keys():
             rule_dict[post].append(pred)
 
@@ -43,19 +48,10 @@ def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
     returns dict[int, list[int]]: a dictionary of entries of the form
     if KEY is in the page list, then none of the page numbers in
     VALUE's list may follow it."""
-    rules: dict[int, list[int]] = dict()
 
-    with file_path.open() as f:
-        while line := f.readline().rstrip():
-            nums: tuple[int, int] | None = parse_rule(line)
+    rule_dict = compile_rule_dict(file_path)
 
-            if nums is not None:
-                if nums[1] in rules.keys():
-                    rules[nums[1]].append(nums[0])
-                else:
-                    rules[nums[1]] = [nums[0]]
-
-    return rules
+    return rule_dict
 
 def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
     page_lists: list[list[int]] = []
