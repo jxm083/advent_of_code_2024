@@ -5,7 +5,6 @@ from pathlib import Path
 from advent.advent_of_code_2024.day05.main import (
     exercise_one,
     compile_rule_dict,
-    import_page_lists,
     stream_rules,
     valid_page_list,
     parse_list,
@@ -20,17 +19,6 @@ PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
 ROOT_PACKAGE_DIR: Path = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
 DATA_DIR = ROOT_PACKAGE_DIR / "advent" / "advent_of_code_2024" / "day05"
 DATA_EXAMPLE_ONE = DATA_DIR / "data_example_1.txt"
-
-#@pytest.fixture
-#def example_one_rules() -> dict[int, list[int]]:
-    #return {
-        #47: [53, 13, 61, 29],
-        #97: [13, 61, 47, 29, 53, 75],
-        #75: [29, 53, 47, 61, 13],
-        #61: [13, 53, 29],
-        #29: [13],
-        #53: [29, 13]
-    #}
 
 @pytest.fixture
 def example_one_rules() -> dict[int, list[int]]:
@@ -77,9 +65,6 @@ def test_stream_rules():
 
 def test_compile_rule_dict(example_one_rules: dict[int, list[int]]):
     assert compile_rule_dict(DATA_EXAMPLE_ONE) == example_one_rules
-
-def test_import_page_lists(example_one_page_lists: list[list[int]]):
-    assert import_page_lists(DATA_EXAMPLE_ONE) == example_one_page_lists
 
 def test_is_page_list():
     test_list_text = "75,29,13"

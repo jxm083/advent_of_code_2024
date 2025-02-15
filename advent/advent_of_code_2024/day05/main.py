@@ -32,17 +32,6 @@ def compile_rule_dict(file_path: Path = DATA_01) -> dict[int, list[int]]:
 
     return rule_dict
 
-def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
-    page_lists: list[list[int]] = []
-
-    with file_path.open() as f:
-        for line in f.readlines():
-            count = line.count
-            if count(",") >= 1:
-                page_lists.append([int(num) for num in line.split(",")])
-
-    return page_lists
-
 def is_page_list(text: str, page_list_pattern: re.Pattern[str] = PAGE_LIST_PATTERN) -> bool:
     return bool(page_list_pattern.search(text))
 
