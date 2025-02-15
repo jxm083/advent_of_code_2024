@@ -17,10 +17,6 @@ def parse_rule(line: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> tuple
     else:
         return int(result.group(1)), int(result.group(2))
 
-#def parse_rule(line: str) -> tuple[int, int]:
-    #first, last = line.split("|")
-    #return int(first), int(last) # TODO: functional paradigm
-
 def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Generator[tuple[int, int], None, None]:
     for match in re.finditer(rule_pattern, data):
         g = match.groups()
@@ -38,18 +34,6 @@ def compile_rule_dict(file_path: Path = DATA_01) -> dict[int, list[int]]:
 
         else:
             rule_dict[post] = [pred]
-
-    return rule_dict
-
-def import_rules(file_path: Path = DATA_01) -> dict[int, list[int]]:
-    """
-    file_path (Path): the file path to the rules and page lists
-    
-    returns dict[int, list[int]]: a dictionary of entries of the form
-    if KEY is in the page list, then none of the page numbers in
-    VALUE's list may follow it."""
-
-    rule_dict = compile_rule_dict(file_path)
 
     return rule_dict
 
@@ -89,7 +73,7 @@ def exercise_one(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
 
     page_lists: list[list[int]] = import_page_lists(file_path)
-    rules: dict[int, list[int]] = import_rules(file_path)
+    rules: dict[int, list[int]] = compile_rule_dict(file_path)
 
     for pages in page_lists:
         if valid_page_list(pages, rules):
@@ -127,7 +111,7 @@ def exercise_two(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
 
     page_lists: list[list[int]] = import_page_lists(file_path)
-    rules: dict[int, list[int]] = import_rules(file_path)
+    rules: dict[int, list[int]] = compile_rule_dict(file_path)
 
     for pages in page_lists:
         if not valid_page_list(pages, rules):

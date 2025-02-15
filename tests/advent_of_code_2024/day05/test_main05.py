@@ -4,7 +4,7 @@ from pathlib import Path
 
 from advent.advent_of_code_2024.day05.main import (
     exercise_one,
-    import_rules,
+    compile_rule_dict,
     import_page_lists,
     parse_rule,
     valid_page_list,
@@ -70,8 +70,8 @@ def test_valid_page_list(
 def test_parse_rule():
     assert parse_rule("47|53") == (47, 53)
 
-def test_import_rules(example_one_rules: dict[int, list[int]]):
-    assert import_rules(DATA_EXAMPLE_ONE) == example_one_rules
+def test_compile_rule_dict(example_one_rules: dict[int, list[int]]):
+    assert compile_rule_dict(DATA_EXAMPLE_ONE) == example_one_rules
 
 def test_import_page_lists(example_one_page_lists: list[list[int]]):
     assert import_page_lists(DATA_EXAMPLE_ONE) == example_one_page_lists
