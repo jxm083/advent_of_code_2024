@@ -61,6 +61,7 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 def sum_median_values(values_list: Iterator[list[int]]) -> int:
     return sum(values[len(values)//2] for values in values_list)
 
+# TODO: my functional attempt is longer; ways to simplify?
 def exercise_one(file_path: Path = DATA_01) -> int:
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
     file_stream = stream_lines_from_file(file_path)
