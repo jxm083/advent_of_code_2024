@@ -1,6 +1,6 @@
 from pathlib import Path
 import re
-from typing import Generator
+from typing import Generator, Iterator
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -69,11 +69,11 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 
     return valid_list
 
+def sum_median_values(values_list: Iterator[list[int]]) -> int:
+    return sum(values[len(values)//2] for values in values_list)
+
 def exercise_one(file_path: Path = DATA_01) -> int:
-    mid_num_sum: int = 0
-
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
-
     file_stream = stream_lines_from_file(file_path)
 
     page_lists = map(
@@ -86,9 +86,7 @@ def exercise_one(file_path: Path = DATA_01) -> int:
         page_lists
         )
 
-    mid_nums = [pages[len(pages)//2] for pages in valid_page_lists]
-
-    return sum(mid_nums)
+    return sum_median_values(valid_page_lists)
 
 def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     new_pages: list[int] = pages
@@ -117,19 +115,23 @@ def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     return new_pages
 
 def exercise_two(file_path: Path = DATA_01) -> int:
-    mid_num_sum: int = 0
+    file_stream = stream_lines_from_file(file_path)
+    page_lists = map(
+        parse_list,
+        filter(is_page_list, file_stream)
+    )
 
-    page_lists: list[list[int]] = import_page_lists(file_path)
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
 
-    for pages in page_lists:
-        if not valid_page_list(pages, rules):
-            new_pages = reorder_pages(pages, rules)
-            if not valid_page_list(new_pages, rules):
-                print(pages)
-            mid_num_sum += new_pages[len(new_pages) // 2]
+    corrected_page_lists = map(
+        lambda x: reorder_pages(x, rules),
+        filter(
+            lambda x: not(valid_page_list(x, rules)),
+            page_lists
+        )
+    )
 
-    return mid_num_sum
+    return sum_median_values(corrected_page_lists)
 
 if __name__ == "__main__":
     print(f"Exercise one: {exercise_one()}")
