@@ -81,11 +81,14 @@ def exercise_one(file_path: Path = DATA_01) -> int:
         filter(is_page_list, file_stream)
     )
     
-    for pages in page_lists:
-        if valid_page_list(pages, rules):
-            mid_num_sum += pages[len(pages)//2]
+    valid_page_lists = filter(
+        lambda x: valid_page_list(x, rules),
+        page_lists
+        )
 
-    return mid_num_sum
+    mid_nums = [pages[len(pages)//2] for pages in valid_page_lists]
+
+    return sum(mid_nums)
 
 def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     new_pages: list[int] = pages
@@ -129,7 +132,5 @@ def exercise_two(file_path: Path = DATA_01) -> int:
     return mid_num_sum
 
 if __name__ == "__main__":
-    file_stream = stream_lines_from_file(DATA_EXAMPLE_01)
-    print([line for line in file_stream])
     print(f"Exercise one: {exercise_one()}")
     print(f"Exercise two: {exercise_two()}")
