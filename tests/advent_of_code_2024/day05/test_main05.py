@@ -8,9 +8,13 @@ from advent.advent_of_code_2024.day05.main import (
     import_page_lists,
     stream_rules,
     valid_page_list,
+    parse_list,
     exercise_two,
-    reorder_pages
+    reorder_pages,
+    is_page_list
 )
+
+from advent.common.data_stream import stream_lines_from_file
 
 PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
 ROOT_PACKAGE_DIR: Path = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
@@ -76,6 +80,22 @@ def test_compile_rule_dict(example_one_rules: dict[int, list[int]]):
 
 def test_import_page_lists(example_one_page_lists: list[list[int]]):
     assert import_page_lists(DATA_EXAMPLE_ONE) == example_one_page_lists
+
+def test_is_page_list():
+    test_list_text = "75,29,13"
+    assert is_page_list(test_list_text) is True
+
+    test_rule_text = "48|53"
+    assert is_page_list(test_rule_text) is False
+
+    file_stream = stream_lines_from_file(DATA_EXAMPLE_ONE)
+
+    lists_stream = filter(lambda x: is_page_list(x), file_stream)
+    assert len([text for text in lists_stream]) > 0
+
+def test_parse_list():
+    test_list_text = "75,29,13"
+    assert parse_list(test_list_text) == [75, 29, 13]
 
 def test_exercise_one_example():
     assert exercise_one(DATA_EXAMPLE_ONE) == 143

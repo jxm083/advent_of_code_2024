@@ -9,7 +9,7 @@ DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"
 DATA_01: Path = DATA_DIR / "data_01.txt"
 
 RULE_PATTERN = re.compile(r"(\d+)\| ?(\d+)")
-PAGE_LIST_PATTERN = re.compile(r"(\d+),?")
+PAGE_LIST_PATTERN = re.compile(r"(\d+),")
 
 # TODO: break into separate stream and parse functions?
 def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Generator[tuple[int, int], None, None]:
@@ -46,11 +46,10 @@ def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
 def is_page_list(text: str, page_list_pattern: re.Pattern[str] = PAGE_LIST_PATTERN) -> bool:
     return bool(page_list_pattern.search(text))
 
-def parse_list(text: str, page_list_pattern: re.Pattern[str] = PAGE_LIST_PATTERN) -> list[int]:
-    search_results = page_list_pattern.search(text)
-    page_list: list[int] = []
-    if search_results is not None:
-        page_list = [int(match) for match in search_results.groups()]
+def parse_list(text: str) -> list[int]:
+    page_split: str = r"\d+"
+    
+    page_list = [int(match) for match in re.findall(page_split, text)]
 
     return page_list
 
@@ -77,10 +76,12 @@ def exercise_one(file_path: Path = DATA_01) -> int:
 
     file_stream = stream_lines_from_file(file_path)
 
-    page_lists = (
-        parse_list(line) for line in file_stream
-    )
+    page_list_stream = filter(is_page_list, file_stream)
 
+    page_lists = (
+        parse_list(list) for list in page_list_stream
+    )
+    
     for pages in page_lists:
         if valid_page_list(pages, rules):
             mid_num_sum += pages[len(pages)//2]
@@ -129,6 +130,7 @@ def exercise_two(file_path: Path = DATA_01) -> int:
     return mid_num_sum
 
 if __name__ == "__main__":
-    print(parse_rule("47|53"))
+    file_stream = stream_lines_from_file(DATA_EXAMPLE_01)
+    print([line for line in file_stream])
     print(f"Exercise one: {exercise_one()}")
     print(f"Exercise two: {exercise_two()}")
