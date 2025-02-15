@@ -6,7 +6,7 @@ from advent.advent_of_code_2024.day05.main import (
     exercise_one,
     compile_rule_dict,
     import_page_lists,
-    parse_rule,
+    stream_rules,
     valid_page_list,
     exercise_two,
     reorder_pages
@@ -67,8 +67,9 @@ def test_valid_page_list(
 
     assert valid_list_check == example_one_valid_lists # TODO: check comparing boolean lists
 
-def test_parse_rule():
-    assert parse_rule("47|53") == (47, 53)
+def test_stream_rules():
+    stream = stream_rules("48|53")
+    assert list(stream)[0] == (48, 53)
 
 def test_compile_rule_dict(example_one_rules: dict[int, list[int]]):
     assert compile_rule_dict(DATA_EXAMPLE_ONE) == example_one_rules

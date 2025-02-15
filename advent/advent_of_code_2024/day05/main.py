@@ -9,14 +9,9 @@ DATA_EXAMPLE_01: Path = DATA_DIR / "data_example_1.txt"
 DATA_01: Path = DATA_DIR / "data_01.txt"
 
 RULE_PATTERN = re.compile(r"(\d+)\| ?(\d+)")
+PAGE_LIST_PATTERN = re.compile(r"(\d+),?")
 
-def parse_rule(line: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> tuple[int, int] | None:
-    result = rule_pattern.search(line)
-    if result is None:
-        return None
-    else:
-        return int(result.group(1)), int(result.group(2))
-
+# TODO: break into separate stream and parse functions?
 def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Generator[tuple[int, int], None, None]:
     for match in re.finditer(rule_pattern, data):
         g = match.groups()
@@ -48,10 +43,16 @@ def import_page_lists(file_path: Path = DATA_01) -> list[list[int]]:
 
     return page_lists
 
-def valid_page(page: int, list_rest: list[int], rules: dict[int, list[int]]) -> bool:
-    valid: bool = True
+def is_page_list(text: str, page_list_pattern: re.Pattern[str] = PAGE_LIST_PATTERN) -> bool:
+    return bool(page_list_pattern.search(text))
 
-    return valid
+def parse_list(text: str, page_list_pattern: re.Pattern[str] = PAGE_LIST_PATTERN) -> list[int]:
+    search_results = page_list_pattern.search(text)
+    page_list: list[int] = []
+    if search_results is not None:
+        page_list = [int(match) for match in search_results.groups()]
+
+    return page_list
 
 def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
     """
@@ -72,8 +73,13 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 def exercise_one(file_path: Path = DATA_01) -> int:
     mid_num_sum: int = 0
 
-    page_lists: list[list[int]] = import_page_lists(file_path)
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
+
+    file_stream = stream_lines_from_file(file_path)
+
+    page_lists = (
+        parse_list(line) for line in file_stream
+    )
 
     for pages in page_lists:
         if valid_page_list(pages, rules):
