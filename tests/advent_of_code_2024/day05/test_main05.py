@@ -90,7 +90,7 @@ def test_is_page_list():
 
     file_stream = stream_lines_from_file(DATA_EXAMPLE_ONE)
 
-    lists_stream = filter(lambda x: is_page_list(x), file_stream)
+    lists_stream = filter(is_page_list, file_stream)
     assert len([text for text in lists_stream]) > 0
 
 def test_parse_list():

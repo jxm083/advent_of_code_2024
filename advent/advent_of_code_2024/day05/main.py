@@ -76,10 +76,9 @@ def exercise_one(file_path: Path = DATA_01) -> int:
 
     file_stream = stream_lines_from_file(file_path)
 
-    page_list_stream = filter(is_page_list, file_stream)
-
-    page_lists = (
-        parse_list(list) for list in page_list_stream
+    page_lists = map(
+        parse_list,
+        filter(is_page_list, file_stream)
     )
     
     for pages in page_lists:
