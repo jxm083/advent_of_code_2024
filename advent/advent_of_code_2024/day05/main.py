@@ -58,6 +58,41 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 
     return valid_list
 
+# TODO: better to use nested generator expression? e.g. map(... filter())
+def import_page_list(file_stream: Generator[str, None, None]) -> Generator[list[int], None, None]:
+    for line in file_stream:
+        if is_page_list(line):
+            yield parse_list(line)
+
+def sum_median_values(values_list: Iterator[list[int]]) -> int:
+    return sum(values[len(values)//2] for values in values_list)
+
+def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
+    new_pages: list[int] = pages
+
+    for ind, page in enumerate(pages):
+        if page in list(rules) and not valid_page_list(pages[ind:], rules):
+            predecessor_inds: list[int] = []
+            for predecessor in rules[page]:
+                if predecessor in pages[ind + 1:]:
+                    predecessor_inds.append(pages.index(predecessor))
+            
+            if predecessor_inds:
+                last_predecessor_ind: int = max(predecessor_inds)
+
+                new_pages.insert(last_predecessor_ind + 1, page)
+                new_pages.pop(ind)
+
+    return new_pages
+
+def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
+    new_pages: list[int] = pages
+
+    while not valid_page_list(new_pages, rules):
+        new_pages = reorder_pages_pass(new_pages, rules)
+
+    return new_pages
+
 # TODO: this looks gnarly; better way?
 def process_updates(
     file_path: Path,
@@ -86,15 +121,6 @@ def process_updates(
 
     return page_list_condensor(processed_page_lists)
 
-# TODO: better to use nested generator expression? e.g. map(... filter())
-def import_page_list(file_stream: Generator[str, None, None]) -> Generator[list[int], None, None]:
-    for line in file_stream:
-        if is_page_list(line):
-            yield parse_list(line)
-
-def sum_median_values(values_list: Iterator[list[int]]) -> int:
-    return sum(values[len(values)//2] for values in values_list)
-
 # TODO: my functional attempt is longer; ways to simplify?
 def exercise_one(file_path: Path = DATA_01) -> int:
     return process_updates(
@@ -103,32 +129,6 @@ def exercise_one(file_path: Path = DATA_01) -> int:
         page_list_manipulator=None,
         page_list_condensor=sum_median_values
     )
-
-def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
-    new_pages: list[int] = pages
-
-    for ind, page in enumerate(pages):
-        if page in list(rules) and not valid_page_list(pages[ind:], rules):
-            predecessor_inds: list[int] = []
-            for predecessor in rules[page]:
-                if predecessor in pages[ind + 1:]:
-                    predecessor_inds.append(pages.index(predecessor))
-            
-            if predecessor_inds:
-                last_predecessor_ind: int = max(predecessor_inds)
-
-                new_pages.insert(last_predecessor_ind + 1, page)
-                new_pages.pop(ind)
-
-    return new_pages
-
-def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
-    new_pages: list[int] = pages
-
-    while not valid_page_list(new_pages, rules):
-        new_pages = reorder_pages_pass(new_pages, rules)
-
-    return new_pages
 
 def exercise_two(file_path: Path = DATA_01) -> int:
     return process_updates(
