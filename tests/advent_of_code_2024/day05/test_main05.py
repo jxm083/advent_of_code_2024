@@ -12,12 +12,10 @@ from advent.advent_of_code_2024.day05.main import (
     reorder_pages,
     is_page_list
 )
-
+import advent.advent_of_code_2024.day05.main as test_script # TODO: best way to get path reference?
 from advent.common.data_stream import stream_lines_from_file
 
-PACKAGE_ROOT_LEVEL: int = 3 # TODO: make this better than a relative path
-ROOT_PACKAGE_DIR: Path = Path(__file__).parents[PACKAGE_ROOT_LEVEL]
-DATA_DIR = ROOT_PACKAGE_DIR / "advent" / "advent_of_code_2024" / "day05"
+DATA_DIR = Path(test_script.__file__).parent
 DATA_EXAMPLE_ONE = DATA_DIR / "data_example_1.txt"
 
 @pytest.fixture
