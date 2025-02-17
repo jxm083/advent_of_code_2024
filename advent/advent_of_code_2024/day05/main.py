@@ -58,10 +58,11 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 
     return valid_list
 
+# TODO: this looks gnarly; better way?
 def process_updates(
     file_path: Path,
     page_list_selector: Callable[[list[int], dict[int, list[int]]], bool],
-    page_list_manipulator: Callable[[list[int], dict[int, list[int]]], list[int]],
+    page_list_manipulator: Callable[[list[int], dict[int, list[int]]], list[int]] | None,
     page_list_condensor: Callable[[Iterator[list[int]]], int]
 ) -> int:
     rules = compile_rule_dict(file_path)
@@ -74,7 +75,16 @@ def process_updates(
         page_lists
     )
 
-    return page_list_condensor(selected_page_lists)
+    if page_list_manipulator is not None:
+        processed_page_lists = map(
+            lambda x: page_list_manipulator(x, rules),
+            selected_page_lists
+        )
+    else:
+        processed_page_lists = selected_page_lists
+
+
+    return page_list_condensor(processed_page_lists)
 
 # TODO: better to use nested generator expression? e.g. map(... filter())
 def import_page_list(file_stream: Generator[str, None, None]) -> Generator[list[int], None, None]:
@@ -87,17 +97,12 @@ def sum_median_values(values_list: Iterator[list[int]]) -> int:
 
 # TODO: my functional attempt is longer; ways to simplify?
 def exercise_one(file_path: Path = DATA_01) -> int:
-    rules: dict[int, list[int]] = compile_rule_dict(file_path)
-    file_stream = stream_lines_from_file(file_path)
-
-    page_lists = import_page_list(file_stream)
-    
-    valid_page_lists = filter(
-        lambda x: valid_page_list(x, rules),
-        page_lists
-        )
-
-    return sum_median_values(valid_page_lists)
+    return process_updates(
+        file_path,
+        page_list_selector=valid_page_list,
+        page_list_manipulator=None,
+        page_list_condensor=sum_median_values
+    )
 
 def reorder_pages_pass(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     new_pages: list[int] = pages
@@ -126,19 +131,12 @@ def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
     return new_pages
 
 def exercise_two(file_path: Path = DATA_01) -> int:
-    file_stream = stream_lines_from_file(file_path)
-    page_lists = import_page_list(file_stream)
-    rules: dict[int, list[int]] = compile_rule_dict(file_path)
-
-    corrected_page_lists = map(
-        lambda x: reorder_pages(x, rules),
-        filter(
-            lambda x: not(valid_page_list(x, rules)),
-            page_lists
-        )
+    return process_updates(
+        file_path,
+        page_list_selector=(lambda x, y: not(valid_page_list(x, y))),
+        page_list_manipulator=reorder_pages,
+        page_list_condensor=sum_median_values
     )
-
-    return sum_median_values(corrected_page_lists)
 
 if __name__ == "__main__":
     print(f"Exercise one: {exercise_one()}")
