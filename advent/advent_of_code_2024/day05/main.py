@@ -1,6 +1,6 @@
 from pathlib import Path
 import re
-from typing import Generator, Iterator
+from typing import Generator, Iterator, Callable
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -58,6 +58,30 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 
     return valid_list
 
+def process_updates(
+    file_path: Path,
+    page_list_selector: Callable[[list[int], dict[int, list[int]]], bool],
+    page_list_manipulator: Callable[[list[int], dict[int, list[int]]], list[int]],
+    page_list_condensor: Callable[[Iterator[list[int]]], int]
+) -> int:
+    rules = compile_rule_dict(file_path)
+
+    file_stream = stream_lines_from_file(file_path)
+    page_lists = import_page_list(file_stream)
+
+    selected_page_lists = filter(
+        lambda x: page_list_selector(x, rules),
+        page_lists
+    )
+
+    return page_list_condensor(selected_page_lists)
+
+# TODO: better to use nested generator expression? e.g. map(... filter())
+def import_page_list(file_stream: Generator[str, None, None]) -> Generator[list[int], None, None]:
+    for line in file_stream:
+        if is_page_list(line):
+            yield parse_list(line)
+
 def sum_median_values(values_list: Iterator[list[int]]) -> int:
     return sum(values[len(values)//2] for values in values_list)
 
@@ -66,10 +90,7 @@ def exercise_one(file_path: Path = DATA_01) -> int:
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
     file_stream = stream_lines_from_file(file_path)
 
-    page_lists = map(
-        parse_list,
-        filter(is_page_list, file_stream)
-    )
+    page_lists = import_page_list(file_stream)
     
     valid_page_lists = filter(
         lambda x: valid_page_list(x, rules),
@@ -106,11 +127,7 @@ def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
 
 def exercise_two(file_path: Path = DATA_01) -> int:
     file_stream = stream_lines_from_file(file_path)
-    page_lists = map(
-        parse_list,
-        filter(is_page_list, file_stream)
-    )
-
+    page_lists = import_page_list(file_stream)
     rules: dict[int, list[int]] = compile_rule_dict(file_path)
 
     corrected_page_lists = map(
