@@ -1,33 +1,35 @@
 from pathlib import Path
+from functools import partial
 
 from advent.common.data_stream import stream_lines_from_file
 from advent.advent_of_code_2024.day06.main import (
     parse_lines_to_grid_entries,
-    update_direction
+    update_direction,
+    calc_next_step
 )
 import advent.advent_of_code_2024.day06.main as test_script
 DATA_DIR: Path = Path(test_script.__file__).parent
 DATA_PATH_00 = DATA_DIR / "data_00_example_1.txt"
 
 def test_update_direction():
-    assert update_direction((0, 1)) == (1, 0)
-    assert update_direction((0, 1), reverse=True) == (-1, 0)
-    assert update_direction((1, 0)) == (0, -1)
-    assert update_direction((0, -1)) == (-1, 0)
-    assert update_direction((-1, 0)) == (0, 1)
+    assert update_direction((0, 1)) == (-1, 0)
+    assert update_direction((0, 1), reverse=True) == (1, 0)
+    assert update_direction((1, 0)) == (0, 1)
+    assert update_direction((0, -1)) == (1, 0)
+    assert update_direction((-1, 0)) == (0, -1)
 
 first_test_entries: list[tuple[int, int, str]] = [
     (0, 0, "."),
-    (0, 1, "."),
-    (0, 2, "."),
-    (0, 3, "."),
-    (0, 4, "#"),
-    (0, 5, "."),
-    (0, 6, "."),
-    (0, 7, "."),
-    (0, 8, "."),
-    (0, 9, "."),
     (1, 0, "."),
+    (2, 0, "."),
+    (3, 0, "."),
+    (4, 0, "#"),
+    (5, 0, "."),
+    (6, 0, "."),
+    (7, 0, "."),
+    (8, 0, "."),
+    (9, 0, "."),
+    (0, 1, "."),
 ]
 
 def test_parse_lines_to_grid_entries():
@@ -39,5 +41,56 @@ def test_parse_lines_to_grid_entries():
         else:
             break
 
-def test_calc_next_step():
-    pass
+dummy_map_dict: dict[tuple[int, int], str] = {
+    (0, 0): ".",
+    (1, 0): "#",
+    (2, 0): ".",
+    (0, 1): ".",
+    (1, 1): ".",
+    (2, 1): "#",
+    (0, 2): ".",
+    (1, 2): "^",
+    (2, 2): ".",
+}
+
+def test_calc_next_step_dummy():
+    calc_next_step_dum = partial(calc_next_step, map_dict=dummy_map_dict)
+
+    # go left
+    assert calc_next_step_dum(
+        location=(1, 1),
+        direction=(-1, 0)
+    ) == (0, 1)
+
+    # go down
+    assert calc_next_step_dum(
+        location=(1, 1),
+        direction=(0, 1)
+    ) == (1, 2)
+
+    # go right, encounter an obstacle
+    assert calc_next_step_dum(
+        location=(1, 1),
+        direction=(1, 0)
+    ) == (1, 2)
+
+    # go up, encounter two obstacles
+    assert calc_next_step_dum(
+        location=(1, 1),
+        direction=(0, -1)
+    ) == (1, 2)
+
+    # now try walking off the grid
+    assert calc_next_step_dum(
+        location=(2, 2),
+        direction=(1, 0)
+    ) is None
+
+if __name__ == "__main__":
+    print(
+        calc_next_step(
+            location=(1,1),
+            direction=(0, -1),
+            map_dict=dummy_map_dict
+        )
+    )
