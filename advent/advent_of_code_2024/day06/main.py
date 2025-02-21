@@ -101,6 +101,7 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
             guard_direction_init = parse_guard_direction(character)
             if guard_direction_init is not None:
                 guard_pos_init = pos
+                guard_path.append(guard_pos_init)
 
     if guard_direction_init is not None and guard_pos_init is not None:
         guard_path = calc_guard_path(
@@ -108,10 +109,8 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
             direction=guard_direction_init,
             map_dict=map_dict
         )
-    
-    return len(guard_path)
+    # return the length of the set to remove any duplicates from the path
+    return len(set(guard_path))
 
 if __name__ == "__main__":
-    print(DATA_00_PATH)
-    print(DATA_DIR)
     print(f"exercise one: {exercise_one(DATA_00_PATH)}")

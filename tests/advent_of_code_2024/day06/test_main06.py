@@ -6,7 +6,8 @@ from advent.advent_of_code_2024.day06.main import (
     parse_lines_to_grid_entries,
     update_direction,
     calc_next_step,
-    parse_guard_direction
+    parse_guard_direction,
+    exercise_one
 )
 import advent.advent_of_code_2024.day06.main as test_script
 DATA_DIR: Path = Path(test_script.__file__).parent
@@ -92,6 +93,9 @@ def test_parse_guard_direction():
     assert parse_guard_direction("<") == (-1, 0)
     assert parse_guard_direction("^") == (0, -1)
     assert parse_guard_direction(">") == (1, 0)
+
+def test_exercise_one_example():
+    assert exercise_one(DATA_PATH_00) == 41
 
 if __name__ == "__main__":
     print(
