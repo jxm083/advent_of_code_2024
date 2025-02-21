@@ -3,9 +3,26 @@ from pathlib import Path
 
 from advent.common.data_stream import stream_lines_from_file
 
-DATA_DIR = Path(__file__).parent
-DATA_00_PATH = DATA_DIR / "data_00.txt"
-DATA_01_PATH = DATA_DIR / "data_01.txt"
+DATA_DIR: Path = Path(__file__).parent
+DATA_00_PATH: Path = DATA_DIR / "data_00_example_1.txt"
+DATA_01_PATH: Path = DATA_DIR / "data_01.txt"
+
+def parse_guard_direction(arrow: str) -> tuple[int, int]:
+    direction: tuple[int, int] = (0, 0)
+
+    match arrow:
+        case ">":
+            direction = (1, 0)
+        case "v":
+            direction = (0, 1)
+        case "<":
+            direction = (-1, 0)
+        case "^":
+            direction = (0, -1)
+        case _:
+            raise ValueError
+    
+    return direction
 
 def parse_lines_to_grid_entries(file_stream: Generator[str, None, None]) -> Iterator[tuple[int, int, str]]:
     for line_num, line in enumerate(file_stream):
@@ -64,4 +81,6 @@ def exercise_one(file_path: Path = DATA_01_PATH):
     print(map_dict)
 
 if __name__ == "__main__":
+    print(DATA_00_PATH)
+    print(DATA_DIR)
     print(f"exercise one: {exercise_one(DATA_00_PATH)}")

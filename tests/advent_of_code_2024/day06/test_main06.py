@@ -5,7 +5,8 @@ from advent.common.data_stream import stream_lines_from_file
 from advent.advent_of_code_2024.day06.main import (
     parse_lines_to_grid_entries,
     update_direction,
-    calc_next_step
+    calc_next_step,
+    parse_guard_direction
 )
 import advent.advent_of_code_2024.day06.main as test_script
 DATA_DIR: Path = Path(test_script.__file__).parent
@@ -85,6 +86,12 @@ def test_calc_next_step_dummy():
         location=(2, 2),
         direction=(1, 0)
     ) is None
+
+def test_parse_guard_direction():
+    assert parse_guard_direction("v") == (0, 1)
+    assert parse_guard_direction("<") == (-1, 0)
+    assert parse_guard_direction("^") == (0, -1)
+    assert parse_guard_direction(">") == (1, 0)
 
 if __name__ == "__main__":
     print(
