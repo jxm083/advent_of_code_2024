@@ -31,5 +31,5 @@ def test_parse_lines_to_grid_entries():
         else:
             break
 
-
-    
+def test_calc_next_step():
+    pass
