@@ -113,4 +113,4 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     return len(set(guard_path))
 
 if __name__ == "__main__":
-    print(f"exercise one: {exercise_one(DATA_00_PATH)}")
+    print(f"exercise one: {exercise_one()}")
