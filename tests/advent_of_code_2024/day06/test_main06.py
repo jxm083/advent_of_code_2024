@@ -116,8 +116,8 @@ def test_parse_guard_direction():
     assert parse_guard_direction(">") == (1, 0)
 
 def test_is_path_loop():
-    assert is_path_loop(dummy_map_dict_loop) == True
-    assert is_path_loop(dummy_map_dict) == False
+    assert is_path_loop((1, 2), (0, -1), dummy_map_dict_loop) == True
+    assert is_path_loop((1, 2), (0, -1), dummy_map_dict) == False
 
 def test_exercise_one_example():
     assert exercise_one(DATA_PATH_00) == 41

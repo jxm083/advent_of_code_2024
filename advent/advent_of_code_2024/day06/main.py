@@ -71,20 +71,25 @@ def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map_di
     return loc
 
 def calc_guard_path(location: tuple[int, int], direction: tuple[int, int], map_dict: dict[tuple[int, int], str]) -> list[tuple[int, int]]:
-    guard_path: list[tuple[int, int]] = [location]
-    next_location: tuple[int, int] | None = calc_next_step(location, direction, map_dict)
+    trajectory_stream = stream_guard_trajectory(
+        guard_location=location,
+        guard_direction=direction,
+        map_dict=map_dict
+    )
 
-    while next_location is not None:
-        current_location = next_location
-        new_direction: tuple[int, int] = (
-            current_location[0] - guard_path[-1][0],
-            current_location[1] - guard_path[-1][1]
-        )
-        guard_path.append(current_location)
-        next_location = calc_next_step(current_location, new_direction, map_dict)
+    trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
 
-    return guard_path
+    for update in trajectory_stream:
+        # This condition catches if the gaurd is in a loop
+        # since he will hit the same location moving
+        # in the same directions
+        if update in trajectory:
+            break
+        else:
+            trajectory.append(update)
 
+    return [loc for loc, _ in trajectory]
+    
 def compile_initial_map_dict(file_path: Path) -> tuple[dict[tuple[int, int], str], tuple[int, int] | None, tuple[int, int] | None]:
     line_stream: Generator[str, None, None] = stream_lines_from_file(file_path)
     map_stream = parse_lines_to_grid_entries(line_stream)
@@ -112,7 +117,7 @@ def stream_guard_trajectory(
     next_location: tuple[int, int] | None = guard_location
     next_direction: tuple[int, int] | None = guard_direction
 
-    while next_location is not None and next_direction is not None:
+    while next_location is not None:
         loc = next_location
         dir = next_direction
 
@@ -129,18 +134,29 @@ def stream_guard_trajectory(
             )
 
         yield loc, dir
-
         
 def is_path_loop(
         location: tuple[int, int], 
         direction: tuple[int, int], 
         map_dict: dict[tuple[int, int], str]
-) -> bool: # TODO: best convention for this?
-    guard_path: list[tuple[int, int]]
-    path_loop: bool = True
+) -> bool: # TODO: best convention for formatting this def'n?
+    path_loop: bool = False
+    trajectory_stream = stream_guard_trajectory(
+        guard_location=location,
+        guard_direction=direction,
+        map_dict=map_dict
+    )
+
+    trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
+
+    for update in trajectory_stream:
+        if update in trajectory:
+            path_loop = True
+            break
+        else:
+            trajectory.append(update)
     
     return path_loop
-
 
 def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     map_dict: dict[tuple[int, int], str] = {} # TODO: initialize for type safety?
@@ -166,3 +182,4 @@ def exercise_two(file_path: Path = DATA_00_PATH) -> int:
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
+    print(f"exercise two: {exercise_two()}")
