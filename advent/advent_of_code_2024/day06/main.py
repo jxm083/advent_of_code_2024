@@ -163,14 +163,10 @@ def collect_loop_obstacle_positions(
         guard_direction: tuple[int, int],
         map_dict: dict[tuple[int, int], str]
 ) -> set[tuple[int, int]]:
-    grd_pos: tuple[int, int] = guard_position # TODO: No typing necessary! except empty containers
-    grd_dir: tuple[int ,int] = guard_direction
-    map_dict_0: dict[tuple[int, int], str] = map_dict
-
     grd_trajectory_stream = stream_guard_trajectory(
-        guard_location=grd_pos,
-        guard_direction=grd_dir,
-        map_dict=map_dict_0
+        guard_location=guard_position,
+        guard_direction=guard_direction,
+        map_dict=map_dict
     )
     
     grd_trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
