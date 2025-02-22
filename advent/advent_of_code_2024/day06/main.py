@@ -158,6 +158,45 @@ def is_path_loop(
     
     return path_loop
 
+def collect_loop_obstacle_positions(
+        guard_position: tuple[int, int],
+        guard_direction: tuple[int, int],
+        map_dict: dict[tuple[int, int], str]
+) -> set[tuple[int, int]]:
+    grd_pos: tuple[int, int] = guard_position
+    grd_dir: tuple[int ,int] = guard_direction
+    map_dict_0: dict[tuple[int, int], str] = map_dict
+
+    obstacle_pos: list[tuple[int, int]] = []
+
+    grd_trajectory = stream_guard_trajectory(
+        guard_location=grd_pos,
+        guard_direction=grd_dir,
+        map_dict=map_dict_0
+    )
+
+    for grd_pos_new, _ in grd_trajectory:
+        map_dict_new = add_obstacle_to_map(
+            initial_map=map_dict_0,
+            obstacle_position=grd_pos_new
+        )
+        if is_path_loop(
+            location=guard_position,
+            direction=guard_direction,
+            map_dict=map_dict_new
+        ):
+            obstacle_pos.append(grd_pos_new)
+
+    return set(obstacle_pos)
+
+def add_obstacle_to_map(
+        initial_map: dict[tuple[int, int], str],
+        obstacle_position: tuple[int, int]
+) -> dict[tuple[int, int], str]:
+    initial_map[obstacle_position] = "#"
+
+    return initial_map
+
 def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     map_dict: dict[tuple[int, int], str] = {} # TODO: initialize for type safety?
     guard_pos_init: tuple[int, int] | None = None
@@ -176,9 +215,20 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     return len(set(guard_path))
 
 def exercise_two(file_path: Path = DATA_00_PATH) -> int:
-    obstacle_positions: list[tuple[int, int]] = []
+    map_dict, guard_pos_init, guard_direction_init = compile_initial_map_dict(
+        file_path=file_path
+    )
 
-    return len(set(obstacle_positions))
+    if guard_pos_init is not None and guard_direction_init is not None:
+        obstacle_positions: set[tuple[int, int]] = collect_loop_obstacle_positions(
+            guard_position=guard_pos_init,
+            guard_direction=guard_direction_init,
+            map_dict=map_dict
+    )
+    else:
+        obstacle_positions = set([])
+
+    return len(obstacle_positions)
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
