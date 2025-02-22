@@ -104,6 +104,33 @@ def compile_initial_map_dict(file_path: Path) -> tuple[dict[tuple[int, int], str
 
     return map_dict, guard_position, guard_direction
 
+def stream_guard_trajectory(
+        guard_location: tuple[int, int],
+        guard_direction: tuple[int, int],
+        map_dict: dict[tuple[int, int], str]
+) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+    next_location: tuple[int, int] | None = guard_location
+    next_direction: tuple[int, int] | None = guard_direction
+
+    while next_location is not None and next_direction is not None:
+        loc = next_location
+        dir = next_direction
+
+        next_location = calc_next_step(
+            location=next_location,
+            direction=next_direction,
+            map_dict=map_dict
+        )
+
+        if next_location is not None:
+            next_direction = (
+                next_location[0] - loc[0],
+                next_location[1] - loc[1]
+            )
+
+        yield loc, dir
+
+        
 def is_path_loop(
         location: tuple[int, int], 
         direction: tuple[int, int], 
