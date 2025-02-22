@@ -151,6 +151,9 @@ def test_exercise_one_real():
 def test_exercise_two_example():
     assert exercise_two(DATA_PATH_00) == 6
 
+#def test_exercise_two_real():
+    #assert exercise_two() == 1705
+
 if __name__ == "__main__":
     print(
         calc_next_step(

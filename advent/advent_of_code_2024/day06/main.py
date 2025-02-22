@@ -1,6 +1,6 @@
 from typing import Generator, Iterator
 from pathlib import Path
-from copy import deepcopy
+from copy import copy
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -201,7 +201,7 @@ def add_obstacle_to_map(
         initial_map: dict[tuple[int, int], str],
         obstacle_position: tuple[int, int]
 ) -> dict[tuple[int, int], str]:
-    new_map = deepcopy(initial_map)
+    new_map = copy(initial_map)
     new_map[obstacle_position] = "#"
 
     return new_map
