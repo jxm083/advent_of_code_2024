@@ -163,7 +163,7 @@ def collect_loop_obstacle_positions(
         guard_direction: tuple[int, int],
         map_dict: dict[tuple[int, int], str]
 ) -> set[tuple[int, int]]:
-    grd_pos: tuple[int, int] = guard_position
+    grd_pos: tuple[int, int] = guard_position # TODO: No typing necessary! except empty containers
     grd_dir: tuple[int ,int] = guard_direction
     map_dict_0: dict[tuple[int, int], str] = map_dict
 
@@ -194,13 +194,8 @@ def collect_loop_obstacle_positions(
             obstacle_position=obs_pos
         )
 
-        new_guard_trajectories = [
-            (pos, vel) for (pos, vel) in grd_trajectory if pos != obs_pos
-        ]
-
-        for pos, vel in new_guard_trajectories:
-            if is_path_loop(pos, vel, new_map):
-                loop_obstacle_positions.add(pos)
+        if is_path_loop(guard_position, guard_direction, new_map):
+            loop_obstacle_positions.add(obs_pos)
 
     return set(loop_obstacle_positions)
 
