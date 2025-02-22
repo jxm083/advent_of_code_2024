@@ -104,8 +104,19 @@ def compile_initial_map_dict(file_path: Path) -> tuple[dict[tuple[int, int], str
 
     return map_dict, guard_position, guard_direction
 
+def is_path_loop(
+        location: tuple[int, int], 
+        direction: tuple[int, int], 
+        map_dict: dict[tuple[int, int], str]
+) -> bool: # TODO: best convention for this?
+    guard_path: list[tuple[int, int]]
+    path_loop: bool = True
+    
+    return path_loop
+
+
 def exercise_one(file_path: Path = DATA_01_PATH) -> int:
-    map_dict: dict[tuple[int, int], str] = {}
+    map_dict: dict[tuple[int, int], str] = {} # TODO: initialize for type safety?
     guard_pos_init: tuple[int, int] | None = None
     guard_direction_init: tuple[int, int] | None = None
     map_dict, guard_pos_init, guard_direction_init = compile_initial_map_dict(file_path=file_path)
@@ -120,6 +131,11 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
         )
     # return the length of the set to remove any duplicates from the path
     return len(set(guard_path))
+
+def exercise_two(file_path: Path = DATA_00_PATH) -> int:
+    obstacle_positions: list[tuple[int, int]] = []
+
+    return len(set(obstacle_positions))
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
