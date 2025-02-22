@@ -85,23 +85,32 @@ def calc_guard_path(location: tuple[int, int], direction: tuple[int, int], map_d
 
     return guard_path
 
-def exercise_one(file_path: Path = DATA_01_PATH) -> int:
-    line_stream = stream_lines_from_file(file_path)
+def compile_initial_map_dict(file_path: Path) -> tuple[dict[tuple[int, int], str], tuple[int, int] | None, tuple[int, int] | None]:
+    line_stream: Generator[str, None, None] = stream_lines_from_file(file_path)
     map_stream = parse_lines_to_grid_entries(line_stream)
+
     map_dict: dict[tuple[int, int], str] = {}
-    guard_path: list[tuple[int, int]] = []
-    guard_pos_init: tuple[int, int] | None = None
-    guard_direction_init: tuple[int, int] | None = None
+    guard_position: tuple[int, int] | None = None
+    guard_direction: tuple[int, int] | None = None
 
     for xcor, ycor, character in map_stream:
         pos = (xcor, ycor)
         map_dict[pos] = character
 
-        if len(guard_path) == 0:
-            guard_direction_init = parse_guard_direction(character)
-            if guard_direction_init is not None:
-                guard_pos_init = pos
-                guard_path.append(guard_pos_init)
+        if guard_direction is None:
+            guard_direction = parse_guard_direction(character)
+            if guard_direction is not None:
+                guard_position = pos
+
+    return map_dict, guard_position, guard_direction
+
+def exercise_one(file_path: Path = DATA_01_PATH) -> int:
+    map_dict: dict[tuple[int, int], str] = {}
+    guard_pos_init: tuple[int, int] | None = None
+    guard_direction_init: tuple[int, int] | None = None
+    map_dict, guard_pos_init, guard_direction_init = compile_initial_map_dict(file_path=file_path)
+
+    guard_path: list[tuple[int, int]] = []
 
     if guard_direction_init is not None and guard_pos_init is not None:
         guard_path = calc_guard_path(

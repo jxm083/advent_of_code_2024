@@ -98,7 +98,7 @@ def test_exercise_one_example():
     assert exercise_one(DATA_PATH_00) == 41
 
 def test_exercise_one_real():
-    assert exercise_one() > 41
+    assert exercise_one() == 4374
 
 if __name__ == "__main__":
     print(
