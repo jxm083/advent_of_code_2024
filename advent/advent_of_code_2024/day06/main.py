@@ -167,27 +167,42 @@ def collect_loop_obstacle_positions(
     grd_dir: tuple[int ,int] = guard_direction
     map_dict_0: dict[tuple[int, int], str] = map_dict
 
-    obstacle_pos: list[tuple[int, int]] = []
-
-    grd_trajectory = stream_guard_trajectory(
+    grd_trajectory_stream = stream_guard_trajectory(
         guard_location=grd_pos,
         guard_direction=grd_dir,
         map_dict=map_dict_0
     )
+    
+    grd_trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
 
-    for grd_pos_new, _ in grd_trajectory:
-        map_dict_new = add_obstacle_to_map(
-            initial_map=map_dict_0,
-            obstacle_position=grd_pos_new
+    for update in grd_trajectory_stream:
+        if update in grd_trajectory:
+            break
+        else:
+            grd_trajectory.append(update)
+
+    grd_positions: list[tuple[int, int]] = [
+        pos for pos, _ in grd_trajectory
+    ]
+
+    possible_obstacle_positions: set[tuple[int, int]] = set(grd_positions)
+    loop_obstacle_positions: set[tuple[int, int]] = set()
+
+    for obs_pos in possible_obstacle_positions:
+        new_map: dict[tuple[int, int], str] = add_obstacle_to_map(
+            initial_map=map_dict,
+            obstacle_position=obs_pos
         )
-        if is_path_loop(
-            location=guard_position,
-            direction=guard_direction,
-            map_dict=map_dict_new
-        ):
-            obstacle_pos.append(grd_pos_new)
 
-    return set(obstacle_pos)
+        new_guard_trajectories = [
+            (pos, vel) for (pos, vel) in grd_trajectory if pos != obs_pos
+        ]
+
+        for pos, vel in new_guard_trajectories:
+            if is_path_loop(pos, vel, new_map):
+                loop_obstacle_positions.add(pos)
+
+    return set(loop_obstacle_positions)
 
 def add_obstacle_to_map(
         initial_map: dict[tuple[int, int], str],

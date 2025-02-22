@@ -9,7 +9,9 @@ from advent.advent_of_code_2024.day06.main import (
     parse_guard_direction,
     is_path_loop,
     exercise_one,
-    exercise_two
+    exercise_two,
+    compile_initial_map_dict,
+    collect_loop_obstacle_positions
 )
 import advent.advent_of_code_2024.day06.main as test_script
 DATA_DIR: Path = Path(test_script.__file__).parent
@@ -118,6 +120,27 @@ def test_parse_guard_direction():
 def test_is_path_loop():
     assert is_path_loop((1, 2), (0, -1), dummy_map_dict_loop) == True
     assert is_path_loop((1, 2), (0, -1), dummy_map_dict) == False
+
+example_obstacle_positions = set([
+    (3, 6),
+    (6, 7),
+    (7, 7),
+    (1, 8),
+    (3, 8),
+    (7, 9)
+])
+
+def test_collect_loop_obstacle_positions():
+    map_dict, grd_pos, grd_dir = compile_initial_map_dict(
+        DATA_PATH_00
+    )
+
+    assert collect_loop_obstacle_positions(
+        guard_position=grd_pos,
+        guard_direction=grd_dir,
+        map_dict=map_dict
+    ) == example_obstacle_positions
+
 
 def test_exercise_one_example():
     assert exercise_one(DATA_PATH_00) == 41
