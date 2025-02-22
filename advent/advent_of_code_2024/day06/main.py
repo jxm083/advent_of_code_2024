@@ -1,5 +1,6 @@
 from typing import Generator, Iterator
 from pathlib import Path
+from copy import deepcopy
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -178,19 +179,20 @@ def collect_loop_obstacle_positions(
             grd_trajectory.append(update)
 
     grd_positions: list[tuple[int, int]] = [
-        pos for pos, _ in grd_trajectory
+        pos for pos, _ in grd_trajectory if pos != guard_position
     ]
 
     possible_obstacle_positions: set[tuple[int, int]] = set(grd_positions)
     loop_obstacle_positions: set[tuple[int, int]] = set()
 
-    for obs_pos in possible_obstacle_positions:
+    for num, obs_pos in enumerate(possible_obstacle_positions):
         new_map: dict[tuple[int, int], str] = add_obstacle_to_map(
             initial_map=map_dict,
             obstacle_position=obs_pos
         )
 
         if is_path_loop(guard_position, guard_direction, new_map):
+            print(f"{num + 1} / {len(possible_obstacle_positions)}: {obs_pos}")
             loop_obstacle_positions.add(obs_pos)
 
     return set(loop_obstacle_positions)
@@ -199,9 +201,10 @@ def add_obstacle_to_map(
         initial_map: dict[tuple[int, int], str],
         obstacle_position: tuple[int, int]
 ) -> dict[tuple[int, int], str]:
-    initial_map[obstacle_position] = "#"
+    new_map = deepcopy(initial_map)
+    new_map[obstacle_position] = "#"
 
-    return initial_map
+    return new_map
 
 def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     map_dict: dict[tuple[int, int], str] = {} # TODO: initialize for type safety?
@@ -220,7 +223,7 @@ def exercise_one(file_path: Path = DATA_01_PATH) -> int:
     # return the length of the set to remove any duplicates from the path
     return len(set(guard_path))
 
-def exercise_two(file_path: Path = DATA_00_PATH) -> int:
+def exercise_two(file_path: Path = DATA_01_PATH) -> int:
     map_dict, guard_pos_init, guard_direction_init = compile_initial_map_dict(
         file_path=file_path
     )
