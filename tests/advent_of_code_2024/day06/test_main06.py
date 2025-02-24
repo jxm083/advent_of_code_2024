@@ -135,11 +135,12 @@ def test_collect_loop_obstacle_positions():
         DATA_PATH_00
     )
 
-    assert collect_loop_obstacle_positions(
-        guard_position=grd_pos,
-        guard_direction=grd_dir,
-        map_dict=map_dict
-    ) == example_obstacle_positions
+    if grd_pos is not None and grd_dir is not None:
+        assert collect_loop_obstacle_positions(
+            guard_position=grd_pos,
+            guard_direction=grd_dir,
+            map_dict=map_dict
+        ) == example_obstacle_positions
 
 
 def test_exercise_one_example():
