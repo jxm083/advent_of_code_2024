@@ -8,6 +8,8 @@ DATA_DIR: Path = Path(__file__).parent
 DATA_00_PATH: Path = DATA_DIR / "data_00_example_1.txt"
 DATA_01_PATH: Path = DATA_DIR / "data_01.txt"
 
+type Map2d = list[list[str]]
+
 def parse_guard_direction(arrow: str) -> tuple[int, int] | None:
     direction: tuple[int, int] | None = (0, 0)
 
@@ -51,7 +53,7 @@ def update_direction(direction: tuple[int, int], reverse: bool = False) -> tuple
 
     return new_direction
 
-def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map_dict: dict[tuple[int, int], str]) -> tuple[int, int] | None:
+def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map2d: Map2d) -> tuple[int, int] | None:
     """
     given the guards location and direction and the map of the complex,
     return his next step, taking into consideration obstacles.
@@ -62,20 +64,21 @@ def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map_di
         location[1] + direction[1]
     )
 
-    if loc in map_dict:
-        if map_dict[loc] == "#":
+    try :
+        symbol: str = map2d[loc[1]][loc[0]]
+        if symbol == "#":
             new_direction: tuple[int, int] = update_direction(direction)
-            loc = calc_next_step(location, new_direction, map_dict)
-    else:
+            loc = calc_next_step(location, new_direction, map2d)
+    except IndexError:
         loc = None
 
     return loc
 
-def calc_guard_path(location: tuple[int, int], direction: tuple[int, int], map_dict: dict[tuple[int, int], str]) -> list[tuple[int, int]]:
+def calc_guard_path(location: tuple[int, int], direction: tuple[int, int], map2d: Map2d) -> list[tuple[int, int]]:
     trajectory_stream = stream_guard_trajectory(
         guard_location=location,
         guard_direction=direction,
-        map_dict=map_dict
+        map2d=map2d
     )
 
     trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
@@ -91,29 +94,32 @@ def calc_guard_path(location: tuple[int, int], direction: tuple[int, int], map_d
 
     return [loc for loc, _ in trajectory]
     
-def compile_initial_map_dict(file_path: Path) -> tuple[dict[tuple[int, int], str], tuple[int, int] | None, tuple[int, int] | None]:
+def compile_initial_map_dict(file_path: Path) -> tuple[Map2d, tuple[int, int] | None, tuple[int, int] | None]:
     line_stream: Generator[str, None, None] = stream_lines_from_file(file_path)
     map_stream = parse_lines_to_grid_entries(line_stream)
 
-    map_dict: dict[tuple[int, int], str] = {}
+    map_flat = [datum for datum in map_stream]
+    max_x_ind = map_flat[-1][0]
+    max_y_ind = map_flat[-1][1]
+    map_2d: Map2d = [[""] * max_x_ind] * max_y_ind
     guard_position: tuple[int, int] | None = None
     guard_direction: tuple[int, int] | None = None
 
     for xcor, ycor, character in map_stream:
         pos = (xcor, ycor)
-        map_dict[pos] = character
+        map_2d[ycor][xcor]= character
 
         if guard_direction is None:
             guard_direction = parse_guard_direction(character)
             if guard_direction is not None:
                 guard_position = pos
 
-    return map_dict, guard_position, guard_direction
+    return map_2d, guard_position, guard_direction
 
 def stream_guard_trajectory(
         guard_location: tuple[int, int],
         guard_direction: tuple[int, int],
-        map_dict: dict[tuple[int, int], str]
+        map2d: Map2d
 ) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
     next_location: tuple[int, int] | None = guard_location
     next_direction: tuple[int, int] | None = guard_direction
@@ -191,9 +197,14 @@ def collect_loop_obstacle_positions(
             obstacle_position=obs_pos
         )
 
+        ### ADDING NUM LIMIT TO LIMIT RUN TIME
+        ### REMOVE IF FULL SOLUTION IS DESIRED
+        if num > 1000:
+            break
+
         if is_path_loop(guard_position, guard_direction, new_map):
-            print(f"{num + 1} / {len(possible_obstacle_positions)}: {obs_pos}")
             loop_obstacle_positions.add(obs_pos)
+            print(f"{num + 1} / {len(possible_obstacle_positions)}, {len(loop_obstacle_positions)} found: {obs_pos}")
 
     return set(loop_obstacle_positions)
 
@@ -240,5 +251,5 @@ def exercise_two(file_path: Path = DATA_01_PATH) -> int:
     return len(obstacle_positions)
 
 if __name__ == "__main__":
-    print(f"exercise one: {exercise_one()}")
+    #print(f"exercise one: {exercise_one()}")
     print(f"exercise two: {exercise_two()}")

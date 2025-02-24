@@ -11,7 +11,8 @@ from advent.advent_of_code_2024.day06.main import (
     exercise_one,
     exercise_two,
     compile_initial_map_dict,
-    collect_loop_obstacle_positions
+    collect_loop_obstacle_positions,
+    Map2d
 )
 import advent.advent_of_code_2024.day06.main as test_script
 DATA_DIR: Path = Path(test_script.__file__).parent
@@ -59,6 +60,12 @@ dummy_map_dict: dict[tuple[int, int], str] = {
     (2, 2): ".",
 }
 
+dummy_map: Map2d = [
+    [".", "#", "."],
+    [".", ".", "#"],
+    [".", "^", "."],
+]
+
 dummy_map_dict_loop: dict[tuple[int, int], str] = {
     (0, 0): ".",
     (1, 0): "#",
@@ -78,8 +85,15 @@ dummy_map_dict_loop: dict[tuple[int, int], str] = {
     (3, 3): ".",
 }
 
+dummy_map_loop: Map2d = [
+    [".", "#", ".", "."],
+    [".", ".", ".", "#"],
+    ["#", "^", ".", "."],
+    [".", ".", "#", "."]
+]
+
 def test_calc_next_step_dummy():
-    calc_next_step_dum = partial(calc_next_step, map_dict=dummy_map_dict)
+    calc_next_step_dum = partial(calc_next_step, map2d=dummy_map)
 
     # go left
     assert calc_next_step_dum(
