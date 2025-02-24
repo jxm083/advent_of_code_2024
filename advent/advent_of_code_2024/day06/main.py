@@ -1,8 +1,10 @@
 from typing import Generator, Iterator
 from pathlib import Path
 from copy import deepcopy
+import cProfile
 
 from advent.common.data_stream import stream_lines_from_file
+pr = cProfile.Profile()
 
 DATA_DIR: Path = Path(__file__).parent
 DATA_00_PATH: Path = DATA_DIR / "data_00_example_1.txt"
@@ -59,18 +61,24 @@ def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map2d:
     return his next step, taking into consideration obstacles.
     if the next step is not in the map, return None
     """
-    loc: tuple[int, int] | None = (
-        location[0] + direction[0],
-        location[1] + direction[1]
-    )
+    can_move: bool = False
 
-    try :
-        symbol: str = map2d[loc[1]][loc[0]]
-        if symbol == "#":
-            new_direction: tuple[int, int] = update_direction(direction)
-            loc = calc_next_step(location, new_direction, map2d)
-    except IndexError:
-        loc = None
+    new_direction = direction
+
+    while can_move is False:
+        loc = (
+            location[0] + new_direction[0],
+            location[1] + new_direction[1]
+        )
+        try:
+            symbol = map2d[loc[1]][loc[0]]
+            if symbol == "#":
+                new_direction = update_direction(new_direction)
+            else:
+                can_move = True
+        except IndexError:
+                can_move = True
+                loc = None
 
     return loc
 
@@ -117,10 +125,10 @@ def compile_initial_map(file_path: Path) -> tuple[Map2d, tuple[int, int] | None,
     return map_2d, guard_position, guard_direction
 
 def stream_guard_trajectory(
-        guard_location: tuple[int, int],
-        guard_direction: tuple[int, int],
+        guard_location: tuple[int, int] | None,
+        guard_direction: tuple[int, int] | None,
         map2d: Map2d
-) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+) -> Iterator[tuple[tuple[int, int] | None, tuple[int, int] | None]]:
     next_location: tuple[int, int] | None = guard_location
     next_direction: tuple[int, int] | None = guard_direction
 
@@ -147,6 +155,7 @@ def is_path_loop(
         direction: tuple[int, int], 
         map2d: Map2d
 ) -> bool: # TODO: best convention for formatting this def'n?
+    pr.enable()
     path_loop: bool = False
     trajectory_stream = stream_guard_trajectory(
         guard_location=location,
@@ -154,7 +163,7 @@ def is_path_loop(
         map2d=map2d
     )
 
-    trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
+    trajectory: list[tuple[tuple[int, int] | None, tuple[int, int] | None]] = []
 
     for update in trajectory_stream:
         if update in trajectory:
@@ -163,11 +172,12 @@ def is_path_loop(
         else:
             trajectory.append(update)
     
+    pr.disable()
     return path_loop
 
 def collect_loop_obstacle_positions(
-        guard_position: tuple[int, int],
-        guard_direction: tuple[int, int],
+        guard_position: tuple[int, int] | None,
+        guard_direction: tuple[int, int] | None,
         map2d: Map2d
 ) -> set[tuple[int, int]]:
     grd_trajectory_stream = stream_guard_trajectory(
@@ -176,7 +186,7 @@ def collect_loop_obstacle_positions(
         map2d=map2d
     )
     
-    grd_trajectory: list[tuple[tuple[int, int], tuple[int, int]]] = []
+    grd_trajectory: list[tuple[tuple[int, int] | None, tuple[int, int] | None]] = []
 
     for update in grd_trajectory_stream:
         if update in grd_trajectory:
@@ -184,11 +194,11 @@ def collect_loop_obstacle_positions(
         else:
             grd_trajectory.append(update)
 
-    grd_positions: list[tuple[int, int]] = [
+    grd_positions: list[tuple[int, int] | None] = [
         pos for pos, _ in grd_trajectory if pos != guard_position
     ]
 
-    possible_obstacle_positions: set[tuple[int, int]] = set(grd_positions)
+    possible_obstacle_positions: set[tuple[int, int] | None] = set(grd_positions)
     loop_obstacle_positions: set[tuple[int, int]] = set()
 
     for num, obs_pos in enumerate(possible_obstacle_positions):
@@ -199,21 +209,25 @@ def collect_loop_obstacle_positions(
 
         ### ADDING NUM LIMIT TO LIMIT RUN TIME
         ### REMOVE IF FULL SOLUTION IS DESIRED
-        if num > 1000:
+        if num > 250:
             break
 
         if is_path_loop(guard_position, guard_direction, new_map):
             loop_obstacle_positions.add(obs_pos)
-            print(f"{num + 1} / {len(possible_obstacle_positions)}, {len(loop_obstacle_positions)} found: {obs_pos}")
+            #print(f"{num + 1} / {len(possible_obstacle_positions)}, {len(loop_obstacle_positions)} found: {obs_pos}")
 
     return set(loop_obstacle_positions)
 
 def add_obstacle_to_map(
         initial_map: Map2d,
-        obstacle_position: tuple[int, int]
+        obstacle_position: tuple[int, int] | None
 ) -> Map2d:
-    new_map = deepcopy(initial_map)
-    new_map[obstacle_position[1]][obstacle_position[0]]= "#"
+    if obstacle_position is not None:
+        new_map = deepcopy(initial_map)
+        new_map[obstacle_position[1]][obstacle_position[0]]= "#"
+
+    else:
+        new_map = initial_map
 
     return new_map
 
@@ -249,4 +263,9 @@ def exercise_two(file_path: Path = DATA_01_PATH) -> int:
 
 if __name__ == "__main__":
     #print(f"exercise one: {exercise_one()}")
+    import time
+    start = time.time()
     print(f"exercise two: {exercise_two()}")
+    end = time.time()
+    print(f"{end - start}")
+    pr.dump_stats("list2d_is_loop.prof")
