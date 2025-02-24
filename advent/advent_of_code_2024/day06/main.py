@@ -140,7 +140,7 @@ def is_path_loop(
         location: tuple[int, int], 
         direction: tuple[int, int], 
         map_dict: dict[tuple[int, int], str]
-) -> bool: # TODO: best convention for formatting this def'n?
+) -> bool:
     path_loop: bool = False
     trajectory_stream = stream_guard_trajectory(
         guard_location=location,
@@ -207,7 +207,7 @@ def add_obstacle_to_map(
     return new_map
 
 def exercise_one(file_path: Path = DATA_01_PATH) -> int:
-    map_dict: dict[tuple[int, int], str] = {} # TODO: initialize for type safety?
+    map_dict: dict[tuple[int, int], str] = {}
     guard_pos_init: tuple[int, int] | None = None
     guard_direction_init: tuple[int, int] | None = None
     map_dict, guard_pos_init, guard_direction_init = compile_initial_map_dict(file_path=file_path)

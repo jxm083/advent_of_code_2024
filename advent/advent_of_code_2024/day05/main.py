@@ -11,7 +11,6 @@ DATA_01: Path = DATA_DIR / "data_01.txt"
 RULE_PATTERN = re.compile(r"(\d+)\| ?(\d+)")
 PAGE_LIST_PATTERN = re.compile(r"(\d+),")
 
-# TODO: break into separate stream and parse functions?
 def stream_rules(data: str, rule_pattern: re.Pattern[str] = RULE_PATTERN) -> Generator[tuple[int, int], None, None]:
     for match in re.finditer(rule_pattern, data):
         g = match.groups()
@@ -58,7 +57,6 @@ def valid_page_list(page_list: list[int], rules: dict[int, list[int]]) -> bool:
 
     return valid_list
 
-# TODO: better to use nested generator expression? e.g. map(... filter())
 def import_page_list(file_stream: Generator[str, None, None]) -> Generator[list[int], None, None]:
     for line in file_stream:
         if is_page_list(line):
@@ -93,7 +91,6 @@ def reorder_pages(pages: list[int], rules: dict[int, list[int]]) -> list[int]:
 
     return new_pages
 
-# TODO: this looks gnarly; better way?
 def process_updates(
     file_path: Path,
     page_list_selector: Callable[[list[int], dict[int, list[int]]], bool],
@@ -121,7 +118,6 @@ def process_updates(
 
     return page_list_condensor(processed_page_lists)
 
-# TODO: my functional attempt is longer; ways to simplify?
 def exercise_one(file_path: Path = DATA_01) -> int:
     return process_updates(
         file_path,

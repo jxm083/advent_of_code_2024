@@ -55,7 +55,7 @@ def test_valid_page_list(
         valid_page_list(pages, example_one_rules) for pages in example_one_page_lists
     ]
 
-    assert valid_list_check == example_one_valid_lists # TODO: check comparing boolean lists
+    assert valid_list_check == example_one_valid_lists
 
 def test_stream_rules():
     stream = stream_rules("48|53")
