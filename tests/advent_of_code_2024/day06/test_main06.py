@@ -118,8 +118,8 @@ def test_parse_guard_direction():
     assert parse_guard_direction(">") == (1, 0)
 
 def test_is_path_loop():
-    assert is_path_loop((1, 2), (0, -1), dummy_map_dict_loop) == True
-    assert is_path_loop((1, 2), (0, -1), dummy_map_dict) == False
+    assert is_path_loop((1, 2), (0, -1), dummy_map_dict_loop) is True
+    assert is_path_loop((1, 2), (0, -1), dummy_map_dict) is False
 
 example_obstacle_positions = set([
     (3, 6),
