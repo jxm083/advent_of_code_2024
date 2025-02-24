@@ -1,10 +1,8 @@
 from typing import Generator, Iterator
 from pathlib import Path
 from copy import deepcopy
-import cProfile
 
 from advent.common.data_stream import stream_lines_from_file
-pr = cProfile.Profile()
 
 DATA_DIR: Path = Path(__file__).parent
 DATA_00_PATH: Path = DATA_DIR / "data_00_example_1.txt"
@@ -64,6 +62,7 @@ def calc_next_step(location: tuple[int, int], direction: tuple[int, int], map2d:
     can_move: bool = False
 
     new_direction = direction
+    loc = None
 
     while can_move is False:
         loc = (
@@ -155,7 +154,6 @@ def is_path_loop(
         direction: tuple[int, int], 
         map2d: Map2d
 ) -> bool: # TODO: best convention for formatting this def'n?
-    pr.enable()
     path_loop: bool = False
     trajectory_stream = stream_guard_trajectory(
         guard_location=location,
@@ -172,7 +170,6 @@ def is_path_loop(
         else:
             trajectory.append(update)
     
-    pr.disable()
     return path_loop
 
 def collect_loop_obstacle_positions(
@@ -268,4 +265,3 @@ if __name__ == "__main__":
     print(f"exercise two: {exercise_two()}")
     end = time.time()
     print(f"{end - start}")
-    pr.dump_stats("list2d_is_loop.prof")
