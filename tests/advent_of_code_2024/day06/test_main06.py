@@ -10,7 +10,7 @@ from advent.advent_of_code_2024.day06.main import (
     is_path_loop,
     exercise_one,
     exercise_two,
-    compile_initial_map_dict,
+    compile_initial_map,
     collect_loop_obstacle_positions,
     Map2d
 )
@@ -48,48 +48,30 @@ def test_parse_lines_to_grid_entries():
         else:
             break
 
-dummy_map_dict: dict[tuple[int, int], str] = {
-    (0, 0): ".",
-    (1, 0): "#",
-    (2, 0): ".",
-    (0, 1): ".",
-    (1, 1): ".",
-    (2, 1): "#",
-    (0, 2): ".",
-    (1, 2): "^",
-    (2, 2): ".",
-}
-
 dummy_map: Map2d = [
     [".", "#", "."],
     [".", ".", "#"],
     [".", "^", "."],
 ]
 
-dummy_map_dict_loop: dict[tuple[int, int], str] = {
-    (0, 0): ".",
-    (1, 0): "#",
-    (2, 0): ".",
-    (3, 0): ".",
-    (0, 1): ".",
-    (1, 1): ".",
-    (2, 1): ".",
-    (3, 1): "#",
-    (0, 2): "#",
-    (1, 2): "^",
-    (2, 2): ".",
-    (3, 2): ".",
-    (0, 3): ".",
-    (1, 3): ".",
-    (2, 3): "#",
-    (3, 3): ".",
-}
-
 dummy_map_loop: Map2d = [
     [".", "#", ".", "."],
     [".", ".", ".", "#"],
     ["#", "^", ".", "."],
     [".", ".", "#", "."]
+]
+
+example_map: Map2d = [
+    [".", ".", ".", ".", "#", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", ".", ".", ".", ".", "#"],
+    [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+    [".", ".", "#", ".", ".", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", ".", ".", "#", ".", "."],
+    [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+    [".", "#", ".", ".", "^", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", ".", ".", ".", "#", "."],
+    ["#", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", ".", "#", ".", ".", "."],
 ]
 
 def test_calc_next_step_dummy():
@@ -131,9 +113,16 @@ def test_parse_guard_direction():
     assert parse_guard_direction("^") == (0, -1)
     assert parse_guard_direction(">") == (1, 0)
 
+def test_compile_initial_map():
+    assert compile_initial_map(DATA_PATH_00) == (
+        example_map,
+        (4, 6),
+        (0, -1)
+    )   
+
 def test_is_path_loop():
-    assert is_path_loop((1, 2), (0, -1), dummy_map_dict_loop) == True
-    assert is_path_loop((1, 2), (0, -1), dummy_map_dict) == False
+    assert is_path_loop((1, 2), (0, -1), dummy_map_loop) is True
+    assert is_path_loop((1, 2), (0, -1), dummy_map) is False
 
 example_obstacle_positions = set([
     (3, 6),
@@ -145,14 +134,14 @@ example_obstacle_positions = set([
 ])
 
 def test_collect_loop_obstacle_positions():
-    map_dict, grd_pos, grd_dir = compile_initial_map_dict(
+    map2d, grd_pos, grd_dir = compile_initial_map(
         DATA_PATH_00
     )
 
     assert collect_loop_obstacle_positions(
         guard_position=grd_pos,
         guard_direction=grd_dir,
-        map_dict=map_dict
+        map2d=map2d
     ) == example_obstacle_positions
 
 
@@ -169,10 +158,4 @@ def test_exercise_two_example():
     #assert exercise_two() == 1705
 
 if __name__ == "__main__":
-    print(
-        calc_next_step(
-            location=(1,1),
-            direction=(0, -1),
-            map_dict=dummy_map_dict
-        )
-    )
+    pass
