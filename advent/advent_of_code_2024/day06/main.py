@@ -1,6 +1,9 @@
 from typing import Generator, Iterator
 from pathlib import Path
 from copy import copy
+import cProfile
+
+pr = cProfile.Profile()
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -32,24 +35,20 @@ def parse_lines_to_grid_entries(file_stream: Generator[str, None, None]) -> Iter
         for char_num, character in enumerate(line):
             yield (char_num, line_num, character)
 
-def update_direction(direction: tuple[int, int], reverse: bool = False) -> tuple[int, int]:
+DIRECTIONS: list[tuple[int, int]] = [
+    (1, 0),
+    (0, 1),
+    (-1, 0),
+    (0, -1)
+]
+
+def update_direction(direction: tuple[int, int]) -> tuple[int, int]:
     """
     returns the updated direction when the guard reaches an obstacle.
     
     assumes the guard turns right, by default
     """
-    directions: list[tuple[int, int]] = [
-        (1, 0),
-        (0, 1),
-        (-1, 0),
-        (0, -1)
-    ]
-    ind_change: int = 1
-
-    if reverse:
-        ind_change = -1
-
-    new_direction: tuple[int, int] = directions[(directions.index(direction) + ind_change) % 4]
+    new_direction: tuple[int, int] = DIRECTIONS[(DIRECTIONS.index(direction) + 1) % 4]
 
     return new_direction
 
@@ -273,3 +272,4 @@ if __name__ == "__main__":
     print(f"exercise two: {exercise_two()}")
     end = time.time()
     print(f"{end - start}")
+    #pr.dump_stats("inside_calc_next_step.prof")
