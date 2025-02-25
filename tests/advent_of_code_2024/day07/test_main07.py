@@ -63,3 +63,6 @@ def test_is_valid_equation(example_data: list[str]):
 
 def test_exercise_one_example(example_data_file: Path):
     assert exercise_one(example_data_file) == 3749
+
+def test_exercise_one_real():
+    assert exercise_one() == 882304362421

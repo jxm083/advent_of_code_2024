@@ -11,7 +11,7 @@ EXAMPLE_DATA = DATA_DIR / "data00.txt"
 DATA_01 = DATA_DIR / "data01.txt"
 
 Equation: TypeAlias = tuple[int, tuple[int,...]]
-def parse_equation(line: str) -> Equation:
+def parse_equation(line: str) -> Equation: # TODO: fragile if file has empty lines at the end
     numbers = [int(num) for num in findall(r"\d+", line)] # TODO: why isn't findall returning a list?
     return (numbers[0], tuple(numbers[1:]))
 
@@ -59,4 +59,4 @@ def exercise_one(data_path: Path = DATA_01) -> int:
     return sum(answer for answer, _ in valid_equations)
 
 if __name__ == "__main__":
-    pass
+    print(f"exercise one: {exercise_one()}")
