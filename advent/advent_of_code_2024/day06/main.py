@@ -1,6 +1,6 @@
 from typing import Generator, Iterator
 from pathlib import Path
-from copy import deepcopy, copy
+from copy import copy
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -195,8 +195,8 @@ def collect_loop_obstacle_positions(
         pos for pos, _ in grd_trajectory if pos != guard_position
     ]
 
-    possible_obstacle_positions: set[tuple[int, int] | None] = set(grd_positions)
-    loop_obstacle_positions: set[tuple[int, int]] = set()
+    possible_obstacle_positions: list[tuple[int, int] | None] = list(set(grd_positions))
+    loop_obstacle_positions: list[tuple[int, int]] = list()
 
     for num, obs_pos in enumerate(possible_obstacle_positions):
         new_map: Map2d = add_obstacle_to_map(
@@ -210,7 +210,7 @@ def collect_loop_obstacle_positions(
             break
 
         if is_path_loop(guard_position, guard_direction, new_map):
-            loop_obstacle_positions.add(obs_pos)
+            loop_obstacle_positions.append(obs_pos)
             #print(f"{num + 1} / {len(possible_obstacle_positions)}, {len(loop_obstacle_positions)} found: {obs_pos}")
 
     return set(loop_obstacle_positions)
