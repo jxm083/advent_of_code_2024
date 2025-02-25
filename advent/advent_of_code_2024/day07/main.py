@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import TypeAlias, Callable, Iterable
 from re import findall
 from operator import add, mul
-from itertools import combinations_with_replacement, product
+from itertools import product
 
 from advent.common.data_stream import stream_lines_from_file
 

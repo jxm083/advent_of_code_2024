@@ -8,7 +8,6 @@ from advent.advent_of_code_2024.day07.main import (
     parse_equation,
     generate_function_combo,
     is_valid_equation,
-    Equation,
     evaluate_function_combos,
     exercise_one
 )
