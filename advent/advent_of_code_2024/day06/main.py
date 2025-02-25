@@ -1,6 +1,6 @@
 from typing import Generator, Iterator
 from pathlib import Path
-from copy import deepcopy
+from copy import deepcopy, copy
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -220,9 +220,17 @@ def add_obstacle_to_map(
         obstacle_position: tuple[int, int] | None
 ) -> Map2d:
     if obstacle_position is not None:
-        new_map = deepcopy(initial_map)
-        new_map[obstacle_position[1]][obstacle_position[0]]= "#"
+        new_map: Map2d = []
+        temp_line: list[str] = []
 
+        for line_num, line in enumerate(initial_map):
+            if line_num == obstacle_position[1]:
+                temp_line = copy(line)
+                temp_line[obstacle_position[0]] = "#"
+            else:
+                temp_line = line
+
+            new_map.append(temp_line)
     else:
         new_map = initial_map
 
