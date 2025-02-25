@@ -1,9 +1,7 @@
+from dataclasses import dataclass
 from typing import Generator, Iterator
 from pathlib import Path
 from copy import copy
-import cProfile
-
-pr = cProfile.Profile()
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -41,6 +39,21 @@ DIRECTIONS: list[tuple[int, int]] = [
     (-1, 0),
     (0, -1)
 ]
+
+@dataclass(slots=True)
+class DirNode:
+    name: str
+    vector: tuple[int, int]
+    turn: "DirNode"
+
+def make_dir_chain() -> DirNode:
+    up = DirNode("UP", (-1, 0), None) # type: ignore
+    left = DirNode("LEFT", (0, -1), up)
+    down = DirNode("DOWN", (1, 0), left)
+    right = DirNode("RIGHT", (0, 1), down)
+    up.turn = right
+
+    return up
 
 def update_direction(direction: tuple[int, int]) -> tuple[int, int]:
     """
@@ -272,4 +285,3 @@ if __name__ == "__main__":
     print(f"exercise two: {exercise_two()}")
     end = time.time()
     print(f"{end - start}")
-    #pr.dump_stats("inside_calc_next_step.prof")
