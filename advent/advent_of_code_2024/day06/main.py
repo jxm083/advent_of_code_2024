@@ -143,7 +143,7 @@ def stream_guard_trajectory(
     next_location: tuple[int, int] | None = guard_location
     next_direction: tuple[int, int] | None = guard_direction
 
-    while next_location is not None:
+    while next_location is not None and next_direction is not None:
         loc = next_location
         dir = next_direction
 
@@ -222,7 +222,7 @@ def collect_loop_obstacle_positions(
         if num > 250:
             break
 
-        if is_path_loop(guard_position, guard_direction, new_map):
+        if is_path_loop(guard_position, guard_direction, new_map) and obs_pos is not None:
             loop_obstacle_positions.append(obs_pos)
             #print(f"{num + 1} / {len(possible_obstacle_positions)}, {len(loop_obstacle_positions)} found: {obs_pos}")
 
