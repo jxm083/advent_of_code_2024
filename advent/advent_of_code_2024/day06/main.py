@@ -218,6 +218,7 @@ def collect_loop_obstacle_positions(
 
         ### ADDING NUM LIMIT TO LIMIT RUN TIME
         ### REMOVE IF FULL SOLUTION IS DESIRED
+        ### TODO: REMOVE THIS LIMIT TO CALCULATE FULL SOLN
         if num > 250:
             break
 
