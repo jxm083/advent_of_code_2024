@@ -4,7 +4,7 @@ from re import findall
 from operator import add, mul
 from itertools import product
 from functools import partial
-from math import log10
+from math import log10, floor
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -49,7 +49,13 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
     return valid_equation
 
 def concatenate_ints(int0: int, int1: int) -> int:
-    return int0 * 10 ** int(log10(int0)) + int1
+    exponent: int = 0
+    if int1 !=0:
+        exponent = floor(log10(int1))
+    else:
+        exponent = -1
+
+    return int0 * 10 ** (1 + exponent) + int1
 
 def calibration_check(
     data_path: Path = DATA_01,
