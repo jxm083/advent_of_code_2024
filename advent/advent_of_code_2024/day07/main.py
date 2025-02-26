@@ -45,6 +45,7 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
     for eval in function_evaluations:
         if eval == answer:
             valid_equation = True
+            break
 
     return valid_equation
 
