@@ -75,8 +75,12 @@ def concatenate_ints(int0: int, int1: int) -> int:
     else:
         raise ValueError("int1 has more than three digits")
 
-def identity_func(x):
-    return x
+def equation_bool_parser(equation: Equation, equation_filter: Callable[[Equation], bool]) -> int:
+    output: int = 0
+    if equation_filter(equation):
+        output = equation[0]
+    return output
+    
 
 def calibration_check(
     data_path: Path = DATA_01,
@@ -90,13 +94,18 @@ def calibration_check(
         function_list = function_list
     )
 
+    equation_bool_parser_temp: Callable[[Equation], int] = partial(
+        equation_bool_parser,
+        equation_filter=equation_filter
+    )
+
     with ProcessPoolExecutor() as executor:
         valid_equations = executor.map(
-            identity_func,
-            filter(equation_filter, map(parse_equation, data_stream))
+            equation_bool_parser_temp,
+            map(parse_equation, data_stream)
         )
 
-    return sum(answer for answer, _ in valid_equations)
+    return sum(num for num in valid_equations)
 
 def exercise_one(data_path: Path = DATA_01) -> int:
     return calibration_check(
