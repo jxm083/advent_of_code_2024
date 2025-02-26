@@ -9,6 +9,7 @@ from advent.advent_of_code_2024.day07.main import (
     generate_function_combo,
     is_valid_equation,
     evaluate_function_combos,
+    concatenate_ints,
     exercise_one
 )
 
@@ -59,6 +60,9 @@ def test_is_valid_equation(example_data: list[str]):
     example_equations = [parse_equation(line) for line in example_data]
     assert is_valid_equation(example_equations[0]) is True
     assert is_valid_equation(example_equations[3]) is False
+
+def test_concatenate_ints():
+    assert concatenate_ints(15, 72) == 1572
 
 def test_exercise_one_example(example_data_file: Path):
     assert exercise_one(example_data_file) == 3749
