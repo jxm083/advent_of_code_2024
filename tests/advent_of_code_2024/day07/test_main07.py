@@ -10,7 +10,8 @@ from advent.advent_of_code_2024.day07.main import (
     is_valid_equation,
     evaluate_function_combos,
     concatenate_ints,
-    exercise_one
+    exercise_one,
+    exercise_two
 )
 
 @pytest.fixture
@@ -69,3 +70,9 @@ def test_exercise_one_example(example_data_file: Path):
 
 def test_exercise_one_real():
     assert exercise_one() == 882304362421
+
+def test_exercise_two_example(example_data_file: Path):
+    assert exercise_two(example_data_file) == 11387
+
+#def test_exercise_two_real():
+    #assert exercise_two() == 145149066755184
