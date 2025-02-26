@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TypeAlias, Callable, Iterable
+from typing import TypeAlias, Callable, Iterator
 from re import findall
 from operator import add, mul
 from itertools import product
@@ -19,12 +19,13 @@ def parse_equation(line: str) -> Equation: # TODO: fragile if file has empty lin
 FunctionList: TypeAlias = tuple[Callable[[int, int], int],...]
 LIST_OF_FUNCTIONS: FunctionList = (add, mul)
 # TODO: for part two had to add function_list variable everywhere---better design?
-def generate_function_combo(number_of_terms: int, function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterable[FunctionList]:
+# TODO: confirm the difference between Iterable and Iterator
+def generate_function_combo(number_of_terms: int, function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterator[FunctionList]:
     combinations = product(function_list, repeat=number_of_terms - 1)
     for combo in combinations:
         yield combo
 
-def evaluate_function_combos(terms: tuple[int,...], function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterable[int]:
+def evaluate_function_combos(terms: tuple[int,...], function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterator[int]:
     function_combos = generate_function_combo(len(terms), function_list=function_list)
 
     for combo in function_combos:
@@ -39,7 +40,7 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
     terms = equation[1]
     valid_equation = False
 
-    function_evaluations: Iterable[int] = evaluate_function_combos(terms, function_list=function_list)
+    function_evaluations: Iterator[int] = evaluate_function_combos(terms, function_list=function_list)
 
     for eval in function_evaluations:
         if eval == answer:
