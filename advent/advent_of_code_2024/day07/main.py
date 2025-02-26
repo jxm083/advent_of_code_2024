@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TypeAlias, Callable, Iterator
+from typing import TypeAlias, Callable, Iterator, Generator
 from re import findall
 from operator import add, mul
 from itertools import product
@@ -80,7 +80,14 @@ def equation_bool_parser(equation: Equation, equation_filter: Callable[[Equation
     if equation_filter(equation):
         output = equation[0]
     return output
-    
+
+def filter_pair(value, filter_func):
+    return value, filter_func(value)
+
+#  modified from https://stackoverflow.com/questions/57838041/how-to-use-parallel-processing-filter-in-python
+def pool_filter(pool: ProcessPoolExecutor, filter_func, candidates):
+    filter_pair_temp = partial(filter_pair, filter_func=filter_func)
+    return [c for c, keep in pool.map(filter_pair_temp, candidates) if keep]
 
 def calibration_check(
     data_path: Path = DATA_01,
@@ -94,18 +101,14 @@ def calibration_check(
         function_list = function_list
     )
 
-    equation_bool_parser_temp: Callable[[Equation], int] = partial(
-        equation_bool_parser,
-        equation_filter=equation_filter
-    )
-
     with ProcessPoolExecutor() as executor:
-        valid_equations = executor.map(
-            equation_bool_parser_temp,
+        valid_equations = pool_filter(
+            executor,
+            equation_filter,
             map(parse_equation, data_stream)
         )
-
-    return sum(num for num in valid_equations)
+    
+    return sum(answer for answer, _ in valid_equations)
 
 def exercise_one(data_path: Path = DATA_01) -> int:
     return calibration_check(
