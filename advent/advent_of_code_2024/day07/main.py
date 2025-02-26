@@ -4,6 +4,7 @@ from re import findall
 from operator import add, mul
 from itertools import product
 from functools import partial
+from concurrent.futures import ProcessPoolExecutor
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -74,6 +75,9 @@ def concatenate_ints(int0: int, int1: int) -> int:
     else:
         raise ValueError("int1 has more than three digits")
 
+def identity_func(x):
+    return x
+
 def calibration_check(
     data_path: Path = DATA_01,
     function_list: FunctionList = LIST_OF_FUNCTIONS
@@ -86,13 +90,11 @@ def calibration_check(
         function_list = function_list
     )
 
-    valid_equations = filter(
-        equation_filter,
-        map(
-            parse_equation,
-            data_stream
+    with ProcessPoolExecutor() as executor:
+        valid_equations = executor.map(
+            identity_func,
+            filter(equation_filter, map(parse_equation, data_stream))
         )
-    )
 
     return sum(answer for answer, _ in valid_equations)
 
