@@ -50,30 +50,20 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
 def concatenate_ints(int0: int, int1: int) -> int:
     return int(str(int0) + str(int1))
 
-def exercise_one(data_path: Path = DATA_01) -> int:
+def calibration_check(
+    data_path: Path = DATA_01,
+    function_list: FunctionList = LIST_OF_FUNCTIONS
+    ) -> int: # TODO: make sure ruff is working
+
     data_stream = stream_lines_from_file(data_path)
 
-    valid_equations = filter(
-        is_valid_equation,
-        map(
-            parse_equation,
-            data_stream
-        )
-    )
-
-    return sum(answer for answer, _ in valid_equations)
-
-def exercise_two(data_path: Path = DATA_01) -> int:
-    data_stream = stream_lines_from_file(data_path)
-
-    function_list = *LIST_OF_FUNCTIONS, concatenate_ints
-    is_valid_equation_concat: Callable[[Equation], bool] = partial(
+    equation_filter: Callable[[Equation], bool] = partial(
         is_valid_equation,
         function_list = function_list
     )
 
     valid_equations = filter(
-        is_valid_equation_concat,
+        equation_filter,
         map(
             parse_equation,
             data_stream
@@ -81,6 +71,18 @@ def exercise_two(data_path: Path = DATA_01) -> int:
     )
 
     return sum(answer for answer, _ in valid_equations)
+
+def exercise_one(data_path: Path = DATA_01) -> int:
+    return calibration_check(
+        data_path=data_path
+    )
+
+def exercise_two(data_path: Path = DATA_01) -> int:
+    function_list = *LIST_OF_FUNCTIONS, concatenate_ints
+    return calibration_check(
+        data_path=data_path,
+        function_list=function_list
+    )
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
