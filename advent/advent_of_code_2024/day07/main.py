@@ -4,7 +4,6 @@ from re import findall
 from operator import add, mul
 from itertools import product
 from functools import partial
-from math import log10, floor
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -50,13 +49,29 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
     return valid_equation
 
 def concatenate_ints(int0: int, int1: int) -> int:
-    exponent: int = 0
-    if int1 !=0:
-        exponent = floor(log10(int1))
+    """
+    Concatenates two integers, e.g. 
+    concatenate_ints(142, 16) -> 14216
+    
+    ASSUMES the second int, int1, is no more than three digits long.
+    
+    Args:
+        int0 (int): first integer
+        int1 (int): second integer
+        
+    Returns:
+        int: concatenation of int0 and int1
+    """
+    if int1 == 0:
+        return int0 * 10
+    elif int1 <= 10:
+        return int0 * 10 + int1
+    elif int1 <= 100:
+        return int0 * 100 + int1
+    elif int1 <= 1000:
+        return int0 * 1000 + int1
     else:
-        exponent = -1
-
-    return int0 * 10 ** (1 + exponent) + int1
+        raise ValueError("int1 has more than three digits")
 
 def calibration_check(
     data_path: Path = DATA_01,
