@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TypeAlias, Callable, Iterator, Generator
+from typing import TypeAlias, Callable, Iterator
 from re import findall
 from operator import add, mul
 from itertools import product
