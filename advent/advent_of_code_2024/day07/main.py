@@ -7,6 +7,7 @@ from functools import partial
 from concurrent.futures import ProcessPoolExecutor
 
 from advent.common.data_stream import stream_lines_from_file
+from advent.common.concurrent_funcs import pool_filter
 
 DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA = DATA_DIR / "data00.txt"
@@ -80,14 +81,6 @@ def equation_bool_parser(equation: Equation, equation_filter: Callable[[Equation
     if equation_filter(equation):
         output = equation[0]
     return output
-
-def filter_pair(value, filter_func):
-    return value, filter_func(value)
-
-#  modified from https://stackoverflow.com/questions/57838041/how-to-use-parallel-processing-filter-in-python
-def pool_filter(pool: ProcessPoolExecutor, filter_func, candidates):
-    filter_pair_temp = partial(filter_pair, filter_func=filter_func)
-    return [c for c, keep in pool.map(filter_pair_temp, candidates) if keep]
 
 def calibration_check(
     data_path: Path = DATA_01,
