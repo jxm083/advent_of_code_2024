@@ -110,7 +110,7 @@ def calibration_check(
     data_path: Path = DATA_01,
     function_list: FunctionList = LIST_OF_FUNCTIONS,
     parallel_process: bool = False,
-) -> int:  # TODO: make sure ruff is working
+) -> int:
     data_stream = stream_lines_from_file(data_path)
 
     equation_filter: Callable[[Equation], bool] = partial(
