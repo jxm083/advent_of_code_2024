@@ -84,7 +84,8 @@ def equation_bool_parser(equation: Equation, equation_filter: Callable[[Equation
 
 def calibration_check(
     data_path: Path = DATA_01,
-    function_list: FunctionList = LIST_OF_FUNCTIONS
+    function_list: FunctionList = LIST_OF_FUNCTIONS,
+    parallel_process: bool = False
     ) -> int: # TODO: make sure ruff is working
 
     data_stream = stream_lines_from_file(data_path)
@@ -94,9 +95,16 @@ def calibration_check(
         function_list = function_list
     )
 
-    with ProcessPoolExecutor() as executor:
-        valid_equations = pool_filter(
-            executor,
+    if parallel_process:
+        with ProcessPoolExecutor() as executor:
+            valid_equations = pool_filter(
+                executor,
+                equation_filter,
+                map(parse_equation, data_stream)
+            )
+
+    else:
+        valid_equations = filter(
             equation_filter,
             map(parse_equation, data_stream)
         )
@@ -110,15 +118,22 @@ def exercise_one(data_path: Path = DATA_01) -> int:
 
 def exercise_two(data_path: Path = DATA_01) -> int:
     function_list = *LIST_OF_FUNCTIONS, concatenate_ints
+    with open(data_path) as f:
+        line_count = sum(1 for _ in f)
+
+    # Only exercise two using the real data
+    # benefited from using parallel processing.
+    if line_count < 11:
+        parallel_process = False
+    else:
+        parallel_process = True
+
     return calibration_check(
         data_path=data_path,
-        function_list=function_list
+        function_list=function_list,
+        parallel_process=parallel_process
     )
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
-    import time
-    start = time.time()
     print(f"exercise two: {exercise_two()}")
-    end = time.time()
-    print(f"exercise two duration: {end - start} s")
