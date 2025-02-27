@@ -13,21 +13,35 @@ DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA = DATA_DIR / "data00.txt"
 DATA_01 = DATA_DIR / "data01.txt"
 
-Equation: TypeAlias = tuple[int, tuple[int,...]]
-def parse_equation(line: str) -> Equation: # TODO: fragile if file has empty lines at the end
-    numbers = [int(num) for num in findall(r"\d+", line)] # TODO: why isn't findall returning a list?
+Equation: TypeAlias = tuple[int, tuple[int, ...]]
+
+
+def parse_equation(
+    line: str,
+) -> Equation:  # TODO: fragile if file has empty lines at the end
+    numbers = [
+        int(num) for num in findall(r"\d+", line)
+    ]  # TODO: why isn't findall returning a list?
     return (numbers[0], tuple(numbers[1:]))
 
-FunctionList: TypeAlias = tuple[Callable[[int, int], int],...]
+
+FunctionList: TypeAlias = tuple[Callable[[int, int], int], ...]
 LIST_OF_FUNCTIONS: FunctionList = (add, mul)
+
+
 # TODO: for part two had to add function_list variable everywhere---better design?
 # TODO: confirm the difference between Iterable and Iterator
-def generate_function_combo(number_of_terms: int, function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterator[FunctionList]:
+def generate_function_combo(
+    number_of_terms: int, function_list: FunctionList = LIST_OF_FUNCTIONS
+) -> Iterator[FunctionList]:
     combinations = product(function_list, repeat=number_of_terms - 1)
     for combo in combinations:
         yield combo
 
-def evaluate_function_combos(terms: tuple[int,...], function_list: FunctionList = LIST_OF_FUNCTIONS) -> Iterator[int]:
+
+def evaluate_function_combos(
+    terms: tuple[int, ...], function_list: FunctionList = LIST_OF_FUNCTIONS
+) -> Iterator[int]:
     function_combos = generate_function_combo(len(terms), function_list=function_list)
 
     for combo in function_combos:
@@ -37,12 +51,17 @@ def evaluate_function_combos(terms: tuple[int,...], function_list: FunctionList 
 
         yield total
 
-def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_FUNCTIONS) -> bool:
+
+def is_valid_equation(
+    equation: Equation, function_list: FunctionList = LIST_OF_FUNCTIONS
+) -> bool:
     answer = equation[0]
     terms = equation[1]
     valid_equation = False
 
-    function_evaluations: Iterator[int] = evaluate_function_combos(terms, function_list=function_list)
+    function_evaluations: Iterator[int] = evaluate_function_combos(
+        terms, function_list=function_list
+    )
 
     for eval in function_evaluations:
         if eval == answer:
@@ -51,17 +70,18 @@ def is_valid_equation(equation: Equation, function_list: FunctionList = LIST_OF_
 
     return valid_equation
 
+
 def concatenate_ints(int0: int, int1: int) -> int:
     """
-    Concatenates two integers, e.g. 
+    Concatenates two integers, e.g.
     concatenate_ints(142, 16) -> 14216
-    
+
     ASSUMES the second int, int1, is no more than three digits long.
-    
+
     Args:
         int0 (int): first integer
         int1 (int): second integer
-        
+
     Returns:
         int: concatenation of int0 and int1
     """
@@ -76,45 +96,42 @@ def concatenate_ints(int0: int, int1: int) -> int:
     else:
         raise ValueError("int1 has more than three digits")
 
-def equation_bool_parser(equation: Equation, equation_filter: Callable[[Equation], bool]) -> int:
+
+def equation_bool_parser(
+    equation: Equation, equation_filter: Callable[[Equation], bool]
+) -> int:
     output: int = 0
     if equation_filter(equation):
         output = equation[0]
     return output
 
+
 def calibration_check(
     data_path: Path = DATA_01,
     function_list: FunctionList = LIST_OF_FUNCTIONS,
-    parallel_process: bool = False
-    ) -> int: # TODO: make sure ruff is working
-
+    parallel_process: bool = False,
+) -> int:  # TODO: make sure ruff is working
     data_stream = stream_lines_from_file(data_path)
 
     equation_filter: Callable[[Equation], bool] = partial(
-        is_valid_equation,
-        function_list = function_list
+        is_valid_equation, function_list=function_list
     )
 
     if parallel_process:
         with ProcessPoolExecutor() as executor:
             valid_equations = pool_filter(
-                executor,
-                equation_filter,
-                map(parse_equation, data_stream)
+                executor, equation_filter, map(parse_equation, data_stream)
             )
 
     else:
-        valid_equations = filter(
-            equation_filter,
-            map(parse_equation, data_stream)
-        )
-    
+        valid_equations = filter(equation_filter, map(parse_equation, data_stream))
+
     return sum(answer for answer, _ in valid_equations)
 
+
 def exercise_one(data_path: Path = DATA_01) -> int:
-    return calibration_check(
-        data_path=data_path
-    )
+    return calibration_check(data_path=data_path)
+
 
 def exercise_two(data_path: Path = DATA_01) -> int:
     function_list = *LIST_OF_FUNCTIONS, concatenate_ints
@@ -131,8 +148,9 @@ def exercise_two(data_path: Path = DATA_01) -> int:
     return calibration_check(
         data_path=data_path,
         function_list=function_list,
-        parallel_process=parallel_process
+        parallel_process=parallel_process,
     )
+
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
