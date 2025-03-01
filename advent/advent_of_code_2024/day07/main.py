@@ -30,7 +30,9 @@ LIST_OF_FUNCTIONS: FunctionList = (add, mul)
 
 
 # TODO: for part two had to add function_list variable everywhere---better design?
+# maybe context? but not necessarily
 # TODO: confirm the difference between Iterable and Iterator
+# Iterator can be exhausted when run through once
 def generate_function_combo(
     number_of_terms: int, function_list: FunctionList = LIST_OF_FUNCTIONS
 ) -> Iterator[FunctionList]:

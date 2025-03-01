@@ -38,7 +38,7 @@ def example_data_file(tmp_path: Path, example_data: list[str]):
     return fake_file
 
 
-def test_parse_equation(example_data: list[str]):  # TODO: cast by typing?
+def test_parse_equation(example_data: list[str]):  # TODO: cast by typing? Should be Iterator
     example_data_list: list[str] = [data for data in example_data]
     assert parse_equation(example_data_list[0]) == (190, (10, 19))
     assert parse_equation(example_data_list[1]) == (3267, (81, 40, 27))
