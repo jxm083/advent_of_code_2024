@@ -1,8 +1,6 @@
 from math import sqrt
 from typing import TypeAlias, Iterator
 
-from advent.common.data_stream import stream_lines_from_file
-
 AntennaData: TypeAlias = tuple[int, int, str]
 def antenna_data_stream(file_data: Iterator[str]) -> Iterator[AntennaData]: # TODO: move this to common
     for line_num, line in enumerate(file_data):
