@@ -1,7 +1,9 @@
 import pytest
 from typing import Iterator
+from math import sqrt
 
 from advent.advent_of_code_2024.day08.main import (
+    distance,
     exercise_one
 )
 
@@ -21,6 +23,9 @@ def example_data() -> Iterator[str]:
 ............"""
 
     return iter(data.splitlines())
+
+def test_distance():
+    assert distance((0, 0), (2, 2)) == sqrt(8)
 
 def test_exercise_one():
     assert exercise_one() == 14
