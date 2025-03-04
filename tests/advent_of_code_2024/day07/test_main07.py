@@ -31,14 +31,14 @@ def example_data() -> Iterator[str]:
 
 
 @pytest.fixture
-def example_data_file(tmp_path: Path, example_data: list[str]):
+def example_data_file(tmp_path: Path, example_data: Iterator[str]):
     fake_file = tmp_path / "day07_example_data.txt"
     data = "\n".join(line for line in example_data)
     fake_file.write_text(data)
     return fake_file
 
 
-def test_parse_equation(example_data: list[str]):  # TODO: cast by typing? Should be Iterator
+def test_parse_equation(example_data: Iterator[str]):
     example_data_list: list[str] = [data for data in example_data]
     assert parse_equation(example_data_list[0]) == (190, (10, 19))
     assert parse_equation(example_data_list[1]) == (3267, (81, 40, 27))
@@ -56,7 +56,7 @@ def test_evaluate_function_combos():
     assert set(test_solutions) == set(solutions)
 
 
-def test_is_valid_equation(example_data: list[str]):
+def test_is_valid_equation(example_data: Iterator[str]):
     example_equations = [parse_equation(line) for line in example_data]
     assert is_valid_equation(example_equations[0]) is True
     assert is_valid_equation(example_equations[3]) is False
