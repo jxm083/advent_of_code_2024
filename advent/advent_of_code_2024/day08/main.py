@@ -2,11 +2,10 @@ from math import sqrt
 from typing import TypeAlias, Iterator
 
 AntennaData: TypeAlias = tuple[int, int, str]
-def antenna_data_stream(file_data: Iterator[str]) -> Iterator[AntennaData]: # TODO: move this to common
+def stream_position_and_char(file_data: Iterator[str]) -> Iterator[AntennaData]: # TODO: move this to common
     for line_num, line in enumerate(file_data):
         for char_num, char in enumerate(line):
-            if char != ".":
-                yield (line_num, char_num, char)
+            yield (line_num, char_num, char)
 
     
 

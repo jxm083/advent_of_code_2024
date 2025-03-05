@@ -4,7 +4,7 @@ from math import sqrt
 
 from advent.advent_of_code_2024.day08.main import (
     distance,
-    antenna_data_stream,
+    stream_position_and_char,
     exercise_one
 )
 
@@ -25,7 +25,7 @@ def example_data() -> Iterator[str]:
 
     return iter(data.splitlines())
 
-def test_antenna_data_stream(example_data: Iterator[str]):
+def test_stream_position_and_char(example_data: Iterator[str]):
     example_antenna_data = [
         (1, 8, "0"),
         (2, 5, "0"),
@@ -35,8 +35,18 @@ def test_antenna_data_stream(example_data: Iterator[str]):
         (8, 8, "A"),
         (9, 9, "A")
     ]
-    data = antenna_data_stream(example_data)
-    assert [datum for datum in data] == example_antenna_data
+    data = stream_position_and_char(example_data)
+    # a happy-path test of the stream, looking at only
+    # a subset of the data
+    def filter_periods(datum: tuple[int, int, str]) -> bool:
+        return datum[2] != "."
+
+    assert list(
+        filter(
+            filter_periods, 
+            [datum for datum in data]
+            )
+            ) == example_antenna_data
 
 def test_distance():
     assert distance((0, 0), (2, 2)) == sqrt(8)
