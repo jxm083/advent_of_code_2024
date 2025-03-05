@@ -1,8 +1,13 @@
 from math import sqrt
 from typing import TypeAlias, Iterator
 from functools import partial
+from pathlib import Path
 
 from advent.common.data_stream import stream_lines_from_file
+
+DATA_DIR = Path(__file__).parent
+EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
+DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
 CharData: TypeAlias = tuple[int, int, str]
 def stream_position_and_char(file_data: Iterator[str]) -> Iterator[CharData]: # TODO: move this to common
@@ -50,10 +55,10 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, i
     
     return list(filter(position_in_current_map, set(antinode_positions)))
 
-def exercise_one(file_path = DATA_PATH_01):
+def exercise_one(file_path: Path = DATA_PATH_01):
     file_data = stream_lines_from_file(file_path)
     pos_char_stream = stream_position_and_char(file_data)
     return len(find_all_antinodes(pos_char_stream))
 
 if __name__ == "__main__":
-    print(f"exercise one: {exercise_one(DATA_PATH_00)}")
+    print(f"exercise one: {exercise_one(EXAMPLE_DATA_PATH)}")
