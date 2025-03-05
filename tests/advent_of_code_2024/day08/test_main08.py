@@ -5,7 +5,7 @@ from math import sqrt
 from advent.advent_of_code_2024.day08.main import (
     distance,
     stream_position_and_char,
-    antinode_positions,
+    calc_antinode_pair,
     exercise_one,
 )
 
@@ -46,10 +46,10 @@ def test_stream_position_and_char(example_data: Iterator[str]):
         filter(filter_periods,[datum for datum in data])
             ) == reference_antenna_data
 
-def test_antinode_positions():
+def test_calc_antinode_pair():
     # added set so as to not test the order in which
     # the coordinates are returned
-    assert set(antinode_positions((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
+    assert set(calc_antinode_pair((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
 
 def test_distance():
     assert distance((0, 0), (2, 2)) == sqrt(8)
