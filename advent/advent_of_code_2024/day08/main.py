@@ -53,7 +53,12 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, i
         position_in_map, num_map_lines=max_line_num, num_map_cols=max_col_num
     )
     
-    return list(filter(position_in_current_map, set(antinode_positions)))
+    filtered_positions = list(filter(
+        position_in_current_map, set(antinode_positions)
+    ))
+
+    print(filtered_positions)
+    return filtered_positions
 
 def exercise_one(file_path: Path = DATA_PATH_01):
     file_data = stream_lines_from_file(file_path)
