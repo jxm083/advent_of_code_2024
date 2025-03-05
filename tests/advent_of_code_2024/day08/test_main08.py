@@ -5,7 +5,8 @@ from math import sqrt
 from advent.advent_of_code_2024.day08.main import (
     distance,
     stream_position_and_char,
-    exercise_one
+    antinode_positions,
+    exercise_one,
 )
 
 @pytest.fixture
@@ -26,7 +27,7 @@ def example_data() -> Iterator[str]:
     return iter(data.splitlines())
 
 def test_stream_position_and_char(example_data: Iterator[str]):
-    example_antenna_data = [
+    reference_antenna_data = [
         (1, 8, "0"),
         (2, 5, "0"),
         (3, 7, "0"),
@@ -42,11 +43,13 @@ def test_stream_position_and_char(example_data: Iterator[str]):
         return datum[2] != "."
 
     assert list(
-        filter(
-            filter_periods, 
-            [datum for datum in data]
-            )
-            ) == example_antenna_data
+        filter(filter_periods,[datum for datum in data])
+            ) == reference_antenna_data
+
+def test_antinode_positions():
+    # added set so as to not test the order in which
+    # the coordinates are returned
+    assert set(antinode_positions((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
 
 def test_distance():
     assert distance((0, 0), (2, 2)) == sqrt(8)
