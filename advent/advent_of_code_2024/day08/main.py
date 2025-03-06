@@ -1,6 +1,7 @@
 from math import sqrt
 from typing import TypeAlias, Iterator
 from functools import partial
+from itertools import count
 from pathlib import Path
 
 from advent.common.data_stream import stream_lines_from_file
@@ -19,6 +20,17 @@ def stream_position_and_char(
         for char_num, char in enumerate(line):
             yield (line_num, char_num, char)
 
+def add_tuple(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
+    return tuple([a + b for a, b in zip(tuple0, tuple1)])
+
+def negate_tuple(my_tuple: tuple[int, ...]) -> tuple[int, ...]:
+    return tuple([-a for a in my_tuple])
+
+def tuple_displacement(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
+    return add_tuple(
+        tuple1,
+        negate_tuple(tuple0)
+    )
 
 def distance(point0: tuple[int, int], point1: tuple[int, int]) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
@@ -28,10 +40,18 @@ def distance(point0: tuple[int, int], point1: tuple[int, int]) -> float:
 def calc_antinode_pair(
     position0: tuple[int, ...], position1: tuple[int, ...]
 ) -> tuple[tuple[int, ...], tuple[int, ...]]:
-    displacement_01 = [b - a for a, b in zip(position0, position1)]
+    displacement_01 = tuple_displacement(position0, position1)
+    
     antinode0 = [pos + 2 * dis for pos, dis in zip(position0, displacement_01)]
     antinode1 = [pos - dis for pos, dis in zip(position0, displacement_01)]
     return tuple(antinode0), tuple(antinode1)
+
+
+def antinodes_with_resonance(
+        antenna0_position: tuple[int, ...],
+        antenna1_position: tuple[int, ...]
+) -> tuple[tuple[int, ...], ...]:
+    pass
 
 
 def position_in_map(

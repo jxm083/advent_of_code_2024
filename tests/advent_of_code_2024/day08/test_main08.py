@@ -8,6 +8,9 @@ from advent.advent_of_code_2024.day08.main import (
     stream_position_and_char,
     calc_antinode_pair,
     find_all_antinodes,
+    add_tuple,
+    negate_tuple,
+    tuple_displacement,
     exercise_one,
 )
 
@@ -94,6 +97,18 @@ def test_find_all_antinodes(example_data: Iterator[str]):
 
 def test_distance():
     assert distance((0, 0), (2, 2)) == sqrt(8)
+
+
+def test_add_tuple():
+    assert add_tuple((1, 3), (5, 8)) == (6, 11)
+    assert add_tuple((-10, 3), (6, -1)) == (-4, 2)
+
+
+def test_negate_tuple():
+    assert negate_tuple((4, 8)) == (-4, -8)
+
+def test_tuple_displacement():
+    assert tuple_displacement((0, 0), (3, 4)) == (3, 4)
 
 
 def test_exercise_one_example(example_data_file: Path):
