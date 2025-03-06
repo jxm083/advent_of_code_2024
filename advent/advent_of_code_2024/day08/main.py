@@ -85,13 +85,22 @@ def position_in_map(
     return in_map
 
 
-def find_all_antinodes(pos_char_stream: Iterator[CharData], antinode_func: Callable[[tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]]) -> list[tuple[int, int]]:
+def find_all_antinodes(
+    pos_char_stream: Iterator[CharData],
+    antinode_func: Callable[
+        [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
+    ],
+) -> list[tuple[int, int]]:
     antenna_positions: dict[str, list[tuple[int, int]]] = dict()
     antinode_positions: list[tuple[int, int]] = list()
 
     positions_of_characters: list[CharData] = list(pos_char_stream)
     max_line_num = max([line_num for line_num, _, _ in positions_of_characters])
     max_col_num = max([col_num for _, col_num, _ in positions_of_characters])
+
+    position_in_current_map = partial(
+        position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
+    )
 
     for line_num, col_num, char in positions_of_characters:
         current_position = (line_num, col_num)
@@ -101,15 +110,16 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData], antinode_func: Calla
                 antenna_positions[char] = [current_position]
             else:
                 for position in antenna_positions[char]:
-                    for antinode_position in antinode_func(
-                        current_position, position
-                    ):
-                        antinode_positions.append(antinode_position)  # type:ignore
-                antenna_positions[char].append(current_position)
+                    num_excluded_positions = 0
+                    for antinode_position in antinode_func(current_position, position):
+                        if num_excluded_positions > 2:
+                            break
+                        elif position_in_current_map(antinode_position):  # type: ignore
+                            antinode_positions.append(antinode_position)  # type: ignore
+                        else:
+                            num_excluded_positions += 1
 
-    position_in_current_map = partial(
-        position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
-    )
+                antenna_positions[char].append(current_position)
 
     filtered_positions = list(filter(position_in_current_map, set(antinode_positions)))
 
@@ -121,10 +131,12 @@ def exercise_one(file_path: Path = DATA_PATH_01):
     pos_char_stream = stream_position_and_char(file_data)
     return len(find_all_antinodes(pos_char_stream, calc_antinode_pair))
 
+
 def exercise_two(file_path: Path = DATA_PATH_01) -> int:
     file_data = stream_lines_from_file(file_path)
     pos_char_stream = stream_position_and_char(file_data)
     return len(find_all_antinodes(pos_char_stream, antinodes_with_resonance))
+
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")

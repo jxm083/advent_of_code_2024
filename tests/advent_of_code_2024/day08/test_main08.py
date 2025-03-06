@@ -16,7 +16,7 @@ from advent.advent_of_code_2024.day08.main import (
     diverging_count,
     antinodes_with_resonance,
     exercise_one,
-    exercise_two
+    exercise_two,
 )
 
 
