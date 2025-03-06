@@ -150,3 +150,7 @@ def test_exercise_one_real():
 
 def test_exercise_two_example(example_data_file: Path):
     assert exercise_two(example_data_file) == 34
+
+
+def test_exercise_two_real():
+    assert exercise_two() == 955

@@ -89,7 +89,7 @@ def find_all_antinodes(
     pos_char_stream: Iterator[CharData],
     antinode_func: Callable[
         [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
-    ],
+    ] = calc_antinode_pair,
 ) -> list[tuple[int, int]]:
     antenna_positions: dict[str, list[tuple[int, int]]] = dict()
     antinode_positions: list[tuple[int, int]] = list()
