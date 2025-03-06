@@ -97,6 +97,7 @@ def find_all_antinodes(
     positions_of_characters: list[CharData] = list(pos_char_stream)
     max_line_num = max([line_num for line_num, _, _ in positions_of_characters])
     max_col_num = max([col_num for _, col_num, _ in positions_of_characters])
+    max_dimension = max(max_line_num, max_col_num)
 
     position_in_current_map = partial(
         position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
@@ -112,7 +113,7 @@ def find_all_antinodes(
                 for position in antenna_positions[char]:
                     num_excluded_positions = 0
                     for antinode_position in antinode_func(current_position, position):
-                        if num_excluded_positions > 2:
+                        if num_excluded_positions > max_dimension:
                             break
                         elif position_in_current_map(antinode_position):  # type: ignore
                             antinode_positions.append(antinode_position)  # type: ignore
