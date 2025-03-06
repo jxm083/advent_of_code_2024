@@ -41,17 +41,21 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, i
     for line_num, col_num, char in pos_char_stream:
         max_line_num = line_num
         max_col_num = max(col_num, max_col_num)
+        current_position = (line_num, col_num)
+
         if char != ".":
             if char not in antenna_positions:
-                antenna_positions[char] = [(line_num, col_num)]
+                antenna_positions[char] = [current_position]
             else:
                 for position in antenna_positions[char]:
-                    for antinode_position in calc_antinode_pair((line_num, col_num), position):
+                    for antinode_position in calc_antinode_pair(current_position, position):
                         antinode_positions.append(antinode_position) # type:ignore
+                antenna_positions[char].append(current_position)
 
     position_in_current_map = partial(
-        position_in_map, num_map_lines=max_line_num, num_map_cols=max_col_num
+        position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
     )
+    print(set(antinode_positions))
     
     filtered_positions = list(filter(
         position_in_current_map, set(antinode_positions)
@@ -66,4 +70,4 @@ def exercise_one(file_path: Path = DATA_PATH_01):
     return len(find_all_antinodes(pos_char_stream))
 
 if __name__ == "__main__":
-    print(f"exercise one: {exercise_one(EXAMPLE_DATA_PATH)}")
+    print(f"exercise one: {exercise_one()}")
