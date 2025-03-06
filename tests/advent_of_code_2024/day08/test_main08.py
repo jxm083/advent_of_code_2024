@@ -98,3 +98,7 @@ def test_distance():
 
 def test_exercise_one_example(example_data_file: Path):
     assert exercise_one(example_data_file) == 14
+
+
+def test_exercise_one_real():
+    assert exercise_one() == 240
