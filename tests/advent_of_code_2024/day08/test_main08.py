@@ -2,6 +2,7 @@ import pytest
 from typing import Iterator
 from math import sqrt
 from pathlib import Path
+from itertools import islice
 
 from advent.advent_of_code_2024.day08.main import (
     distance,
@@ -11,6 +12,9 @@ from advent.advent_of_code_2024.day08.main import (
     add_tuple,
     negate_tuple,
     tuple_displacement,
+    mul_tuple,
+    diverging_count,
+    antinodes_with_resonance,
     exercise_one,
 )
 
@@ -107,8 +111,32 @@ def test_add_tuple():
 def test_negate_tuple():
     assert negate_tuple((4, 8)) == (-4, -8)
 
+
 def test_tuple_displacement():
     assert tuple_displacement((0, 0), (3, 4)) == (3, 4)
+
+
+def test_mul_tuple():
+    assert mul_tuple(5, (2, 11)) == (10, 55)
+
+
+def test_diverging_count():
+    first_terms_reference = [0, -1, 1, -2, 2]
+    first_terms = list(islice(diverging_count(), 5))
+    assert first_terms == first_terms_reference
+
+
+def test_antinodes_with_resonance():
+    antenna0_position = (0, 0)
+    antenna1_position = (2, 3)
+
+    reference_antinodes = [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)]
+
+    calc_antinodes = antinodes_with_resonance(
+        antenna0_position=antenna0_position, antenna1_position=antenna1_position
+    )
+
+    assert list(islice(calc_antinodes, 5)) == reference_antinodes
 
 
 def test_exercise_one_example(example_data_file: Path):

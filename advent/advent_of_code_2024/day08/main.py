@@ -20,17 +20,24 @@ def stream_position_and_char(
         for char_num, char in enumerate(line):
             yield (line_num, char_num, char)
 
+
 def add_tuple(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
     return tuple([a + b for a, b in zip(tuple0, tuple1)])
+
 
 def negate_tuple(my_tuple: tuple[int, ...]) -> tuple[int, ...]:
     return tuple([-a for a in my_tuple])
 
-def tuple_displacement(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
-    return add_tuple(
-        tuple1,
-        negate_tuple(tuple0)
-    )
+
+def tuple_displacement(
+    tuple0: tuple[int, ...], tuple1: tuple[int, ...]
+) -> tuple[int, ...]:
+    return add_tuple(tuple1, negate_tuple(tuple0))
+
+
+def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
+    return tuple([factor * a for a in my_tuple])
+
 
 def distance(point0: tuple[int, int], point1: tuple[int, int]) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
@@ -41,7 +48,7 @@ def calc_antinode_pair(
     position0: tuple[int, ...], position1: tuple[int, ...]
 ) -> Iterator[tuple[int, ...]]:
     displacement_01 = tuple_displacement(position0, position1)
-    
+
     antinode0 = [pos + 2 * dis for pos, dis in zip(position0, displacement_01)]
     antinode1 = [pos - dis for pos, dis in zip(position0, displacement_01)]
 
@@ -50,11 +57,22 @@ def calc_antinode_pair(
         yield antinode
 
 
+def diverging_count() -> Iterator[int]:
+    for n in count():
+        if n % 2 == 0:
+            yield n // 2
+
+        else:
+            yield -((n - 1) // 2 + 1)
+
+
 def antinodes_with_resonance(
-        antenna0_position: tuple[int, ...],
-        antenna1_position: tuple[int, ...]
-) -> tuple[tuple[int, ...], ...]:
-    pass
+    antenna0_position: tuple[int, ...], antenna1_position: tuple[int, ...]
+) -> Iterator[tuple[int, ...]]:
+    displacement = tuple_displacement(antenna0_position, antenna1_position)
+
+    for n in diverging_count():
+        yield add_tuple(antenna0_position, mul_tuple(n, displacement))
 
 
 def position_in_map(
