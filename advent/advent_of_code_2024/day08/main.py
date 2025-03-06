@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import TypeAlias, Iterator
+from typing import TypeAlias, Iterator, Callable
 from functools import partial
 from itertools import count
 from pathlib import Path
@@ -85,7 +85,7 @@ def position_in_map(
     return in_map
 
 
-def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, int]]:
+def find_all_antinodes(pos_char_stream: Iterator[CharData], antinode_func: Callable[[tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]]) -> list[tuple[int, int]]:
     antenna_positions: dict[str, list[tuple[int, int]]] = dict()
     antinode_positions: list[tuple[int, int]] = list()
 
@@ -119,7 +119,7 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, i
 def exercise_one(file_path: Path = DATA_PATH_01):
     file_data = stream_lines_from_file(file_path)
     pos_char_stream = stream_position_and_char(file_data)
-    return len(find_all_antinodes(pos_char_stream))
+    return len(find_all_antinodes(pos_char_stream, calc_antinode_pair))
 
 
 if __name__ == "__main__":
