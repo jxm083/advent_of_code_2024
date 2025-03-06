@@ -101,7 +101,7 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData], antinode_func: Calla
                 antenna_positions[char] = [current_position]
             else:
                 for position in antenna_positions[char]:
-                    for antinode_position in calc_antinode_pair(
+                    for antinode_position in antinode_func(
                         current_position, position
                     ):
                         antinode_positions.append(antinode_position)  # type:ignore
@@ -121,6 +121,11 @@ def exercise_one(file_path: Path = DATA_PATH_01):
     pos_char_stream = stream_position_and_char(file_data)
     return len(find_all_antinodes(pos_char_stream, calc_antinode_pair))
 
+def exercise_two(file_path: Path = DATA_PATH_01) -> int:
+    file_data = stream_lines_from_file(file_path)
+    pos_char_stream = stream_position_and_char(file_data)
+    return len(find_all_antinodes(pos_char_stream, antinodes_with_resonance))
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
+    print(f"exercise two: {exercise_two()}")

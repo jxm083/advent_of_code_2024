@@ -16,6 +16,7 @@ from advent.advent_of_code_2024.day08.main import (
     diverging_count,
     antinodes_with_resonance,
     exercise_one,
+    exercise_two
 )
 
 
@@ -145,3 +146,7 @@ def test_exercise_one_example(example_data_file: Path):
 
 def test_exercise_one_real():
     assert exercise_one() == 240
+
+
+def test_exercise_two_example(example_data_file: Path):
+    assert exercise_two(example_data_file) == 34
