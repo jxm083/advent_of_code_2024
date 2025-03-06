@@ -48,11 +48,11 @@ def find_all_antinodes(pos_char_stream: Iterator[CharData]) -> list[tuple[int, i
     antenna_positions: dict[str, list[tuple[int, int]]] = dict()
     antinode_positions: list[tuple[int, int]] = list()
 
-    max_col_num = 0
-    max_line_num = 0
-    for line_num, col_num, char in pos_char_stream:
-        max_line_num = line_num
-        max_col_num = max(col_num, max_col_num)
+    positions_of_characters: list[CharData] = list(pos_char_stream)
+    max_line_num = max([line_num for line_num, _, _ in positions_of_characters])
+    max_col_num = max([col_num for _, col_num, _ in positions_of_characters])
+
+    for line_num, col_num, char in positions_of_characters:
         current_position = (line_num, col_num)
 
         if char != ".":
