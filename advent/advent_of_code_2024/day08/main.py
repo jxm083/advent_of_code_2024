@@ -39,12 +39,15 @@ def distance(point0: tuple[int, int], point1: tuple[int, int]) -> float:
 # better calc_antinode_pair
 def calc_antinode_pair(
     position0: tuple[int, ...], position1: tuple[int, ...]
-) -> tuple[tuple[int, ...], tuple[int, ...]]:
+) -> Iterator[tuple[int, ...]]:
     displacement_01 = tuple_displacement(position0, position1)
     
     antinode0 = [pos + 2 * dis for pos, dis in zip(position0, displacement_01)]
     antinode1 = [pos - dis for pos, dis in zip(position0, displacement_01)]
-    return tuple(antinode0), tuple(antinode1)
+
+    antinode_positions = map(tuple, [antinode0, antinode1])
+    for antinode in antinode_positions:
+        yield antinode
 
 
 def antinodes_with_resonance(
