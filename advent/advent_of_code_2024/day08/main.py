@@ -1,8 +1,8 @@
-from math import sqrt
-from typing import TypeAlias, Iterator, Callable
 from functools import partial
-from itertools import count
+from itertools import count, islice, combinations, starmap, chain
+from math import sqrt
 from pathlib import Path
+from typing import Callable, Iterator, TypeAlias
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -11,6 +11,7 @@ EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
 DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
 CharData: TypeAlias = tuple[int, int, str]
+Coordinate: TypeAlias = tuple[int, ...]
 
 
 def stream_position_and_char(
@@ -75,6 +76,21 @@ def antinodes_with_resonance(
         yield add_tuple(antenna0_position, mul_tuple(n, displacement))
 
 
+def antinodes_from_antenna_group(
+    antenna_positions: list[Coordinate],
+    antinode_func: Callable[[Coordinate, Coordinate], Iterator[Coordinate]] = calc_antinode_pair,
+    max_length: int | None = None
+) -> Iterator[Coordinate]:
+    pairs = combinations(antenna_positions, 2)
+    def limited_antinodes_func(coor0: Coordinate, coor1: Coordinate) -> Iterator[Coordinate]:
+        return islice(antinode_func(coor0, coor1), max_length)
+
+    antinodes = chain(starmap(limited_antinodes_func, pairs))
+
+    return antinodes
+
+
+
 def position_in_map(
     position: tuple[int, int], num_map_lines: int, num_map_cols: int
 ) -> bool:
@@ -111,14 +127,11 @@ def find_all_antinodes(
                 antenna_positions[char] = [current_position]
             else:
                 for position in antenna_positions[char]:
-                    num_excluded_positions = 0
-                    for antinode_position in antinode_func(current_position, position):
-                        if num_excluded_positions > max_dimension:
-                            break
-                        elif position_in_current_map(antinode_position):  # type: ignore
-                            antinode_positions.append(antinode_position)  # type: ignore
-                        else:
-                            num_excluded_positions += 1
+                    antinode_positions += list(
+                        islice(
+                            antinode_func(current_position, position), 2 * max_dimension
+                        )
+                    )  # type: ignore
 
                 antenna_positions[char].append(current_position)
 

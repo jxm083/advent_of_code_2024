@@ -5,6 +5,8 @@ from pathlib import Path
 from itertools import islice
 
 from advent.advent_of_code_2024.day08.main import (
+    Coordinate,
+    CharData,
     distance,
     stream_position_and_char,
     calc_antinode_pair,
@@ -39,14 +41,18 @@ def example_data() -> Iterator[str]:
 
 
 @pytest.fixture
-def example_data_file(tmp_path: Path, example_data: list[str]):
+def example_data_file(tmp_path: Path, example_data: Iterator[str]):
     fake_file = tmp_path / "day08_example_data.txt"
     data = "\n".join(line for line in example_data)
     fake_file.write_text(data)
     return fake_file
 
+@pytest.fixture
+def example_data_stream(example_data: Iterator[str]):
+    return stream_position_and_char(example_data)
 
-def test_stream_position_and_char(example_data: Iterator[str]):
+
+def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
     reference_antenna_data = [
         (1, 8, "0"),
         (2, 5, "0"),
@@ -56,15 +62,13 @@ def test_stream_position_and_char(example_data: Iterator[str]):
         (8, 8, "A"),
         (9, 9, "A"),
     ]
-    data = stream_position_and_char(example_data)
-
     # a happy-path test of the stream, looking at only
     # a subset of the data
     def filter_periods(datum: tuple[int, int, str]) -> bool:
         return datum[2] != "."
 
     assert (
-        list(filter(filter_periods, [datum for datum in data]))
+        list(filter(filter_periods, [datum for datum in example_data_stream]))
         == reference_antenna_data
     )
 
@@ -75,7 +79,7 @@ def test_calc_antinode_pair():
     assert set(calc_antinode_pair((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
 
 
-def test_find_all_antinodes(example_data: Iterator[str]):
+def test_find_all_antinodes(example_data_stream: Iterator[CharData]):
     reference_antinode_positions: set[tuple[int, int]] = set(
         [
             (2, 4),
@@ -95,9 +99,7 @@ def test_find_all_antinodes(example_data: Iterator[str]):
         ]
     )
 
-    pos_char_stream = stream_position_and_char(example_data)
-
-    assert set(find_all_antinodes(pos_char_stream)) == reference_antinode_positions
+    assert set(find_all_antinodes(example_data_stream)) == reference_antinode_positions
 
 
 def test_distance():
