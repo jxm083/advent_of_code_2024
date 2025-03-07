@@ -1,18 +1,16 @@
-from itertools import islice
+from itertools import count
 from typing import TypeVar, Iterator, Callable, Iterable
-from collections import deque
 
 T = TypeVar("T")
 
 
-def sliding_window(iterable: Iterable[T], n: int) -> Iterator[tuple[T, ...]]:
-    "Collect data into overlapping fixed-length chunks or blocks."
-    # sliding_window('ABCDEFG', 4) → ABCD BCDE CDEF DEFG
-    iterator = iter(iterable)
-    window = deque(islice(iterator, n - 1), maxlen=n)
-    for x in iterator:
-        window.append(x)
-        yield tuple(window)
+def diverging_count() -> Iterator[int]:
+    for n in count():
+        if n % 2 == 0:
+            yield n // 2
+
+        else:
+            yield -((n - 1) // 2 + 1)
 
 
 def takewhile_pair(

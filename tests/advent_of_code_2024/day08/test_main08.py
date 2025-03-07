@@ -124,10 +124,7 @@ def test_mul_tuple():
     assert mul_tuple(5, (2, 11)) == (10, 55)
 
 
-def test_diverging_count():
-    first_terms_reference = [0, -1, 1, -2, 2]
-    first_terms = list(islice(diverging_count(), 5))
-    assert first_terms == first_terms_reference
+
 
 
 

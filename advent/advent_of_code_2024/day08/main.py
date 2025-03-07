@@ -59,13 +59,7 @@ def calc_antinode_pair(
         yield antinode
 
 
-def diverging_count() -> Iterator[int]:
-    for n in count():
-        if n % 2 == 0:
-            yield n // 2
 
-        else:
-            yield -((n - 1) // 2 + 1)
 
 
 
