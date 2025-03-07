@@ -2,7 +2,8 @@ import pytest
 from typing import Iterator
 from math import sqrt
 from pathlib import Path
-from itertools import islice
+from itertools import islice, groupby
+from operator import itemgetter
 
 from advent.advent_of_code_2024.day08.main import (
     Coordinate,
@@ -129,6 +130,10 @@ def test_diverging_count():
     assert first_terms == first_terms_reference
 
 
+
+
+
+
 def test_antinodes_with_resonance():
     antenna0_position = (0, 0)
     antenna1_position = (2, 3)
@@ -140,6 +145,9 @@ def test_antinodes_with_resonance():
     )
 
     assert list(islice(calc_antinodes, 5)) == reference_antinodes
+
+def test_antinodes_from_antenna_group(example_data_stream: Iterator[CharData]):
+    antenna_a_positions = groupby(example_data_stream, itemgetter(2))
 
 
 def test_exercise_one_example(example_data_file: Path):

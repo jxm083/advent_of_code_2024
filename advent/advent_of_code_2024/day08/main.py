@@ -1,8 +1,9 @@
 from functools import partial
-from itertools import count, islice, combinations, starmap, chain
+from itertools import count, islice, combinations, starmap, chain, groupby
 from math import sqrt
 from pathlib import Path
 from typing import Callable, Iterator, TypeAlias
+from operator import itemgetter
 
 from advent.common.data_stream import stream_lines_from_file
 
@@ -65,6 +66,10 @@ def diverging_count() -> Iterator[int]:
 
         else:
             yield -((n - 1) // 2 + 1)
+
+
+
+
 
 
 def antinodes_with_resonance(
@@ -155,3 +160,15 @@ def exercise_two(file_path: Path = DATA_PATH_01) -> int:
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
     print(f"exercise two: {exercise_two()}")
+    file_data = stream_lines_from_file(EXAMPLE_DATA_PATH)
+    pos_char_stream = stream_position_and_char(file_data)
+
+    antenna_positions_sorted_by_freq = groupby(
+        sorted(
+            filter(lambda x: x[2] != ".", pos_char_stream),
+            key=itemgetter(2)), 
+        itemgetter(2)
+    )
+
+    for key, group in antenna_positions_sorted_by_freq:
+        print(key, list(group))
