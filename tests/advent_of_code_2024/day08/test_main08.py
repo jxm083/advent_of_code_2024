@@ -8,13 +8,13 @@ from advent.advent_of_code_2024.day08.main import (
     CharData,
     stream_position_and_char,
     find_antenna_groups,
-    calc_antinode_pair,
+    find_antinode_pair,
     find_all_antinodes,
     add_tuple,
     negate_tuple,
     tuple_displacement,
     mul_tuple,
-    antinodes_with_resonance,
+    find_antinodes_with_resonance,
     exercise_one,
     exercise_two,
 )
@@ -87,10 +87,10 @@ def test_find_antenna_groups(example_data_stream: Iterator[CharData]):
         assert set(list(test_group)) == set(ref_group)
 
 
-def test_calc_antinode_pair():
+def test_find_antinode_pair():
     # added set so as to not test the order in which
     # the coordinates are returned
-    assert set(calc_antinode_pair((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
+    assert set(find_antinode_pair((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
 
 
 def test_find_all_antinodes(example_data_stream: Iterator[CharData]):
@@ -133,13 +133,13 @@ def test_mul_tuple():
     assert mul_tuple(5, (2, 11)) == (10, 55)
 
 
-def test_antinodes_with_resonance():
+def test_find_antinodes_with_resonance():
     antenna0_position = (0, 0)
     antenna1_position = (2, 3)
 
     reference_antinodes = [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)]
 
-    calc_antinodes = antinodes_with_resonance(
+    calc_antinodes = find_antinodes_with_resonance(
         antenna0_position=antenna0_position, antenna1_position=antenna1_position
     )
 

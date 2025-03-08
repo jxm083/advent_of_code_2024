@@ -54,8 +54,8 @@ def find_antenna_groups(
         yield iter(group)
 
 
-# better calc_antinode_pair
-def calc_antinode_pair(
+# better find_antinode_pair
+def find_antinode_pair(
     position0: tuple[int, ...], position1: tuple[int, ...]
 ) -> Iterator[tuple[int, ...]]:
     displacement_01 = tuple_displacement(position0, position1)
@@ -68,7 +68,7 @@ def calc_antinode_pair(
         yield antinode
 
 
-def antinodes_with_resonance(
+def find_antinodes_with_resonance(
     antenna0_position: tuple[int, ...], antenna1_position: tuple[int, ...]
 ) -> Iterator[tuple[int, ...]]:
     displacement = tuple_displacement(antenna0_position, antenna1_position)
@@ -77,11 +77,11 @@ def antinodes_with_resonance(
         yield add_tuple(antenna0_position, mul_tuple(n, displacement))
 
 
-def antinodes_from_antenna_group(
+def find_antinodes_from_antenna_group(
     antenna_positions: Iterator[Coordinate],
     antinode_func: Callable[
         [Coordinate, Coordinate], Iterator[Coordinate]
-    ] = calc_antinode_pair,
+    ] = find_antinode_pair,
     in_map: Callable[[Coordinate], bool] = lambda x: True,
 ) -> Iterator[Coordinate]:
     pairs = combinations(antenna_positions, 2)
@@ -114,7 +114,7 @@ def find_all_antinodes(
     pos_char_stream: Iterator[CharData],
     antinode_func: Callable[
         [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
-    ] = calc_antinode_pair,
+    ] = find_antinode_pair,
 ) -> list[Coordinate]:
     positions_of_characters: list[CharData] = list(pos_char_stream)
 
@@ -124,23 +124,38 @@ def find_all_antinodes(
     position_in_current_map = create_grid_boundary_filter(positions_of_characters)
 
     for group in antenna_groups:
-        antinode_positions += antinodes_from_antenna_group(
+        antinode_positions += find_antinodes_from_antenna_group(
             group, antinode_func, position_in_current_map
         )
 
     return list(set(antinode_positions))
 
+def count_distinct_antinodes(
+        file_path: Path = DATA_PATH_01,
+        find_antinode_func: Callable[[Coordinate, Coordinate], Iterator[Coordinate]] = find_antinode_pair
+) -> int:
+    file_data = stream_lines_from_file(file_path)
+    position_char_stream = stream_position_and_char(file_data)
+
+    antinode_count = len(
+        find_all_antinodes(position_char_stream, find_antinode_func)
+    )
+
+    return antinode_count
+
 
 def exercise_one(file_path: Path = DATA_PATH_01):
-    file_data = stream_lines_from_file(file_path)
-    pos_char_stream = stream_position_and_char(file_data)
-    return len(find_all_antinodes(pos_char_stream, calc_antinode_pair))
+    return count_distinct_antinodes(
+        file_path=file_path,
+        find_antinode_func=find_antinode_pair
+    )
 
 
 def exercise_two(file_path: Path = DATA_PATH_01) -> int:
-    file_data = stream_lines_from_file(file_path)
-    pos_char_stream = stream_position_and_char(file_data)
-    return len(find_all_antinodes(pos_char_stream, antinodes_with_resonance))
+    return count_distinct_antinodes(
+        file_path=file_path,
+        find_antinode_func=find_antinodes_with_resonance
+    )
 
 
 if __name__ == "__main__":
