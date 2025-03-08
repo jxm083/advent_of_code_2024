@@ -46,17 +46,18 @@ def distance(point0: Coordinate, point1: Coordinate) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
 
 def find_antenna_groups(grid_stream: Iterable[CharData]) -> Iterator[Iterator[Coordinate]]:
-    antenna_positions: dict[str, list[Coordinate]] = dict()
+    antenna_groups: dict[str, list[Coordinate]] = dict()
+    only_antennas_grid = filter(lambda x: x[2] != ".", grid_stream)
 
-    for line_num, col_num, char in grid_stream:
+    for line_num, col_num, char in only_antennas_grid:
         current_position = (line_num, col_num)
 
-        if char not in antenna_positions:
-            antenna_positions[char] = [current_position]
+        if char not in antenna_groups:
+            antenna_groups[char] = [current_position]
         else:
-            antenna_positions[char].append(current_position)
+            antenna_groups[char].append(current_position)
 
-    for group in antenna_positions.values():
+    for group in antenna_groups.values():
         yield iter(group)
      
 

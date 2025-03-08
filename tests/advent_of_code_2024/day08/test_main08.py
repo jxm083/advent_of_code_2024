@@ -9,6 +9,7 @@ from advent.advent_of_code_2024.day08.main import (
     CharData,
     distance,
     stream_position_and_char,
+    find_antenna_groups,
     calc_antinode_pair,
     find_all_antinodes,
     add_tuple,
@@ -72,6 +73,29 @@ def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
         list(filter(filter_periods, [datum for datum in example_data_stream]))
         == reference_antenna_data
     )
+
+def test_find_antenna_groups(example_data_stream: Iterator[CharData]):
+    reference_antenna_data = [
+        # Frequency 0 antennas
+        [
+            (1, 8),
+            (2, 5),
+            (3, 7),
+            (4, 4)
+        ],
+        # Frequency A antennas
+        [
+            (5, 6),
+            (8, 8),
+            (9, 9)
+        ]
+    ]
+
+    test = find_antenna_groups(example_data_stream)
+
+    for test_group, ref_group in zip(test, reference_antenna_data):
+        assert set(list(test_group)) == set(ref_group)
+
 
 
 def test_calc_antinode_pair():
