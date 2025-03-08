@@ -133,9 +133,9 @@ def find_all_antinodes(
     
     antenna_groups = find_antenna_groups(positions_of_characters)
 
-    for positions in antenna_positions.items():
+    for group in antenna_groups:
         antinode_positions += antinodes_from_antenna_group(
-            positions,
+            group,
             antinode_func,
             position_in_current_map
         )
