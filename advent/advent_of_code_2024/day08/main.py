@@ -39,20 +39,15 @@ def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
 def find_antenna_groups(
     grid_stream: Iterable[CharData],
 ) -> Iterator[Iterator[Coordinate]]:
-    antenna_groups: dict[str, list[Coordinate]] = dict()
     only_antennas_grid = filter(lambda x: x[2] != ".", grid_stream)
+    antenna_groups_with_key = groupby(
+        sorted(only_antennas_grid, key=itemgetter(2)),
+        itemgetter(2)
+    )
 
-    for line_num, col_num, char in only_antennas_grid:
-        current_position = (line_num, col_num)
-
-        if char not in antenna_groups:
-            antenna_groups[char] = [current_position]
-        else:
-            antenna_groups[char].append(current_position)
-
-    for group in antenna_groups.values():
-        yield iter(group)
-
+    for _, group in antenna_groups_with_key:
+        group_coordinates = (x[:2] for x in group)
+        yield group_coordinates
 
 
 # better find_antinode_pair
