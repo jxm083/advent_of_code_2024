@@ -1,6 +1,4 @@
-from functools import partial
-from itertools import count, islice, combinations, starmap, chain, groupby
-from math import sqrt
+from itertools import combinations, groupby
 from pathlib import Path
 from typing import Callable, Iterator, TypeAlias, Iterable
 from operator import itemgetter
@@ -94,16 +92,6 @@ def antinodes_from_antenna_group(
         antinodes += takewhile_pair(in_map, antinode_func(*pair))
 
     return filter(in_map, antinodes)
-
-
-def position_in_map(
-    position: Coordinate, num_map_lines: int, num_map_cols: int
-) -> bool:
-    in_map: bool = False
-    if 0 <= position[0] < num_map_lines and 0 <= position[1] < num_map_cols:
-        in_map = True
-
-    return in_map
 
 
 def create_grid_boundary_filter(

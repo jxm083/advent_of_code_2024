@@ -1,6 +1,5 @@
 import pytest
 from typing import Iterator
-from math import sqrt
 from pathlib import Path
 from itertools import islice
 
