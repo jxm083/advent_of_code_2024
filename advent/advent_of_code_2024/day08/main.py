@@ -53,13 +53,6 @@ def find_antenna_groups(
     for group in antenna_groups.values():
         yield iter(group)
 
-    antenna_groups_with_key = groupby(
-        sorted(only_antennas_grid),
-        itemgetter(2)
-    )
-
-    for _, group in antenna_groups_with_key:
-        yield (x[:2] for x in group)
 
 
 # better find_antinode_pair
