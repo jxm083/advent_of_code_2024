@@ -45,7 +45,10 @@ def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
 def distance(point0: Coordinate, point1: Coordinate) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
 
-def find_antenna_groups(grid_stream: Iterable[CharData]) -> Iterator[Iterator[Coordinate]]:
+
+def find_antenna_groups(
+    grid_stream: Iterable[CharData],
+) -> Iterator[Iterator[Coordinate]]:
     antenna_groups: dict[str, list[Coordinate]] = dict()
     only_antennas_grid = filter(lambda x: x[2] != ".", grid_stream)
 
@@ -59,7 +62,6 @@ def find_antenna_groups(grid_stream: Iterable[CharData]) -> Iterator[Iterator[Co
 
     for group in antenna_groups.values():
         yield iter(group)
-     
 
 
 # better calc_antinode_pair
@@ -90,19 +92,17 @@ def antinodes_from_antenna_group(
     antinode_func: Callable[
         [Coordinate, Coordinate], Iterator[Coordinate]
     ] = calc_antinode_pair,
-    in_map: Callable[[Coordinate], bool] = lambda x: True
+    in_map: Callable[[Coordinate], bool] = lambda x: True,
 ) -> Iterator[Coordinate]:
     pairs = combinations(antenna_positions, 2)
 
     antinodes: list[Coordinate] = []
 
     for pair in pairs:
-        antinodes += takewhile_pair(
-            in_map,
-            antinode_func(*pair)
-        )
+        antinodes += takewhile_pair(in_map, antinode_func(*pair))
 
     return filter(in_map, antinodes)
+
 
 def position_in_map(
     position: Coordinate, num_map_lines: int, num_map_cols: int
@@ -113,7 +113,10 @@ def position_in_map(
 
     return in_map
 
-def create_grid_boundary_filter(grid: Iterable[CharData]) -> Callable[[Coordinate], bool]:
+
+def create_grid_boundary_filter(
+    grid: Iterable[CharData],
+) -> Callable[[Coordinate], bool]:
     max_line_index = max([line_ind for line_ind, _, _ in grid])
     max_col_index = max([col_ind for _, col_ind, _ in grid])
 
@@ -133,26 +136,17 @@ def find_all_antinodes(
         [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
     ] = calc_antinode_pair,
 ) -> list[Coordinate]:
+    positions_of_characters: list[CharData] = list(pos_char_stream)
+
+    antenna_groups = find_antenna_groups(positions_of_characters)
 
     antinode_positions: list[Coordinate] = list()
-
-    positions_of_characters: list[CharData] = list(pos_char_stream)
-    max_line_num = max([line_num for line_num, _, _ in positions_of_characters])
-    max_col_num = max([col_num for _, col_num, _ in positions_of_characters])
-
-    position_in_current_map = partial(
-        position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
-    )
-    
-    antenna_groups = find_antenna_groups(positions_of_characters)
+    position_in_current_map = create_grid_boundary_filter(positions_of_characters)
 
     for group in antenna_groups:
         antinode_positions += antinodes_from_antenna_group(
-            group,
-            antinode_func,
-            position_in_current_map
+            group, antinode_func, position_in_current_map
         )
-
 
     return list(set(antinode_positions))
 
