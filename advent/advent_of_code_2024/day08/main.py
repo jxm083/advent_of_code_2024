@@ -2,7 +2,7 @@ from functools import partial
 from itertools import count, islice, combinations, starmap, chain, groupby
 from math import sqrt
 from pathlib import Path
-from typing import Callable, Iterator, TypeAlias
+from typing import Callable, Iterator, TypeAlias, Iterable
 from operator import itemgetter
 
 from advent.common.data_stream import stream_lines_from_file
@@ -44,6 +44,21 @@ def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
 
 def distance(point0: Coordinate, point1: Coordinate) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
+
+def find_antenna_groups(grid_stream: Iterable[CharData]) -> Iterator[Iterator[Coordinate]]:
+    antenna_positions: dict[str, list[Coordinate]] = dict()
+
+    for line_num, col_num, char in grid_stream:
+        current_position = (line_num, col_num)
+
+        if char not in antenna_positions:
+            antenna_positions[char] = [current_position]
+        else:
+            antenna_positions[char].append(current_position)
+
+    for group in antenna_positions.values():
+        yield iter(group)
+     
 
 
 # better calc_antinode_pair
@@ -104,7 +119,7 @@ def find_all_antinodes(
         [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
     ] = calc_antinode_pair,
 ) -> list[Coordinate]:
-    antenna_positions: dict[str, list[Coordinate]] = dict()
+
     antinode_positions: list[Coordinate] = list()
 
     positions_of_characters: list[CharData] = list(pos_char_stream)
@@ -115,20 +130,9 @@ def find_all_antinodes(
         position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
     )
     
-    positions_of_antennas = filter(
-        lambda x: x[2] != ".",
-        positions_of_characters
-    )
+    antenna_groups = find_antenna_groups(positions_of_characters)
 
-    for line_num, col_num, char in positions_of_antennas:
-        current_position = (line_num, col_num)
-
-        if char not in antenna_positions:
-            antenna_positions[char] = [current_position]
-        else:
-            antenna_positions[char].append(current_position)
-
-    for _, positions in antenna_positions.items():
+    for positions in antenna_positions.items():
         antinode_positions += antinodes_from_antenna_group(
             positions,
             antinode_func,
