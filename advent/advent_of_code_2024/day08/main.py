@@ -5,23 +5,19 @@ from pathlib import Path
 from typing import Callable, Iterator, TypeAlias, Iterable
 from operator import itemgetter
 
-from advent.common.data_stream import stream_lines_from_file
+from advent.common.data_stream import (
+    stream_lines_from_file,
+    stream_position_and_char,
+    CharData,
+)
 from advent.common.extended_itertools import diverging_count, takewhile_pair
 
 DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
 DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
-CharData: TypeAlias = tuple[int, int, str]
+
 Coordinate: TypeAlias = tuple[int, ...]
-
-
-def stream_position_and_char(
-    file_data: Iterator[str],
-) -> Iterator[CharData]:  # TODO: move this to common
-    for line_num, line in enumerate(file_data):
-        for char_num, char in enumerate(line):
-            yield (line_num, char_num, char)
 
 
 def add_tuple(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
@@ -40,10 +36,6 @@ def tuple_displacement(
 
 def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
     return tuple([factor * a for a in my_tuple])
-
-
-def distance(point0: Coordinate, point1: Coordinate) -> float:
-    return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
 
 
 def find_antenna_groups(

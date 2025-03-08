@@ -7,7 +7,6 @@ from itertools import islice
 from advent.advent_of_code_2024.day08.main import (
     Coordinate,
     CharData,
-    distance,
     stream_position_and_char,
     find_antenna_groups,
     calc_antinode_pair,
@@ -74,28 +73,19 @@ def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
         == reference_antenna_data
     )
 
+
 def test_find_antenna_groups(example_data_stream: Iterator[CharData]):
     reference_antenna_data = [
         # Frequency 0 antennas
-        [
-            (1, 8),
-            (2, 5),
-            (3, 7),
-            (4, 4)
-        ],
+        [(1, 8), (2, 5), (3, 7), (4, 4)],
         # Frequency A antennas
-        [
-            (5, 6),
-            (8, 8),
-            (9, 9)
-        ]
+        [(5, 6), (8, 8), (9, 9)],
     ]
 
     test = find_antenna_groups(example_data_stream)
 
     for test_group, ref_group in zip(test, reference_antenna_data):
         assert set(list(test_group)) == set(ref_group)
-
 
 
 def test_calc_antinode_pair():
@@ -125,10 +115,6 @@ def test_find_all_antinodes(example_data_stream: Iterator[CharData]):
     )
 
     assert set(find_all_antinodes(example_data_stream)) == reference_antinode_positions
-
-
-def test_distance():
-    assert distance((0, 0), (2, 2)) == sqrt(8)
 
 
 def test_add_tuple():
