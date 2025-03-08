@@ -74,17 +74,19 @@ def antinodes_from_antenna_group(
     antinode_func: Callable[
         [Coordinate, Coordinate], Iterator[Coordinate]
     ] = calc_antinode_pair,
-    in_map: Callable[[Coordinate], bool] = lambda x: True,
+    in_map: Callable[[Coordinate], bool] = lambda x: True
 ) -> Iterator[Coordinate]:
     pairs = combinations(antenna_positions, 2)
 
     antinodes: list[Coordinate] = []
 
     for pair in pairs:
-        antinodes += takewhile_pair(in_map, antinode_func(*pair))
+        antinodes += takewhile_pair(
+            in_map,
+            antinode_func(*pair)
+        )
 
     return filter(in_map, antinodes)
-
 
 def position_in_map(
     position: Coordinate, num_map_lines: int, num_map_cols: int
@@ -112,8 +114,11 @@ def find_all_antinodes(
     position_in_current_map = partial(
         position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
     )
-
-    positions_of_antennas = filter(lambda x: x[2] != ".", positions_of_characters)
+    
+    positions_of_antennas = filter(
+        lambda x: x[2] != ".",
+        positions_of_characters
+    )
 
     for line_num, col_num, char in positions_of_antennas:
         current_position = (line_num, col_num)
@@ -125,8 +130,11 @@ def find_all_antinodes(
 
     for _, positions in antenna_positions.items():
         antinode_positions += antinodes_from_antenna_group(
-            positions, antinode_func, position_in_current_map
+            positions,
+            antinode_func,
+            position_in_current_map
         )
+
 
     return list(set(antinode_positions))
 
