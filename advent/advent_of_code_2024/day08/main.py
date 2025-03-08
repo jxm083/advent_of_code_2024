@@ -113,6 +113,19 @@ def position_in_map(
 
     return in_map
 
+def create_grid_boundary_filter(grid: Iterable[CharData]) -> Callable[[Coordinate], bool]:
+    max_line_index = max([line_ind for line_ind, _, _ in grid])
+    max_col_index = max([col_ind for _, col_ind, _ in grid])
+
+    def grid_boundary_filter(position: Coordinate) -> bool:
+        in_grid = False
+        if 0 <= position[0] <= max_line_index and 0 <= position[1] <= max_col_index:
+            in_grid = True
+
+        return in_grid
+
+    return grid_boundary_filter
+
 
 def find_all_antinodes(
     pos_char_stream: Iterator[CharData],
