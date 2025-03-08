@@ -15,6 +15,7 @@ EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
 DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
 
+# TODO: change to Vector class?
 Coordinate: TypeAlias = tuple[int, ...]
 
 
@@ -50,7 +51,7 @@ def find_antenna_groups(
         yield group_coordinates
 
 
-# better find_antinode_pair
+# TODO: better find_antinode_pair, maybe using vectors
 def find_antinode_pair(
     position0: tuple[int, ...], position1: tuple[int, ...]
 ) -> Iterator[tuple[int, ...]]:
@@ -119,6 +120,7 @@ def find_all_antinodes(
     antinode_positions: list[Coordinate] = list()
     position_in_current_map = create_grid_boundary_filter(positions_of_characters)
 
+    # TODO: make functional (for kicks)
     for group in antenna_groups:
         antinode_positions += find_antinodes_from_antenna_group(
             group, antinode_func, position_in_current_map
