@@ -6,6 +6,7 @@ from typing import Callable, Iterator, TypeAlias
 from operator import itemgetter
 
 from advent.common.data_stream import stream_lines_from_file
+from advent.common.extended_itertools import diverging_count, takewhile_pair
 
 DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
@@ -41,7 +42,7 @@ def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
     return tuple([factor * a for a in my_tuple])
 
 
-def distance(point0: tuple[int, int], point1: tuple[int, int]) -> float:
+def distance(point0: Coordinate, point1: Coordinate) -> float:
     return sqrt((point1[1] - point0[1]) ** 2 + (point1[0] - point0[0]) ** 2)
 
 
@@ -59,13 +60,6 @@ def calc_antinode_pair(
         yield antinode
 
 
-
-
-
-
-
-
-
 def antinodes_with_resonance(
     antenna0_position: tuple[int, ...], antenna1_position: tuple[int, ...]
 ) -> Iterator[tuple[int, ...]]:
@@ -76,22 +70,24 @@ def antinodes_with_resonance(
 
 
 def antinodes_from_antenna_group(
-    antenna_positions: list[Coordinate],
-    antinode_func: Callable[[Coordinate, Coordinate], Iterator[Coordinate]] = calc_antinode_pair,
-    max_length: int | None = None
+    antenna_positions: Iterator[Coordinate],
+    antinode_func: Callable[
+        [Coordinate, Coordinate], Iterator[Coordinate]
+    ] = calc_antinode_pair,
+    in_map: Callable[[Coordinate], bool] = lambda x: True,
 ) -> Iterator[Coordinate]:
     pairs = combinations(antenna_positions, 2)
-    def limited_antinodes_func(coor0: Coordinate, coor1: Coordinate) -> Iterator[Coordinate]:
-        return islice(antinode_func(coor0, coor1), max_length)
 
-    antinodes = chain(starmap(limited_antinodes_func, pairs))
+    antinodes: list[Coordinate] = []
 
-    return antinodes
+    for pair in pairs:
+        antinodes += takewhile_pair(in_map, antinode_func(*pair))
 
+    return filter(in_map, antinodes)
 
 
 def position_in_map(
-    position: tuple[int, int], num_map_lines: int, num_map_cols: int
+    position: Coordinate, num_map_lines: int, num_map_cols: int
 ) -> bool:
     in_map: bool = False
     if 0 <= position[0] < num_map_lines and 0 <= position[1] < num_map_cols:
@@ -105,38 +101,34 @@ def find_all_antinodes(
     antinode_func: Callable[
         [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
     ] = calc_antinode_pair,
-) -> list[tuple[int, int]]:
-    antenna_positions: dict[str, list[tuple[int, int]]] = dict()
-    antinode_positions: list[tuple[int, int]] = list()
+) -> list[Coordinate]:
+    antenna_positions: dict[str, list[Coordinate]] = dict()
+    antinode_positions: list[Coordinate] = list()
 
     positions_of_characters: list[CharData] = list(pos_char_stream)
     max_line_num = max([line_num for line_num, _, _ in positions_of_characters])
     max_col_num = max([col_num for _, col_num, _ in positions_of_characters])
-    max_dimension = max(max_line_num, max_col_num)
 
     position_in_current_map = partial(
         position_in_map, num_map_lines=max_line_num + 1, num_map_cols=max_col_num + 1
     )
 
-    for line_num, col_num, char in positions_of_characters:
+    positions_of_antennas = filter(lambda x: x[2] != ".", positions_of_characters)
+
+    for line_num, col_num, char in positions_of_antennas:
         current_position = (line_num, col_num)
 
-        if char != ".":
-            if char not in antenna_positions:
-                antenna_positions[char] = [current_position]
-            else:
-                for position in antenna_positions[char]:
-                    antinode_positions += list(
-                        islice(
-                            antinode_func(current_position, position), 2 * max_dimension
-                        )
-                    )  # type: ignore
+        if char not in antenna_positions:
+            antenna_positions[char] = [current_position]
+        else:
+            antenna_positions[char].append(current_position)
 
-                antenna_positions[char].append(current_position)
+    for _, positions in antenna_positions.items():
+        antinode_positions += antinodes_from_antenna_group(
+            positions, antinode_func, position_in_current_map
+        )
 
-    filtered_positions = list(filter(position_in_current_map, set(antinode_positions)))
-
-    return filtered_positions
+    return list(set(antinode_positions))
 
 
 def exercise_one(file_path: Path = DATA_PATH_01):
@@ -158,11 +150,9 @@ if __name__ == "__main__":
     pos_char_stream = stream_position_and_char(file_data)
 
     antenna_positions_sorted_by_freq = groupby(
-        sorted(
-            filter(lambda x: x[2] != ".", pos_char_stream),
-            key=itemgetter(2)), 
-        itemgetter(2)
+        sorted(filter(lambda x: x[2] != ".", pos_char_stream), key=itemgetter(2)),
+        itemgetter(2),
     )
 
     for key, group in antenna_positions_sorted_by_freq:
-        print(key, list(group))
+        print(key, list(map(lambda x: x[:2], group)))

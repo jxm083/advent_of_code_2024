@@ -2,8 +2,7 @@ import pytest
 from typing import Iterator
 from math import sqrt
 from pathlib import Path
-from itertools import islice, groupby
-from operator import itemgetter
+from itertools import islice
 
 from advent.advent_of_code_2024.day08.main import (
     Coordinate,
@@ -16,7 +15,6 @@ from advent.advent_of_code_2024.day08.main import (
     negate_tuple,
     tuple_displacement,
     mul_tuple,
-    diverging_count,
     antinodes_with_resonance,
     exercise_one,
     exercise_two,
@@ -48,6 +46,7 @@ def example_data_file(tmp_path: Path, example_data: Iterator[str]):
     fake_file.write_text(data)
     return fake_file
 
+
 @pytest.fixture
 def example_data_stream(example_data: Iterator[str]):
     return stream_position_and_char(example_data)
@@ -63,6 +62,7 @@ def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
         (8, 8, "A"),
         (9, 9, "A"),
     ]
+
     # a happy-path test of the stream, looking at only
     # a subset of the data
     def filter_periods(datum: tuple[int, int, str]) -> bool:
@@ -81,7 +81,7 @@ def test_calc_antinode_pair():
 
 
 def test_find_all_antinodes(example_data_stream: Iterator[CharData]):
-    reference_antinode_positions: set[tuple[int, int]] = set(
+    reference_antinode_positions: set[Coordinate] = set(
         [
             (2, 4),
             (11, 10),
@@ -124,13 +124,6 @@ def test_mul_tuple():
     assert mul_tuple(5, (2, 11)) == (10, 55)
 
 
-
-
-
-
-
-
-
 def test_antinodes_with_resonance():
     antenna0_position = (0, 0)
     antenna1_position = (2, 3)
@@ -142,9 +135,6 @@ def test_antinodes_with_resonance():
     )
 
     assert list(islice(calc_antinodes, 5)) == reference_antinodes
-
-def test_antinodes_from_antenna_group(example_data_stream: Iterator[CharData]):
-    antenna_a_positions = groupby(example_data_stream, itemgetter(2))
 
 
 def test_exercise_one_example(example_data_file: Path):
