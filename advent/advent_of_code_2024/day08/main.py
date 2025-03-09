@@ -1,4 +1,5 @@
-from itertools import combinations, groupby
+from itertools import combinations, groupby, starmap
+from functools import partial
 from pathlib import Path
 from typing import Callable, Iterator, TypeAlias, Iterable
 from operator import itemgetter
@@ -8,7 +9,7 @@ from advent.common.data_stream import (
     stream_position_and_char,
     CharData,
 )
-from advent.common.extended_itertools import diverging_count, takewhile_pair
+from advent.common.extended_itertools import diverging_count, takewhile_pair, flatten
 
 DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
@@ -42,8 +43,7 @@ def find_antenna_groups(
 ) -> Iterator[Iterator[Coordinate]]:
     only_antennas_grid = filter(lambda x: x[2] != ".", grid_stream)
     antenna_groups_with_key = groupby(
-        sorted(only_antennas_grid, key=itemgetter(2)),
-        itemgetter(2)
+        sorted(only_antennas_grid, key=itemgetter(2)), itemgetter(2)
     )
 
     for _, group in antenna_groups_with_key:
@@ -117,44 +117,44 @@ def find_all_antinodes(
 
     antenna_groups = find_antenna_groups(positions_of_characters)
 
-    antinode_positions: list[Coordinate] = list()
     position_in_current_map = create_grid_boundary_filter(positions_of_characters)
 
-    antinode_positions = 
+    find_antinodes_from_antenna_group_partial = partial(
+        find_antinodes_from_antenna_group,
+        antinode_func=antinode_func,
+        in_map=position_in_current_map,
+    )
 
-    # TODO: make functional (for kicks)
-    # for group in antenna_groups:
-    #     antinode_positions += find_antinodes_from_antenna_group(
-    #         group, antinode_func, position_in_current_map
-    #     )
+    antinode_positions = flatten(
+        find_antinodes_from_antenna_group_partial(group) for group in antenna_groups
+    )
 
     return list(set(antinode_positions))
 
+
 def count_distinct_antinodes(
-        file_path: Path = DATA_PATH_01,
-        find_antinode_func: Callable[[Coordinate, Coordinate], Iterator[Coordinate]] = find_antinode_pair
+    file_path: Path = DATA_PATH_01,
+    find_antinode_func: Callable[
+        [Coordinate, Coordinate], Iterator[Coordinate]
+    ] = find_antinode_pair,
 ) -> int:
     file_data = stream_lines_from_file(file_path)
     position_char_stream = stream_position_and_char(file_data)
 
-    antinode_count = len(
-        find_all_antinodes(position_char_stream, find_antinode_func)
-    )
+    antinode_count = len(find_all_antinodes(position_char_stream, find_antinode_func))
 
     return antinode_count
 
 
 def exercise_one(file_path: Path = DATA_PATH_01):
     return count_distinct_antinodes(
-        file_path=file_path,
-        find_antinode_func=find_antinode_pair
+        file_path=file_path, find_antinode_func=find_antinode_pair
     )
 
 
 def exercise_two(file_path: Path = DATA_PATH_01) -> int:
     return count_distinct_antinodes(
-        file_path=file_path,
-        find_antinode_func=find_antinodes_with_resonance
+        file_path=file_path, find_antinode_func=find_antinodes_with_resonance
     )
 
 
