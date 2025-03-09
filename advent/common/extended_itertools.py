@@ -1,4 +1,4 @@
-from itertools import count
+from itertools import count, chain
 from typing import TypeVar, Iterator, Callable, Iterable
 
 T = TypeVar("T")
@@ -43,3 +43,7 @@ def takewhile_pair(
 
     if predicate(last_item):
         yield last_item
+
+
+def flatten(list_of_lists: Iterable[Iterable[T]]) -> Iterable[T]:
+    return chain.from_iterable(list_of_lists)

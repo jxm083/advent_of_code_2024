@@ -120,11 +120,13 @@ def find_all_antinodes(
     antinode_positions: list[Coordinate] = list()
     position_in_current_map = create_grid_boundary_filter(positions_of_characters)
 
+    antinode_positions = 
+
     # TODO: make functional (for kicks)
-    for group in antenna_groups:
-        antinode_positions += find_antinodes_from_antenna_group(
-            group, antinode_func, position_in_current_map
-        )
+    # for group in antenna_groups:
+    #     antinode_positions += find_antinodes_from_antenna_group(
+    #         group, antinode_func, position_in_current_map
+    #     )
 
     return list(set(antinode_positions))
 
