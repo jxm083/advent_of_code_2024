@@ -15,9 +15,9 @@ def test_magnitude(vec0: Vector):
     assert vec0.magnitude() == 14
 
 def test_vector_get_item(vec0: Vector):
-    assert vec0[0] == 1
-    assert vec0[1] == 2
-    assert vec0[2] == 3
+    assert vec0[0] == 1 # type: ignore
+    assert vec0[1] == 2 # type: ignore
+    assert vec0[2] == 3 # type: ignore
 
 def test_vector_not_equal(vec0: Vector, vec1: Vector):
     assert vec0 != vec1
@@ -49,7 +49,7 @@ def test_negative(vec0: Vector):
 if __name__ == "__main__":
     vec_0 = Vector([1, 2, 3])
     vec_1 = Vector([-1, -2 , -3])
-    vec_0[0] = 2
+    vec_0[0] = 2 # type: ignore
     print(vec_0)
 
     print(1 + 3)
