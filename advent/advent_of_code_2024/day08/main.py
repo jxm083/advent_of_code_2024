@@ -23,8 +23,9 @@ def find_antenna_groups(
     antenna_groups_with_key = groupby(
         sorted(only_antennas_grid, key=itemgetter(1)), itemgetter(1)
     )
+    antenna_groups_with_key_debug = list(antenna_groups_with_key)
 
-    for _, group in antenna_groups_with_key:
+    for _, group in list(antenna_groups_with_key):
         group_coordinates = (x.position for x in group)
         yield group_coordinates
 

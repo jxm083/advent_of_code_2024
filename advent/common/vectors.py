@@ -5,7 +5,7 @@ from collections.abc import Sequence
 T = TypeVar('T')
 
 @dataclass(frozen=True)
-class Vector(Sequence): # type: ignore
+class Vector(Sequence[int]): # type: ignore
     components: list[int]
     def __len__(self):
         return len(self.components)

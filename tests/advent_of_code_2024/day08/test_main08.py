@@ -10,10 +10,6 @@ from advent.advent_of_code_2024.day08.main import (
     find_antenna_groups,
     find_antinode_pair,
     find_all_antinodes,
-    add_tuple,
-    negate_tuple,
-    tuple_displacement,
-    mul_tuple,
     find_antinodes_with_resonance,
     exercise_one,
     exercise_two,
@@ -90,27 +86,32 @@ def test_find_antenna_groups(example_data_stream: Iterator[CharPosition]):
 def test_find_antinode_pair():
     # added set so as to not test the order in which
     # the coordinates are returned
-    assert set(find_antinode_pair(Vector([1, 8]), Vector([2, 5]))) == set((Vector([0, 11]), Vector([3, 2])))
+    assert set(find_antinode_pair(Vector([1, 8]), Vector([2, 5]))) == set(
+        (Vector([0, 11]), Vector([3, 2]))
+    )
 
 
 def test_find_all_antinodes(example_data_stream: Iterator[CharPosition]):
-    reference_antinode_positions: set[Coordinate] = set(
-        [
-            (2, 4),
-            (11, 10),
-            (7, 7),
-            (4, 9),
-            (2, 10),
-            (7, 0),
-            (5, 1),
-            (0, 6),
-            (10, 10),
-            (5, 6),
-            (3, 2),
-            (6, 3),
-            (1, 3),
-            (0, 11),
-        ]
+    reference_antinode_positions: set[Vector] = set(
+        map(
+            lambda x: Vector(list(x)),
+            [
+                (2, 4),
+                (11, 10),
+                (7, 7),
+                (4, 9),
+                (2, 10),
+                (7, 0),
+                (5, 1),
+                (0, 6),
+                (10, 10),
+                (5, 6),
+                (3, 2),
+                (6, 3),
+                (1, 3),
+                (0, 11),
+            ],
+        )
     )
 
     assert set(find_all_antinodes(example_data_stream)) == reference_antinode_positions
@@ -120,7 +121,9 @@ def test_find_antinodes_with_resonance():
     antenna0_position = Vector([0, 0])
     antenna1_position = Vector([2, 3])
 
-    reference_antinodes = list(map(lambda x: Vector(list(x)), [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)]))
+    reference_antinodes = list(
+        map(lambda x: Vector(list(x)), [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)])
+    )
 
     calc_antinodes = find_antinodes_with_resonance(
         antenna0_position=antenna0_position, antenna1_position=antenna1_position
