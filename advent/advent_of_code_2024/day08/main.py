@@ -16,28 +16,6 @@ EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
 DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
 
-# TODO: change to Vector class?
-# Coordinate: TypeAlias = tuple[int, ...]
-
-
-def add_tuple(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
-    return tuple([a + b for a, b in zip(tuple0, tuple1)])
-
-
-def negate_tuple(my_tuple: tuple[int, ...]) -> tuple[int, ...]:
-    return tuple([-a for a in my_tuple])
-
-
-def tuple_displacement(
-    tuple0: tuple[int, ...], tuple1: tuple[int, ...]
-) -> tuple[int, ...]:
-    return add_tuple(tuple1, negate_tuple(tuple0))
-
-
-def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
-    return tuple([factor * a for a in my_tuple])
-
-
 def find_antenna_groups(
     grid_stream: Iterable[CharPosition],
 ) -> Iterator[Iterator[Vector]]:

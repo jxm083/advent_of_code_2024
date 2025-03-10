@@ -76,9 +76,9 @@ def test_stream_position_and_char(example_data_stream: Iterator[CharPosition]):
 def test_find_antenna_groups(example_data_stream: Iterator[CharPosition]):
     reference_antenna_data = [
         # Frequency 0 antennas
-        [(1, 8), (2, 5), (3, 7), (4, 4)],
+        [Vector([1, 8]), Vector([2, 5]), Vector([3, 7]), Vector([4, 4])],
         # Frequency A antennas
-        [(5, 6), (8, 8), (9, 9)],
+        [Vector([5, 6]), Vector([8, 8]), Vector([9, 9])],
     ]
 
     test = find_antenna_groups(example_data_stream)
@@ -116,28 +116,11 @@ def test_find_all_antinodes(example_data_stream: Iterator[CharPosition]):
     assert set(find_all_antinodes(example_data_stream)) == reference_antinode_positions
 
 
-def test_add_tuple():
-    assert add_tuple((1, 3), (5, 8)) == (6, 11)
-    assert add_tuple((-10, 3), (6, -1)) == (-4, 2)
-
-
-def test_negate_tuple():
-    assert negate_tuple((4, 8)) == (-4, -8)
-
-
-def test_tuple_displacement():
-    assert tuple_displacement((0, 0), (3, 4)) == (3, 4)
-
-
-def test_mul_tuple():
-    assert mul_tuple(5, (2, 11)) == (10, 55)
-
-
 def test_find_antinodes_with_resonance():
-    antenna0_position = (0, 0)
-    antenna1_position = (2, 3)
+    antenna0_position = Vector([0, 0])
+    antenna1_position = Vector([2, 3])
 
-    reference_antinodes = [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)]
+    reference_antinodes = list(map(lambda x: Vector(list(x)), [(0, 0), (-2, -3), (2, 3), (-4, -6), (4, 6)]))
 
     calc_antinodes = find_antinodes_with_resonance(
         antenna0_position=antenna0_position, antenna1_position=antenna1_position
