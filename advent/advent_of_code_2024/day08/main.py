@@ -23,9 +23,8 @@ def find_antenna_groups(
     antenna_groups_with_key = groupby(
         sorted(only_antennas_grid, key=itemgetter(1)), itemgetter(1)
     )
-    antenna_groups_with_key_debug = list(antenna_groups_with_key)
 
-    for _, group in list(antenna_groups_with_key):
+    for _, group in antenna_groups_with_key:
         group_coordinates = (x.position for x in group)
         yield group_coordinates
 
@@ -141,9 +140,12 @@ if __name__ == "__main__":
     pos_char_stream = stream_position_and_char(EXAMPLE_DATA_PATH)
 
     antenna_positions_sorted_by_freq = groupby(
-        sorted(filter(lambda x: x.char != ".", pos_char_stream), key=itemgetter(2)),
-        itemgetter(2),
+        sorted(filter(lambda x: x.char != ".", pos_char_stream), key=itemgetter(1)),
+        itemgetter(1),
     )
+
+    duplicates = [Vector([1, 2]), Vector([1, 2])]
+    print(set(duplicates))
 
     for key, group in antenna_positions_sorted_by_freq:
         print(key, list(map(lambda x: x[:2], group)))
