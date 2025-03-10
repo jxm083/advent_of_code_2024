@@ -52,7 +52,7 @@ def find_antinodes_with_resonance(
 
 
 def find_antinodes_from_antenna_group(
-    antenna_positions: Iterator[Vector],
+    antenna_positions: Iterable[Vector],
     antinode_func: Callable[
         [Vector, Vector], Iterator[Vector]
     ] = find_antinode_pair,
