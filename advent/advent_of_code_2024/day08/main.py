@@ -1,14 +1,14 @@
 from itertools import combinations, groupby
 from functools import partial
 from pathlib import Path
-from typing import Callable, Iterator, TypeAlias, Iterable
+from typing import Callable, Iterator, Iterable
 from operator import itemgetter
 
 from advent.common.data_stream import (
-    stream_lines_from_file,
     stream_position_and_char,
-    CharData,
+    CharPosition,
 )
+from advent.common.vectors import Vector
 from advent.common.extended_itertools import diverging_count, takewhile_pair, flatten
 
 DATA_DIR = Path(__file__).parent
@@ -17,7 +17,7 @@ DATA_PATH_01 = DATA_DIR / "data_01.txt"
 
 
 # TODO: change to Vector class?
-Coordinate: TypeAlias = tuple[int, ...]
+# Coordinate: TypeAlias = tuple[int, ...]
 
 
 def add_tuple(tuple0: tuple[int, ...], tuple1: tuple[int, ...]) -> tuple[int, ...]:
@@ -39,51 +39,50 @@ def mul_tuple(factor: int, my_tuple: tuple[int, ...]) -> tuple[int, ...]:
 
 
 def find_antenna_groups(
-    grid_stream: Iterable[CharData],
-) -> Iterator[Iterator[Coordinate]]:
-    only_antennas_grid = filter(lambda x: x[2] != ".", grid_stream)
+    grid_stream: Iterable[CharPosition],
+) -> Iterator[Iterator[Vector]]:
+    only_antennas_grid = filter(lambda x: x.char != ".", grid_stream)
     antenna_groups_with_key = groupby(
-        sorted(only_antennas_grid, key=itemgetter(2)), itemgetter(2)
+        sorted(only_antennas_grid, key=itemgetter(1)), itemgetter(1)
     )
 
     for _, group in antenna_groups_with_key:
-        group_coordinates = (x[:2] for x in group)
+        group_coordinates = (x.position for x in group)
         yield group_coordinates
 
 
-# TODO: better find_antinode_pair, maybe using vectors
 def find_antinode_pair(
-    position0: tuple[int, ...], position1: tuple[int, ...]
-) -> Iterator[tuple[int, ...]]:
-    displacement_01 = tuple_displacement(position0, position1)
+    position0: Vector, position1: Vector
+) -> Iterator[Vector]:
+    displacement_01 = position1 - position0
 
-    antinode0 = [pos + 2 * dis for pos, dis in zip(position0, displacement_01)]
-    antinode1 = [pos - dis for pos, dis in zip(position0, displacement_01)]
+    antinode0 = position0 + 2 * displacement_01
+    antinode1 = position0 - displacement_01
 
-    antinode_positions = map(tuple, [antinode0, antinode1])
+    antinode_positions = (antinode0, antinode1)
     for antinode in antinode_positions:
         yield antinode
 
 
 def find_antinodes_with_resonance(
-    antenna0_position: tuple[int, ...], antenna1_position: tuple[int, ...]
-) -> Iterator[tuple[int, ...]]:
-    displacement = tuple_displacement(antenna0_position, antenna1_position)
+    antenna0_position: Vector, antenna1_position: Vector
+) -> Iterator[Vector]:
+    displacement = antenna1_position - antenna0_position
 
     for n in diverging_count():
-        yield add_tuple(antenna0_position, mul_tuple(n, displacement))
+        yield antenna0_position + n * displacement
 
 
 def find_antinodes_from_antenna_group(
-    antenna_positions: Iterator[Coordinate],
+    antenna_positions: Iterator[Vector],
     antinode_func: Callable[
-        [Coordinate, Coordinate], Iterator[Coordinate]
+        [Vector, Vector], Iterator[Vector]
     ] = find_antinode_pair,
-    in_map: Callable[[Coordinate], bool] = lambda x: True,
-) -> Iterator[Coordinate]:
+    in_map: Callable[[Vector], bool] = lambda x: True,
+) -> Iterator[Vector]:
     pairs = combinations(antenna_positions, 2)
 
-    antinodes: list[Coordinate] = []
+    antinodes: list[Vector] = []
 
     for pair in pairs:
         antinodes += takewhile_pair(in_map, antinode_func(*pair))
@@ -92,14 +91,14 @@ def find_antinodes_from_antenna_group(
 
 
 def create_grid_boundary_filter(
-    grid: Iterable[CharData],
-) -> Callable[[Coordinate], bool]:
-    max_line_index = max([line_ind for line_ind, _, _ in grid])
-    max_col_index = max([col_ind for _, col_ind, _ in grid])
+    grid: Iterable[CharPosition],
+) -> Callable[[Vector], bool]:
+    max_line_index = max([position[0] for position, _ in grid]) # type: ignore
+    max_col_index = max([position[1] for position, _ in grid]) # type: ignore
 
-    def grid_boundary_filter(position: Coordinate) -> bool:
+    def grid_boundary_filter(position: Vector) -> bool:
         in_grid = False
-        if 0 <= position[0] <= max_line_index and 0 <= position[1] <= max_col_index:
+        if 0 <= position[0] <= max_line_index and 0 <= position[1] <= max_col_index: # type: ignore
             in_grid = True
 
         return in_grid
@@ -108,12 +107,12 @@ def create_grid_boundary_filter(
 
 
 def find_all_antinodes(
-    pos_char_stream: Iterator[CharData],
+    pos_char_stream: Iterator[CharPosition],
     antinode_func: Callable[
-        [tuple[int, ...], tuple[int, ...]], Iterator[tuple[int, ...]]
+        [Vector, Vector], Iterator[Vector]
     ] = find_antinode_pair,
-) -> list[Coordinate]:
-    positions_of_characters: list[CharData] = list(pos_char_stream)
+) -> list[Vector]:
+    positions_of_characters: list[CharPosition] = list(pos_char_stream)
 
     antenna_groups = find_antenna_groups(positions_of_characters)
 
@@ -135,11 +134,10 @@ def find_all_antinodes(
 def count_distinct_antinodes(
     file_path: Path = DATA_PATH_01,
     find_antinode_func: Callable[
-        [Coordinate, Coordinate], Iterator[Coordinate]
+        [Vector, Vector], Iterator[Vector]
     ] = find_antinode_pair,
 ) -> int:
-    file_data = stream_lines_from_file(file_path)
-    position_char_stream = stream_position_and_char(file_data)
+    position_char_stream = stream_position_and_char(file_path)
 
     antinode_count = len(find_all_antinodes(position_char_stream, find_antinode_func))
 
@@ -161,11 +159,10 @@ def exercise_two(file_path: Path = DATA_PATH_01) -> int:
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
     print(f"exercise two: {exercise_two()}")
-    file_data = stream_lines_from_file(EXAMPLE_DATA_PATH)
-    pos_char_stream = stream_position_and_char(file_data)
+    pos_char_stream = stream_position_and_char(EXAMPLE_DATA_PATH)
 
     antenna_positions_sorted_by_freq = groupby(
-        sorted(filter(lambda x: x[2] != ".", pos_char_stream), key=itemgetter(2)),
+        sorted(filter(lambda x: x.char != ".", pos_char_stream), key=itemgetter(2)),
         itemgetter(2),
     )
 

@@ -3,9 +3,9 @@ from typing import Iterator
 from pathlib import Path
 from itertools import islice
 
+from advent.common.vectors import Vector
+from advent.common.data_stream import CharPosition
 from advent.advent_of_code_2024.day08.main import (
-    Coordinate,
-    CharData,
     stream_position_and_char,
     find_antenna_groups,
     find_antinode_pair,
@@ -47,25 +47,25 @@ def example_data_file(tmp_path: Path, example_data: Iterator[str]):
 
 
 @pytest.fixture
-def example_data_stream(example_data: Iterator[str]):
-    return stream_position_and_char(example_data)
+def example_data_stream(example_data_file: Path):
+    return stream_position_and_char(example_data_file)
 
 
-def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
+def test_stream_position_and_char(example_data_stream: Iterator[CharPosition]):
     reference_antenna_data = [
-        (1, 8, "0"),
-        (2, 5, "0"),
-        (3, 7, "0"),
-        (4, 4, "0"),
-        (5, 6, "A"),
-        (8, 8, "A"),
-        (9, 9, "A"),
+        CharPosition(Vector([1, 8]), "0"),
+        CharPosition(Vector([2, 5]), "0"),
+        CharPosition(Vector([3, 7]), "0"),
+        CharPosition(Vector([4, 4]), "0"),
+        CharPosition(Vector([5, 6]), "A"),
+        CharPosition(Vector([8, 8]), "A"),
+        CharPosition(Vector([9, 9]), "A"),
     ]
 
     # a happy-path test of the stream, looking at only
     # a subset of the data
-    def filter_periods(datum: tuple[int, int, str]) -> bool:
-        return datum[2] != "."
+    def filter_periods(datum: CharPosition) -> bool:
+        return datum.char != "."
 
     assert (
         list(filter(filter_periods, [datum for datum in example_data_stream]))
@@ -73,7 +73,7 @@ def test_stream_position_and_char(example_data_stream: Iterator[CharData]):
     )
 
 
-def test_find_antenna_groups(example_data_stream: Iterator[CharData]):
+def test_find_antenna_groups(example_data_stream: Iterator[CharPosition]):
     reference_antenna_data = [
         # Frequency 0 antennas
         [(1, 8), (2, 5), (3, 7), (4, 4)],
@@ -90,10 +90,10 @@ def test_find_antenna_groups(example_data_stream: Iterator[CharData]):
 def test_find_antinode_pair():
     # added set so as to not test the order in which
     # the coordinates are returned
-    assert set(find_antinode_pair((1, 8), (2, 5))) == set(((0, 11), (3, 2)))
+    assert set(find_antinode_pair(Vector([1, 8]), Vector([2, 5]))) == set((Vector([0, 11]), Vector([3, 2])))
 
 
-def test_find_all_antinodes(example_data_stream: Iterator[CharData]):
+def test_find_all_antinodes(example_data_stream: Iterator[CharPosition]):
     reference_antinode_positions: set[Coordinate] = set(
         [
             (2, 4),
