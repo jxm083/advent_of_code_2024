@@ -5,7 +5,7 @@ from collections.abc import Sequence
 T = TypeVar('T')
 
 @dataclass(frozen=True)
-class Vector(Sequence[int]): # type: ignore
+class Vector(Sequence[int]):
     components: list[int]
     def __len__(self):
         return len(self.components)
@@ -38,6 +38,9 @@ class Vector(Sequence[int]): # type: ignore
                 equal = False
 
         return equal
+
+    def __hash__(self): # type:ignore
+        return hash(tuple(self.components))
 
     def __neg__(self):
         return Vector([-x for x in self.components])
