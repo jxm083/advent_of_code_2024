@@ -64,6 +64,7 @@ def find_antinodes_from_antenna_group(
     return filter(in_map, antinodes)
 
 
+# TODO: best practices? factory?
 def create_grid_boundary_filter(
     grid: list[CharPosition],
 ) -> Callable[[Vector], bool]:
