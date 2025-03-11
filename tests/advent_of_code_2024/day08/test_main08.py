@@ -108,30 +108,28 @@ def test_find_antinodes_with_resonance():
     assert list(islice(calc_antinodes, 5)) == reference_antinodes
 
 
+def test_create_grid_boundary_filter(example_data_stream: Iterator[CharPosition]):
+    example_data_list = list(example_data_stream)
+    in_map = create_grid_boundary_filter(example_data_list)
+
+    assert in_map(Vector([0, 5])) is True
+    assert in_map(Vector([99, 99])) is False
+
+
 def test_find_antinodes_from_antenna_group(example_data_stream: Iterator[CharPosition]):
     example_data = list(example_data_stream)
     antenna_group_stream = find_antenna_groups(example_data)
     antenna_groups = [list(group) for group in antenna_group_stream]
     in_map = create_grid_boundary_filter(example_data)
-    antinodes_from_A = list(find_antinodes_from_antenna_group(
-        antenna_groups[1],
-        find_antinode_pair,
-        in_map
-    ))
-    
-    reference_antinodes = list(map(Vector,
-                                   [
-                                       [3, 2],
-                                       [11, 10],
-                                       [7, 7],
-                                       [10, 10],
-                                       [1, 3]
-                                   ]))
+    antinodes_from_A = list(
+        find_antinodes_from_antenna_group(antenna_groups[1], find_antinode_pair, in_map)
+    )
+
+    reference_antinodes = list(
+        map(Vector, [[2, 4], [11, 10], [7, 7], [10, 10], [1, 3]])
+    )
 
     assert set(antinodes_from_A) == set(reference_antinodes)
-
-    
-
 
 
 def test_find_all_antinodes(example_data_stream: Iterator[CharPosition]):

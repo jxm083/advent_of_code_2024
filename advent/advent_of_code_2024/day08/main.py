@@ -29,9 +29,7 @@ def find_antenna_groups(
         yield group_coordinates
 
 
-def find_antinode_pair(
-    position0: Vector, position1: Vector
-) -> Iterator[Vector]:
+def find_antinode_pair(position0: Vector, position1: Vector) -> Iterator[Vector]:
     displacement_01 = position1 - position0
 
     antinode0 = position0 + 2 * displacement_01
@@ -53,9 +51,7 @@ def find_antinodes_with_resonance(
 
 def find_antinodes_from_antenna_group(
     antenna_positions: Iterable[Vector],
-    antinode_func: Callable[
-        [Vector, Vector], Iterator[Vector]
-    ] = find_antinode_pair,
+    antinode_func: Callable[[Vector, Vector], Iterator[Vector]] = find_antinode_pair,
     in_map: Callable[[Vector], bool] = lambda x: True,
 ) -> Iterator[Vector]:
     pairs = combinations(antenna_positions, 2)
@@ -69,14 +65,14 @@ def find_antinodes_from_antenna_group(
 
 
 def create_grid_boundary_filter(
-    grid: Iterable[CharPosition],
+    grid: list[CharPosition],
 ) -> Callable[[Vector], bool]:
-    max_line_index = max([position[0] for position, _ in grid]) # type: ignore
-    max_col_index = max([position[1] for position, _ in grid]) # type: ignore
+    max_line_index = max([position[0] for position, _ in grid])  # type: ignore
+    max_col_index = max([position[1] for position, _ in grid])  # type: ignore
 
     def grid_boundary_filter(position: Vector) -> bool:
         in_grid = False
-        if 0 <= position[0] <= max_line_index and 0 <= position[1] <= max_col_index: # type: ignore
+        if 0 <= position[0] <= max_line_index and 0 <= position[1] <= max_col_index:  # type: ignore
             in_grid = True
 
         return in_grid
@@ -86,9 +82,7 @@ def create_grid_boundary_filter(
 
 def find_all_antinodes(
     pos_char_stream: Iterator[CharPosition],
-    antinode_func: Callable[
-        [Vector, Vector], Iterator[Vector]
-    ] = find_antinode_pair,
+    antinode_func: Callable[[Vector, Vector], Iterator[Vector]] = find_antinode_pair,
 ) -> list[Vector]:
     positions_of_characters: list[CharPosition] = list(pos_char_stream)
 
