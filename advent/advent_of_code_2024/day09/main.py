@@ -1,13 +1,18 @@
 from itertools import count, batched
-from typing import Iterator, NamedTuple
+from typing import Iterator, NamedTuple, Iterable
 from pathlib import Path
 
+from advent.common.extended_itertools import flatten
 from advent.common.data_stream import stream_lines_from_file
 
 
 class BlockSizeAndID(NamedTuple):
     file_block_size: int
     free_block_size: int
+    id: int
+
+class MemoryBlock(NamedTuple):
+    contents: str
     id: int
 
 
@@ -28,18 +33,22 @@ def fill_in_pair(
     return pair
 
 
-def create_file_block(block_size: int, block_id: int) -> str:
-    return block_size * str(block_id)
+def create_file_block(block_size: int, block_id: int) -> list[str]:
+    return block_size * [str(block_id)]
 
 
-def create_free_block(block_size: int) -> str:
-    return block_size * "."
+def create_free_block(block_size: int) -> list[str]:
+    return block_size * ["."]
 
 
-def create_file_free_pair(block_data: BlockSizeAndID) -> str:
+def create_file_free_pair(block_data: BlockSizeAndID) -> list[str]:
     file_block = create_file_block(block_data.file_block_size, block_data.id)
     free_block = create_free_block(block_data.free_block_size)
     return file_block + free_block
+
+
+def parse_block_pairs_to_memory_stream(block_pairs: Iterable[BlockSizeAndID]) -> Iterator[MemoryBlock]:
+    pass
 
 
 def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
@@ -50,21 +59,21 @@ def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
 
 
 # TODO: type-safe way to generalize this with default value?
-def expand_diskmap(diskmap: str) -> str:
-    return str.join("", map(create_file_free_pair, stream_diskmap(diskmap)))
+def expand_diskmap(diskmap: str) -> Iterable[str]:
+    return flatten(map(create_file_free_pair, stream_diskmap(diskmap)))
 
 def stream_character_and_id(string: str) -> Iterator[tuple[int, str]]:
     for num, char in enumerate(string):
         yield (num, char)
     
 
-def compress_expanded_diskmap(expanded_diskmap: str) -> str:
+def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
     indexed_diskmap = [(ind, char) for ind, char in zip(count(), expanded_diskmap)]
     reversed_indexed_diskmap = iter(indexed_diskmap[::-1])
     compressed_diskmap = str()
     back_ind: int | None = None
     for ind, char in indexed_diskmap:
-        if ind == back_ind:
+        if back_ind is not None and back_ind <= ind:
             break
         elif char != ".":
             compressed_diskmap += char
@@ -72,11 +81,11 @@ def compress_expanded_diskmap(expanded_diskmap: str) -> str:
             back_char = "."
             while back_char == ".":
                 back_ind, back_char = next(reversed_indexed_diskmap)
-                if back_ind == ind:
+                if back_ind <= ind:
                     break
             compressed_diskmap += back_char
 
-    return compressed_diskmap.ljust(len(expanded_diskmap), ".")
+    return compressed_diskmap.ljust(len(indexed_diskmap), ".")
 
 
     
@@ -94,13 +103,10 @@ def find_checksum_from_compressed_diskmap(compressed_diskmap: str) -> int:
 
 
 def find_checksum(diskmap: str) -> int:
-    return find_checksum_from_compressed_diskmap(
-        compress_expanded_diskmap(
-            expand_diskmap(
-                diskmap
-            )
-        )
-    )
+    expanded_diskmap = expand_diskmap(diskmap)
+    compressed_diskmap = compress_expanded_diskmap(expanded_diskmap)
+    checksum = find_checksum_from_compressed_diskmap(compressed_diskmap)
+    return checksum
 
 
 def exercise_one(file_path: Path = DATA_PATH) -> int:

@@ -64,12 +64,13 @@ def test_stream_diskmap():
 
 
 def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
-    reference = "0..111....22222"
-    expanded_diskmap = expand_diskmap("12345")
+    reference = [char for char in "0..111....22222"]
+    expanded_diskmap = list(expand_diskmap("12345"))
     assert expanded_diskmap == reference
 
-    reference = "00...111...2...333.44.5555.6666.777.888899"
-    expanded_diskmap = expand_diskmap(example_disk_map)
+    reference_string = "00...111...2...333.44.5555.6666.777.888899"
+    reference = [char for char in reference_string]
+    expanded_diskmap = list(expand_diskmap(example_disk_map))
     assert expanded_diskmap == reference
 
 def test_compress_expanded_diskmap(example_expanded_disk_map: str, example_compressed_disk_map: str):
