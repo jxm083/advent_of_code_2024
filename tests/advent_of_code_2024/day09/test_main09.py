@@ -1,12 +1,14 @@
 import pytest
 from pathlib import Path
 from re import search, findall
+from itertools import starmap
 
 from advent.advent_of_code_2024.day09.main import (
+    BlockSizeAndID,
     create_file_block,
     create_free_block,
     create_file_free_pair,
-    parse_diskmap,
+    stream_diskmap,
     expand_diskmap,
     compress_expanded_diskmap,
     find_checksum_from_compressed_diskmap,
@@ -52,22 +54,24 @@ def test_create_free_block():
 
 
 def test_create_file_free_pair():
-    assert create_file_free_pair("3", "5", 1) == "111....."
+    assert create_file_free_pair(BlockSizeAndID(3, 5, 1)) == "111....."
 
 
-def test_parse_diskmap():
-    reference = [(0, "1", "2"), (1, "3", "4"), (2, "5", "0")]
-    assert list(parse_diskmap("12345")) == reference
+def test_stream_diskmap():
+    reference = list(starmap(BlockSizeAndID, [(1, 2, 0), (3, 4, 1), (5, 0, 2)]))
+    test = list(stream_diskmap("12345"))
+
+    assert test == reference
 
 
 def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
-    reference = ["0..", "111....", "22222"]
+    reference = "0..111....22222"
     expanded_diskmap = expand_diskmap("12345")
-    assert list(expanded_diskmap) == reference
+    assert expanded_diskmap == reference
 
-    reference = ["00...", "111...", "2...", "333.", "44.", "5555.", "6666.", "777.", "8888", "99"]
+    reference = "00...111...2...333.44.5555.6666.777.888899"
     expanded_diskmap = expand_diskmap(example_disk_map)
-    assert list(expanded_diskmap) == reference
+    assert expanded_diskmap == reference
 
 def test_compress_expanded_diskmap(example_expanded_disk_map: str, example_compressed_disk_map: str):
     assert compress_expanded_diskmap(example_expanded_disk_map) == example_compressed_disk_map
