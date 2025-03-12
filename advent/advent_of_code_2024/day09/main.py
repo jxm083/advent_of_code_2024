@@ -1,5 +1,5 @@
-from itertools import groupby, count, batched
-from typing import Iterator, TypeAlias, NamedTuple
+from itertools import count, batched
+from typing import Iterator, NamedTuple
 from pathlib import Path
 
 from advent.common.data_stream import stream_lines_from_file

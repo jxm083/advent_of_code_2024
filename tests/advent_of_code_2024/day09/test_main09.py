@@ -1,6 +1,5 @@
 import pytest
 from pathlib import Path
-from re import search, findall
 from itertools import starmap
 
 from advent.advent_of_code_2024.day09.main import (
@@ -88,3 +87,7 @@ def test_find_checksum(example_disk_map: str, example_final_checksum: int):
 
 def test_exercise_one_example(example_data_file: Path, example_final_checksum: int):
     assert exercise_one(example_data_file) == example_final_checksum
+
+
+def test_exercise_one_real():
+    assert exercise_one() > 90328963761
