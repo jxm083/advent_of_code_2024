@@ -5,7 +5,7 @@ from re import search, findall
 from advent.advent_of_code_2024.day09.main import (
     create_file_block,
     create_free_block,
-    parse_file_free_pair,
+    create_file_free_pair,
     expand_diskmap,
     find_checksum_from_expanded_diskmap,
     find_checksum,
@@ -49,8 +49,8 @@ def test_create_free_block():
     assert create_free_block(5) == "....."
 
 
-def test_parse_file_free_pair():
-    assert parse_file_free_pair("3", "5", 1) == "111....."
+def test_create_file_free_pair():
+    assert create_file_free_pair("3", "5", 1) == "111....."
 
 
 def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
