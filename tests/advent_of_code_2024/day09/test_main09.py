@@ -1,11 +1,13 @@
 import pytest
 from pathlib import Path
+from re import search, findall
 
 from advent.advent_of_code_2024.day09.main import (
     create_file_block,
     create_free_block,
     parse_file_free_pair,
     expand_diskmap,
+    find_checksum_from_expanded_diskmap,
     find_checksum,
     exercise_one,
 )
@@ -48,15 +50,23 @@ def test_create_free_block():
 
 
 def test_parse_file_free_pair():
-    assert parse_file_free_pair(3, 5, 1) == "111....."
+    assert parse_file_free_pair("3", "5", 1) == "111....."
 
 
 def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
+    reference_components = findall(r"(.+\.*)", example_expanded_disk_map)
+    for expansion, component in zip(expand_diskmap(expand_diskmap), reference_components):
+        assert expansion == component
+
     assert expand_diskmap(example_disk_map) == example_expanded_disk_map
 
 
-def test_find_checksum(example_expanded_disk_map: str, example_final_checksum: int):
-    assert find_checksum(example_expanded_disk_map) == example_final_checksum
+def test_find_checksum_from_expanded_diskmap(example_expanded_disk_map: str, example_final_checksum: int):
+    assert find_checksum_from_expanded_diskmap(example_expanded_disk_map) == example_final_checksum
+
+
+def test_find_checksum(example_compressed_disk_map: str, example_final_checksum: int):
+    assert find_checksum(example_compressed_disk_map) == example_final_checksum
 
 
 def test_exercise_one_example(example_data_file: Path, example_final_checksum: int):
