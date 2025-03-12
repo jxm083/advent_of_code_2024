@@ -82,8 +82,8 @@ def test_find_checksum_from_compressed_diskmap(example_compressed_disk_map: str,
     assert find_checksum_from_compressed_diskmap(example_compressed_disk_map) == example_final_checksum
 
 
-def test_find_checksum(example_compressed_disk_map: str, example_final_checksum: int):
-    assert find_checksum(example_compressed_disk_map) == example_final_checksum
+def test_find_checksum(example_disk_map: str, example_final_checksum: int):
+    assert find_checksum(example_disk_map) == example_final_checksum
 
 
 def test_exercise_one_example(example_data_file: Path, example_final_checksum: int):

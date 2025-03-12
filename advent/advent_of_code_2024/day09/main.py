@@ -13,6 +13,7 @@ class BlockSizeAndID(NamedTuple):
 
 DATA_DIR = Path(__file__).parent
 EXAMPLE_DATA_PATH = DATA_DIR / "data_example.txt"
+DATA_PATH = DATA_DIR / "data.txt"
 
 
 # TODO: type-safe way to generalize this with default value?
@@ -92,15 +93,24 @@ def find_checksum_from_compressed_diskmap(compressed_diskmap: str) -> int:
     return total
 
 
-def find_checksum():
-    pass
+def find_checksum(diskmap: str) -> int:
+    return find_checksum_from_compressed_diskmap(
+        compress_expanded_diskmap(
+            expand_diskmap(
+                diskmap
+            )
+        )
+    )
 
 
-def exercise_one():
-    pass
+def exercise_one(file_path: Path = DATA_PATH) -> int:
+    file_stream = stream_lines_from_file(file_path)
+    diskmap = next(file_stream)
+    return find_checksum(diskmap)
 
 
 if __name__ == "__main__":
+    print(f"exercise one: {exercise_one()}")
     EXAMPLE_DISKMAP = "2333133121414131402"
     print(compress_expanded_diskmap("0..111....22222"))
     # print(list(parse_diskmap_pairs(EXAMPLE_DISKMAP)))
