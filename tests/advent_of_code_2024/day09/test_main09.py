@@ -6,8 +6,10 @@ from advent.advent_of_code_2024.day09.main import (
     create_file_block,
     create_free_block,
     create_file_free_pair,
+    parse_diskmap,
     expand_diskmap,
-    find_checksum_from_expanded_diskmap,
+    compress_expanded_diskmap,
+    find_checksum_from_compressed_diskmap,
     find_checksum,
     exercise_one,
 )
@@ -53,16 +55,27 @@ def test_create_file_free_pair():
     assert create_file_free_pair("3", "5", 1) == "111....."
 
 
+def test_parse_diskmap():
+    reference = [(0, "1", "2"), (1, "3", "4"), (2, "5", "0")]
+    assert list(parse_diskmap("12345")) == reference
+
+
 def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
-    reference_components = findall(r"(.+\.*)", example_expanded_disk_map)
-    for expansion, component in zip(expand_diskmap(expand_diskmap), reference_components):
-        assert expansion == component
+    reference = ["0..", "111....", "22222"]
+    expanded_diskmap = expand_diskmap("12345")
+    assert list(expanded_diskmap) == reference
 
-    assert expand_diskmap(example_disk_map) == example_expanded_disk_map
+    reference = ["00...", "111...", "2...", "333.", "44.", "5555.", "6666.", "777.", "8888", "99"]
+    expanded_diskmap = expand_diskmap(example_disk_map)
+    assert list(expanded_diskmap) == reference
+
+def test_compress_expanded_diskmap(example_expanded_disk_map: str, example_compressed_disk_map: str):
+    assert compress_expanded_diskmap(example_expanded_disk_map) == example_compressed_disk_map
 
 
-def test_find_checksum_from_expanded_diskmap(example_expanded_disk_map: str, example_final_checksum: int):
-    assert find_checksum_from_expanded_diskmap(example_expanded_disk_map) == example_final_checksum
+
+def test_find_checksum_from_compressed_diskmap(example_compressed_disk_map: str, example_final_checksum: int):
+    assert find_checksum_from_compressed_diskmap(example_compressed_disk_map) == example_final_checksum
 
 
 def test_find_checksum(example_compressed_disk_map: str, example_final_checksum: int):

@@ -25,6 +25,12 @@ def parse_diskmap_pairs(diskmap: str):
     for file_block_size, free_block_size in diskmap_pairs:
         yield file_block_size, free_block_size
 
+def parse_diskmap(diskmap: str):
+    diskmap_stream = parse_diskmap_pairs(diskmap)
+
+    for id, (file_size, free_size) in enumerate(diskmap_stream):
+        yield id, file_size, free_size
+
 
 def create_file_free_pair(
     file_block_size: str, free_block_size: str, block_id: int
@@ -39,8 +45,21 @@ def expand_diskmap(diskmap: str):
         yield create_file_free_pair(file_block_size, free_block_size, block_id)
         
 
-def find_checksum_from_expanded_diskmap():
-    pass
+def compress_expanded_diskmap(expanded_diskmap: str) -> str:
+    reversed_diskmap = expanded_diskmap.strip(".")[::-1]
+    compressed_diskmap = str()
+    for char in expanded_diskmap:
+        pass
+
+# TODO: do with filter, map, and count
+def find_checksum_from_compressed_diskmap(compressed_diskmap: str) -> int:
+    total = 0
+    for id, char in enumerate(compressed_diskmap):
+        if char == ".":
+            break
+        else:
+            total += id * int(char)
+    return total
 
 def find_checksum():
     pass
@@ -53,4 +72,5 @@ def exercise_one():
 if __name__ == "__main__":
     EXAMPLE_DISKMAP = "2333133121414131402"
     print(list(parse_diskmap_pairs(EXAMPLE_DISKMAP)))
-    # print(list(expand_diskmap(EXAMPLE_DISKMAP + "0")))
+    print(list(expand_diskmap(EXAMPLE_DISKMAP)))
+    print(list(expand_diskmap("12345")))
