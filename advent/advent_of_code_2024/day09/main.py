@@ -59,20 +59,6 @@ def translate_file_id_stream_to_memory_string(id_stream: Iterable[int | None]) -
     return "".join(map(translate_file_id_to_str, id_stream))
 
 
-def create_file_block(block_size: int, block_id: int) -> list[str]:
-    return block_size * [str(block_id)]
-
-
-def create_free_block(block_size: int) -> list[str]:
-    return block_size * ["."]
-
-
-def create_file_free_pair(block_data: BlockSizeAndID) -> list[str]:
-    file_block = create_file_block(block_data.file_block_size, block_data.id)
-    free_block = create_free_block(block_data.free_block_size)
-    return file_block + free_block
-
-
 def parse_block_pairs_to_memory_stream(block_pairs: Iterable[BlockSizeAndID]) -> Iterator[MemoryBlock]:
     pass
 

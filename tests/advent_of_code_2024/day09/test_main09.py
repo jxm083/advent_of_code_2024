@@ -117,21 +117,6 @@ def test_translate_file_id_stream_to_memory_string(example_expanded_memory: Iter
     )
     assert test_str == reference_str
 
-    
-
-
-def test_create_file_block():
-    assert create_file_block(3, 1) == "111"
-
-
-def test_create_free_block():
-    assert create_free_block(5) == "....."
-
-
-def test_create_file_free_pair():
-    assert create_file_free_pair(BlockSizeAndID(3, 5, 1)) == "111....."
-
-
 def test_stream_diskmap():
     reference = list(starmap(BlockSizeAndID, [(1, 2, 0), (3, 4, 1), (5, 0, 2)]))
     test = list(stream_diskmap("12345"))
