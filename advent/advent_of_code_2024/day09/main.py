@@ -11,8 +11,12 @@ class BlockSizeAndID(NamedTuple):
     file_id: int
 
 
-class MemoryBlock(NamedTuple):
+class IndexedMemoryUnit(NamedTuple):
     memory_ind: int
+    file_id: int | None
+
+class MemoryBlock(NamedTuple):
+    size: int
     file_id: int | None
 
 

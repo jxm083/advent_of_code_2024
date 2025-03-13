@@ -6,7 +6,7 @@ from typing import Iterable
 from advent.common.extended_itertools import flatten
 from advent.advent_of_code_2024.day09.main import (
     BlockSizeAndID,
-    MemoryBlock,
+    IndexedMemoryUnit,
     translate_memory_string_to_file_id_stream,
     translate_file_id_to_str,
     translate_file_id_stream_to_memory_string,
@@ -146,8 +146,8 @@ def simple_block_pair_stream() -> Iterable[BlockSizeAndID]:
     return stream
 
 @pytest.fixture
-def simple_expanded_indexed_memory_stream() -> Iterable[MemoryBlock]:
-    stream = starmap(MemoryBlock, [
+def simple_expanded_indexed_memory_stream() -> Iterable[IndexedMemoryUnit]:
+    stream = starmap(IndexedMemoryUnit, [
         (0, 0),
         (1, None),
         (2, None),
@@ -167,8 +167,8 @@ def simple_expanded_indexed_memory_stream() -> Iterable[MemoryBlock]:
     return stream
 
 @pytest.fixture
-def simple_compressed_indexed_memory_stream() -> Iterable[MemoryBlock]:
-    stream = starmap(MemoryBlock, [
+def simple_compressed_indexed_memory_stream() -> Iterable[IndexedMemoryUnit]:
+    stream = starmap(IndexedMemoryUnit, [
         (0, 0),
         (1, 2),
         (2, 2),
@@ -204,7 +204,7 @@ def test_parse_block_pair():
         None,
     ]
 
-def test_parse_block_pairs_to_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[MemoryBlock]):
+def test_parse_block_pairs_to_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[IndexedMemoryUnit]):
     reference = (m.file_id for m in simple_expanded_indexed_memory_stream)
     test = parse_block_pairs_to_memory_stream(
         simple_block_pair_stream
