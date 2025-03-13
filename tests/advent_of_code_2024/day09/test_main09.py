@@ -10,11 +10,11 @@ from advent.advent_of_code_2024.day09.main import (
     translate_memory_string_to_file_id_stream,
     translate_file_id_to_str,
     translate_file_id_stream_to_memory_string,
-    stream_diskmap,
+    stream_block_pairs,
     parse_block_pair,
     parse_block_pairs_to_memory_stream,
     compress_memory_stream,
-    find_checksum_from_compressed_memory_stream,
+    find_checksum_from_memory_stream,
     find_checksum,
     exercise_one,
 )
@@ -92,6 +92,20 @@ def example_compressed_memory() -> Iterable[int | None]:
     )
     return memory
 
+@pytest.fixture
+def example_fp_compressed_memory_string() -> str:
+    return  "00992111777.44.333....5555.6666.....8888.."
+
+@pytest.fixture
+def example_fp_compressed_memory(example_fp_compressed_memory_string: str) -> Iterable[int | None]:
+    memory = translate_memory_string_to_file_id_stream(
+        example_fp_compressed_memory_string
+    )
+    return memory
+
+@pytest.fixture
+def example_fp_final_checksum() -> int:
+    return 2858
 
 @pytest.fixture
 def example_final_checksum() -> int:
@@ -175,8 +189,8 @@ def simple_compressed_indexed_memory_stream() -> Iterable[MemoryBlock]:
 
 
 
-def test_stream_diskmap(simple_diskmap: str, simple_block_pair_stream: Iterable[BlockSizeAndID]):
-    test = list(stream_diskmap(simple_diskmap))
+def test_stream_block_pairs(simple_diskmap: str, simple_block_pair_stream: Iterable[BlockSizeAndID]):
+    test = list(stream_block_pairs(simple_diskmap))
     reference = list(simple_block_pair_stream)
     assert test == reference
 
@@ -208,13 +222,22 @@ def test_compress_memory_stream(
     assert reference == test
 
 
-def test_find_checksum_from_compressed_memory_stream(
+def test_find_checksum_from_memory_stream(
     example_compressed_memory: Iterable[int | None], example_final_checksum: int
 ):
     assert (
-        find_checksum_from_compressed_memory_stream(example_compressed_memory)
+        find_checksum_from_memory_stream(example_compressed_memory)
         == example_final_checksum
     )
+
+def test_find_checksum_from_memory_stream_part_2(
+        example_fp_compressed_memory: Iterable[int | None],
+        example_fp_final_checksum: int
+):
+    test = find_checksum_from_memory_stream(
+        example_fp_compressed_memory
+    )
+    assert example_fp_final_checksum == test
 
 
 def test_find_checksum(example_disk_map: str, example_final_checksum: int):

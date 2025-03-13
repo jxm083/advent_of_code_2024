@@ -70,7 +70,7 @@ def parse_block_pair(block_pair: BlockSizeAndID) -> Iterable[int | None]:
     return chain(file_block, memory_block)
 
 
-def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
+def stream_block_pairs(diskmap: str) -> Iterator[BlockSizeAndID]:
     diskmap_pairs = map(fill_in_pair, batched(map(int, diskmap), n=2))
 
     for id, (file_size, free_size) in enumerate(diskmap_pairs):
@@ -106,13 +106,13 @@ def compress_memory_stream(memory_stream: Iterable[int | None]) -> Iterable[int 
 
 
 # TODO: do with filter, map, and count
-def find_checksum_from_compressed_memory_stream(
+def find_checksum_from_memory_stream(
     compressed_memory_stream: Iterable[int | None],
 ) -> int:
     total = 0
     for ind, file_id in enumerate(compressed_memory_stream):
         if file_id is None:
-            break
+            pass
         else:
             total += ind * file_id
 
@@ -120,10 +120,10 @@ def find_checksum_from_compressed_memory_stream(
 
 
 def find_checksum(diskmap: str) -> int:
-    diskmap_stream = stream_diskmap(diskmap)
+    diskmap_stream = stream_block_pairs(diskmap)
     memory_stream = parse_block_pairs_to_memory_stream(diskmap_stream)
     compressed_memory_stream = compress_memory_stream(memory_stream)
-    return find_checksum_from_compressed_memory_stream(compressed_memory_stream)
+    return find_checksum_from_memory_stream(compressed_memory_stream)
 
 
 def exercise_one(file_path: Path = DATA_PATH) -> int:
