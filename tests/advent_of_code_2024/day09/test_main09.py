@@ -199,13 +199,13 @@ def test_parse_block_pairs_to_indexed_memory_stream(simple_block_pair_stream: It
 
 
 
-def test_compress_expanded_memory_stream(
+def test_compress_memory_stream(
     example_expanded_memory: Iterable[int | None],
     example_compressed_memory: Iterable[int | None]
 ):
-    reference = example_compressed_memory
-    test = compress_memory_stream(example_expanded_memory)
-    assert list(reference) == list(test)
+    reference = list(example_compressed_memory)
+    test = list(compress_memory_stream(example_expanded_memory))
+    assert reference == test
 
 
 def test_find_checksum_from_compressed_memory_stream(
@@ -226,4 +226,4 @@ def test_exercise_one_example(example_data_file: Path, example_final_checksum: i
 
 
 def test_exercise_one_real():
-    assert exercise_one() > 90328963761
+    assert exercise_one() == 6378826667552

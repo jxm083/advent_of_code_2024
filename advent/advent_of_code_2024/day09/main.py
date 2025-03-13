@@ -77,6 +77,7 @@ def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
     for id, (file_size, free_size) in enumerate(diskmap_pairs):
         yield BlockSizeAndID(file_size, free_size, id)
 
+
 def parse_block_pairs_to_indexed_memory_stream(
     block_pairs: Iterable[BlockSizeAndID],
 ) -> Iterator[int | None]:
@@ -86,35 +87,29 @@ def parse_block_pairs_to_indexed_memory_stream(
             yield unit
 
 
-
-def fill_memory(current_memory_cell: tuple[int, int], fill_values: Iterable[tuple[int, int]]) -> int | None:
-    fill_index, fill_value = next(fill_values)
-    if current_memory_cell[0] >= fill
-
-
 def compress_memory_stream(memory_stream: Iterable[int | None]) -> Iterable[int | None]:
     indexed_memory = list(enumerate(memory_stream))
-    fill_values = filter(lambda x: x[1] is not None, iter(indexed_memory[::-1]))
-    compressed_diskmap = str()
-    back_ind: int | None = None
-    for ind, char in indexed_diskmap:
-        if back_ind is not None and back_ind <= ind:
-            break
-        elif char != ".":
-            compressed_diskmap += char
-        else:
-            back_char = "."
-            while back_char == ".":
-                back_ind, back_char = next(reversed_indexed_diskmap)
-                if back_ind <= ind:
-                    break
-            compressed_diskmap += back_char
+    fill_values = filter(lambda x: x[1] is not None, indexed_memory[::-1])
 
-    return compressed_diskmap.ljust(len(indexed_diskmap), ".")
+    fill_index = len(indexed_memory)
+    for index, value in indexed_memory:
+        if index >= fill_index:
+            yield None
+        elif value is not None:
+            yield value
+        else:
+            try:
+                fill_index, fill_value = next(fill_values)
+                yield fill_value
+            except StopIteration:
+                print("Ran out of fill values!")
+                break
 
 
 # TODO: do with filter, map, and count
-def find_checksum_from_compressed_memory_stream(compressed_memory_stream: Iterable[int | None]) -> int:
+def find_checksum_from_compressed_memory_stream(
+    compressed_memory_stream: Iterable[int | None],
+) -> int:
     total = 0
     for ind, file_id in enumerate(compressed_memory_stream):
         if file_id is None:
@@ -126,7 +121,10 @@ def find_checksum_from_compressed_memory_stream(compressed_memory_stream: Iterab
 
 
 def find_checksum(diskmap: str) -> int:
-    pass
+    diskmap_stream = stream_diskmap(diskmap)
+    memory_stream = parse_block_pairs_to_indexed_memory_stream(diskmap_stream)
+    compressed_memory_stream = compress_memory_stream(memory_stream)
+    return find_checksum_from_compressed_memory_stream(compressed_memory_stream)
 
 
 def exercise_one(file_path: Path = DATA_PATH) -> int:
@@ -137,8 +135,3 @@ def exercise_one(file_path: Path = DATA_PATH) -> int:
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
-    EXAMPLE_DISKMAP = "2333133121414131402"
-    print()
-    # print(list(parse_diskmap_pairs(EXAMPLE_DISKMAP)))
-    # print(list(expand_diskmap(EXAMPLE_DISKMAP)))
-    # print(list(expand_diskmap("12345")))
