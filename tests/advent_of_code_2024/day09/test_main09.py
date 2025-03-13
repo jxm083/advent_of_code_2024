@@ -13,9 +13,8 @@ from advent.advent_of_code_2024.day09.main import (
     stream_diskmap,
     parse_block_pair,
     parse_block_pairs_to_indexed_memory_stream,
-    expand_diskmap,
-    compress_expanded_diskmap,
-    find_checksum_from_compressed_diskmap,
+    compress_memory_stream,
+    find_checksum_from_compressed_memory_stream,
     find_checksum,
     exercise_one,
 )
@@ -192,7 +191,7 @@ def test_parse_block_pair():
     ]
 
 def test_parse_block_pairs_to_indexed_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[MemoryBlock]):
-    reference = simple_expanded_indexed_memory_stream
+    reference = (m.file_id for m in simple_expanded_indexed_memory_stream)
     test = parse_block_pairs_to_indexed_memory_stream(
         simple_block_pair_stream
     )
@@ -200,31 +199,20 @@ def test_parse_block_pairs_to_indexed_memory_stream(simple_block_pair_stream: It
 
 
 
-def test_expand_diskmap(example_disk_map: str, example_expanded_disk_map: str):
-    reference = [char for char in "0..111....22222"]
-    expanded_diskmap = list(expand_diskmap("12345"))
-    assert expanded_diskmap == reference
-
-    reference_string = "00...111...2...333.44.5555.6666.777.888899"
-    reference = [char for char in reference_string]
-    expanded_diskmap = list(expand_diskmap(example_disk_map))
-    assert expanded_diskmap == reference
+def test_compress_expanded_memory_stream(
+    example_expanded_memory: Iterable[int | None],
+    example_compressed_memory: Iterable[int | None]
+):
+    reference = example_compressed_memory
+    test = compress_memory_stream(example_expanded_memory)
+    assert list(reference) == list(test)
 
 
-def test_compress_expanded_diskmap(
-    example_expanded_disk_map: str, example_compressed_disk_map: str
+def test_find_checksum_from_compressed_memory_stream(
+    example_compressed_memory: Iterable[int | None], example_final_checksum: int
 ):
     assert (
-        compress_expanded_diskmap(example_expanded_disk_map)
-        == example_compressed_disk_map
-    )
-
-
-def test_find_checksum_from_compressed_diskmap(
-    example_compressed_disk_map: str, example_final_checksum: int
-):
-    assert (
-        find_checksum_from_compressed_diskmap(example_compressed_disk_map)
+        find_checksum_from_compressed_memory_stream(example_compressed_memory)
         == example_final_checksum
     )
 

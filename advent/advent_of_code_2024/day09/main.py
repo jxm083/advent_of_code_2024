@@ -71,40 +71,30 @@ def parse_block_pair(block_pair: BlockSizeAndID) -> Iterable[int | None]:
     return chain(file_block, memory_block)
 
 
-def parse_block_pairs_to_indexed_memory_stream(
-    block_pairs: Iterable[BlockSizeAndID],
-) -> Iterator[MemoryBlock]:
-    memory_index = count()
-    for pair in block_pairs:
-        block = parse_block_pair(pair)
-        for unit in block:
-            yield MemoryBlock(next(memory_index), unit)
-
-
 def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
     diskmap_pairs = map(fill_in_pair, batched(map(int, diskmap), n=2))
 
     for id, (file_size, free_size) in enumerate(diskmap_pairs):
         yield BlockSizeAndID(file_size, free_size, id)
 
-
-# TODO: type-safe way to generalize this with default value?
-def expand_diskmap(diskmap: str) -> Iterable[str]:
-    return flatten(map(create_file_free_pair, stream_diskmap(diskmap)))
-
-
-def stream_character_and_id(string: str) -> Iterator[tuple[int, str]]:
-    for num, char in enumerate(string):
-        yield (num, char)
+def parse_block_pairs_to_indexed_memory_stream(
+    block_pairs: Iterable[BlockSizeAndID],
+) -> Iterator[int | None]:
+    for pair in block_pairs:
+        block = parse_block_pair(pair)
+        for unit in block:
+            yield unit
 
 
-def get_next_compressed_block() -> Iterator[int]:
-    pass
+
+def fill_memory(current_memory_cell: tuple[int, int], fill_values: Iterable[tuple[int, int]]) -> int | None:
+    fill_index, fill_value = next(fill_values)
+    if current_memory_cell[0] >= fill
 
 
-def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
-    indexed_diskmap = [(ind, char) for ind, char in zip(count(), expanded_diskmap)]
-    reversed_indexed_diskmap = iter(indexed_diskmap[::-1])
+def compress_memory_stream(memory_stream: Iterable[int | None]) -> Iterable[int | None]:
+    indexed_memory = list(enumerate(memory_stream))
+    fill_values = filter(lambda x: x[1] is not None, iter(indexed_memory[::-1]))
     compressed_diskmap = str()
     back_ind: int | None = None
     for ind, char in indexed_diskmap:
@@ -124,21 +114,19 @@ def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
 
 
 # TODO: do with filter, map, and count
-def find_checksum_from_compressed_diskmap(compressed_diskmap: str) -> int:
+def find_checksum_from_compressed_memory_stream(compressed_memory_stream: Iterable[int | None]) -> int:
     total = 0
-    for id, char in enumerate(compressed_diskmap):
-        if char == ".":
+    for ind, file_id in enumerate(compressed_memory_stream):
+        if file_id is None:
             break
         else:
-            total += id * int(char)
+            total += ind * file_id
+
     return total
 
 
 def find_checksum(diskmap: str) -> int:
-    expanded_diskmap = expand_diskmap(diskmap)
-    compressed_diskmap = compress_expanded_diskmap(expanded_diskmap)
-    checksum = find_checksum_from_compressed_diskmap(compressed_diskmap)
-    return checksum
+    pass
 
 
 def exercise_one(file_path: Path = DATA_PATH) -> int:
@@ -150,7 +138,6 @@ def exercise_one(file_path: Path = DATA_PATH) -> int:
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
     EXAMPLE_DISKMAP = "2333133121414131402"
-    EXPANDED_DISKMAP = expand_diskmap(EXAMPLE_DISKMAP)
     print()
     # print(list(parse_diskmap_pairs(EXAMPLE_DISKMAP)))
     # print(list(expand_diskmap(EXAMPLE_DISKMAP)))
