@@ -32,6 +32,32 @@ def fill_in_pair(
 
     return pair
 
+def translate_memory_string_to_file_id_stream(expanded_diskmap_str: str) -> Iterator[int | None]:
+    """
+    NOTE: This only works when the memory blocks in the expanded
+    diskmap have single-digit IDs
+    """
+    for char in expanded_diskmap_str:
+        if char == ".":
+            yield None
+        else:
+            yield int(char)
+
+def translate_file_id_to_str(memory_id: int | None) -> str:
+    char: str | None = None
+    if memory_id is None:
+        char = "."
+    else:
+        char = str(memory_id)
+    return char
+        
+def translate_file_id_stream_to_memory_string(id_stream: Iterable[int | None]) -> str:
+    """
+    NOTE: This only works when the memory blocks in the diskmap
+    have singe-digit IDs
+    """
+    return "".join(map(translate_file_id_to_str, id_stream))
+
 
 def create_file_block(block_size: int, block_id: int) -> list[str]:
     return block_size * [str(block_id)]
@@ -65,7 +91,9 @@ def expand_diskmap(diskmap: str) -> Iterable[str]:
 def stream_character_and_id(string: str) -> Iterator[tuple[int, str]]:
     for num, char in enumerate(string):
         yield (num, char)
-    
+
+def get_next_compressed_block() -> Iterator[int]:
+    pass
 
 def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
     indexed_diskmap = [(ind, char) for ind, char in zip(count(), expanded_diskmap)]
@@ -118,7 +146,8 @@ def exercise_one(file_path: Path = DATA_PATH) -> int:
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
     EXAMPLE_DISKMAP = "2333133121414131402"
-    print(compress_expanded_diskmap("0..111....22222"))
+    EXPANDED_DISKMAP = expand_diskmap(EXAMPLE_DISKMAP)
+    print()
     # print(list(parse_diskmap_pairs(EXAMPLE_DISKMAP)))
     # print(list(expand_diskmap(EXAMPLE_DISKMAP)))
     # print(list(expand_diskmap("12345")))
