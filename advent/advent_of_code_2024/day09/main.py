@@ -1,8 +1,7 @@
-from itertools import count, batched, chain
+from itertools import batched, chain
 from typing import Iterator, NamedTuple, Iterable
 from pathlib import Path
 
-from advent.common.extended_itertools import flatten
 from advent.common.data_stream import stream_lines_from_file
 
 
@@ -78,7 +77,7 @@ def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
         yield BlockSizeAndID(file_size, free_size, id)
 
 
-def parse_block_pairs_to_indexed_memory_stream(
+def parse_block_pairs_to_memory_stream(
     block_pairs: Iterable[BlockSizeAndID],
 ) -> Iterator[int | None]:
     for pair in block_pairs:
@@ -122,7 +121,7 @@ def find_checksum_from_compressed_memory_stream(
 
 def find_checksum(diskmap: str) -> int:
     diskmap_stream = stream_diskmap(diskmap)
-    memory_stream = parse_block_pairs_to_indexed_memory_stream(diskmap_stream)
+    memory_stream = parse_block_pairs_to_memory_stream(diskmap_stream)
     compressed_memory_stream = compress_memory_stream(memory_stream)
     return find_checksum_from_compressed_memory_stream(compressed_memory_stream)
 

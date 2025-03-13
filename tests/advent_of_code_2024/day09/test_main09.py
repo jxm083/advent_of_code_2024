@@ -12,7 +12,7 @@ from advent.advent_of_code_2024.day09.main import (
     translate_file_id_stream_to_memory_string,
     stream_diskmap,
     parse_block_pair,
-    parse_block_pairs_to_indexed_memory_stream,
+    parse_block_pairs_to_memory_stream,
     compress_memory_stream,
     find_checksum_from_compressed_memory_stream,
     find_checksum,
@@ -190,9 +190,9 @@ def test_parse_block_pair():
         None,
     ]
 
-def test_parse_block_pairs_to_indexed_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[MemoryBlock]):
+def test_parse_block_pairs_to_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[MemoryBlock]):
     reference = (m.file_id for m in simple_expanded_indexed_memory_stream)
-    test = parse_block_pairs_to_indexed_memory_stream(
+    test = parse_block_pairs_to_memory_stream(
         simple_block_pair_stream
     )
     assert list(reference) == list(test)
