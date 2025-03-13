@@ -1,4 +1,4 @@
-from itertools import count, batched
+from itertools import count, batched, chain
 from typing import Iterator, NamedTuple, Iterable
 from pathlib import Path
 
@@ -9,11 +9,12 @@ from advent.common.data_stream import stream_lines_from_file
 class BlockSizeAndID(NamedTuple):
     file_block_size: int
     free_block_size: int
-    id: int
+    file_id: int
+
 
 class MemoryBlock(NamedTuple):
-    contents: str
-    id: int
+    memory_ind: int
+    file_id: int | None
 
 
 DATA_DIR = Path(__file__).parent
@@ -32,7 +33,10 @@ def fill_in_pair(
 
     return pair
 
-def translate_memory_string_to_file_id_stream(expanded_diskmap_str: str) -> Iterator[int | None]:
+
+def translate_memory_string_to_file_id_stream(
+    expanded_diskmap_str: str,
+) -> Iterator[int | None]:
     """
     NOTE: This only works when the memory blocks in the expanded
     diskmap have single-digit IDs
@@ -43,6 +47,7 @@ def translate_memory_string_to_file_id_stream(expanded_diskmap_str: str) -> Iter
         else:
             yield int(char)
 
+
 def translate_file_id_to_str(memory_id: int | None) -> str:
     char: str | None = None
     if memory_id is None:
@@ -50,7 +55,8 @@ def translate_file_id_to_str(memory_id: int | None) -> str:
     else:
         char = str(memory_id)
     return char
-        
+
+
 def translate_file_id_stream_to_memory_string(id_stream: Iterable[int | None]) -> str:
     """
     NOTE: This only works when the memory blocks in the diskmap
@@ -59,8 +65,20 @@ def translate_file_id_stream_to_memory_string(id_stream: Iterable[int | None]) -
     return "".join(map(translate_file_id_to_str, id_stream))
 
 
-def parse_block_pairs_to_memory_stream(block_pairs: Iterable[BlockSizeAndID]) -> Iterator[MemoryBlock]:
-    pass
+def parse_block_pair(block_pair: BlockSizeAndID) -> Iterable[int | None]:
+    file_block = block_pair.file_block_size * [block_pair.file_id]
+    memory_block = block_pair.free_block_size * [None]
+    return chain(file_block, memory_block)
+
+
+def parse_block_pairs_to_indexed_memory_stream(
+    block_pairs: Iterable[BlockSizeAndID],
+) -> Iterator[MemoryBlock]:
+    memory_index = count()
+    for pair in block_pairs:
+        block = parse_block_pair(pair)
+        for unit in block:
+            yield MemoryBlock(next(memory_index), unit)
 
 
 def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
@@ -74,12 +92,15 @@ def stream_diskmap(diskmap: str) -> Iterator[BlockSizeAndID]:
 def expand_diskmap(diskmap: str) -> Iterable[str]:
     return flatten(map(create_file_free_pair, stream_diskmap(diskmap)))
 
+
 def stream_character_and_id(string: str) -> Iterator[tuple[int, str]]:
     for num, char in enumerate(string):
         yield (num, char)
 
+
 def get_next_compressed_block() -> Iterator[int]:
     pass
+
 
 def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
     indexed_diskmap = [(ind, char) for ind, char in zip(count(), expanded_diskmap)]
@@ -100,9 +121,6 @@ def compress_expanded_diskmap(expanded_diskmap: Iterable[str]) -> Iterable[str]:
             compressed_diskmap += back_char
 
     return compressed_diskmap.ljust(len(indexed_diskmap), ".")
-
-
-    
 
 
 # TODO: do with filter, map, and count
