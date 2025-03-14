@@ -7,11 +7,14 @@ from advent.common.extended_itertools import flatten
 from advent.advent_of_code_2024.day09.main import (
     BlockSizeAndID,
     IndexedMemoryUnit,
+    MemoryBlock,
     translate_memory_string_to_file_id_stream,
     translate_file_id_to_str,
     translate_file_id_stream_to_memory_string,
     stream_block_pairs,
+    stream_blocks,
     parse_block_pair,
+    parse_block_pair_to_blocks,
     parse_block_pairs_to_memory_stream,
     compress_memory_stream,
     find_checksum_from_memory_stream,
@@ -187,6 +190,18 @@ def simple_compressed_indexed_memory_stream() -> Iterable[IndexedMemoryUnit]:
     ])
     return stream
 
+@pytest.fixture
+def simple_block_stream() -> Iterable[MemoryBlock]:
+    stream = starmap(MemoryBlock, [
+        (1, 0),
+        (2, None),
+        (3, 1),
+        (4, None),
+        (5, 2)
+    ])
+
+    return stream
+
 
 
 def test_stream_block_pairs(simple_diskmap: str, simple_block_pair_stream: Iterable[BlockSizeAndID]):
@@ -194,6 +209,22 @@ def test_stream_block_pairs(simple_diskmap: str, simple_block_pair_stream: Itera
     reference = list(simple_block_pair_stream)
     assert test == reference
 
+def test_parse_block_pair_to_blocks():
+    file_size = 3
+    free_size = 2
+    file_id = 18
+
+    reference = (MemoryBlock(file_size, file_id), MemoryBlock(free_size, None))
+    test = parse_block_pair_to_blocks(BlockSizeAndID(file_size, free_size, file_id))
+
+    assert test == reference
+
+
+def test_stream_blocks(simple_diskmap: str, simple_block_stream: Iterable[MemoryBlock]):
+    test = list(stream_blocks(simple_diskmap))
+    reference = list(simple_block_stream)
+
+    assert test == reference
 
 def test_parse_block_pair():
     assert list(parse_block_pair(BlockSizeAndID(2, 3, 18))) == [
@@ -203,6 +234,7 @@ def test_parse_block_pair():
         None,
         None,
     ]
+
 
 def test_parse_block_pairs_to_memory_stream(simple_block_pair_stream: Iterable[BlockSizeAndID], simple_expanded_indexed_memory_stream: Iterable[IndexedMemoryUnit]):
     reference = (m.file_id for m in simple_expanded_indexed_memory_stream)

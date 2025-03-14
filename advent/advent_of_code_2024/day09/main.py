@@ -2,6 +2,7 @@ from itertools import batched, chain
 from typing import Iterator, NamedTuple, Iterable
 from pathlib import Path
 
+from advent.common.extended_itertools import flatten
 from advent.common.data_stream import stream_lines_from_file
 
 
@@ -79,6 +80,18 @@ def stream_block_pairs(diskmap: str) -> Iterator[BlockSizeAndID]:
 
     for id, (file_size, free_size) in enumerate(diskmap_pairs):
         yield BlockSizeAndID(file_size, free_size, id)
+
+def parse_block_pair_to_blocks(block_pair: BlockSizeAndID) -> tuple[MemoryBlock, MemoryBlock]:
+    file_block = MemoryBlock(block_pair.file_block_size, block_pair.file_id)
+    free_block = MemoryBlock(block_pair.free_block_size, None)
+    return file_block, free_block
+
+def stream_blocks(diskmap: str) -> Iterator[MemoryBlock]:
+    block_pairs = stream_block_pairs(diskmap)
+    blocks = flatten(map(parse_block_pair_to_blocks, block_pairs))
+    for block in blocks:
+        if block.size != 0:
+            yield block
 
 
 def parse_block_pairs_to_memory_stream(
