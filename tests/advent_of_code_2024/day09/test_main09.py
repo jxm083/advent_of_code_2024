@@ -16,6 +16,7 @@ from advent.advent_of_code_2024.day09.main import (
     parse_block_pair,
     parse_block_pair_to_blocks,
     parse_block_pairs_to_memory_stream,
+    parse_memory_stream_to_blocks,
     compress_memory_stream,
     find_checksum_from_memory_stream,
     find_checksum,
@@ -169,6 +170,12 @@ def simple_expanded_indexed_memory_stream() -> Iterable[IndexedMemoryUnit]:
     ])
     return stream
 
+
+@pytest.fixture
+def simple_expanded_memory_stream(simple_expanded_indexed_memory_stream: Iterable[IndexedMemoryUnit]) -> Iterable[int | None]:
+    stream = (unit.file_id for unit in simple_expanded_indexed_memory_stream)
+    return stream
+
 @pytest.fixture
 def simple_compressed_indexed_memory_stream() -> Iterable[IndexedMemoryUnit]:
     stream = starmap(IndexedMemoryUnit, [
@@ -225,6 +232,17 @@ def test_stream_blocks(simple_diskmap: str, simple_block_stream: Iterable[Memory
     reference = list(simple_block_stream)
 
     assert test == reference
+
+def test_parse_memory_stream_to_blocks(
+        simple_expanded_memory_stream: Iterable[int | None], simple_block_stream: Iterable[MemoryBlock]
+):
+    reference = list(simple_block_stream)
+    test = list(
+        parse_memory_stream_to_blocks(simple_expanded_memory_stream)
+    )
+
+    assert test == reference
+
 
 def test_parse_block_pair():
     assert list(parse_block_pair(BlockSizeAndID(2, 3, 18))) == [

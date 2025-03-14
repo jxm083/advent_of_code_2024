@@ -16,6 +16,7 @@ class IndexedMemoryUnit(NamedTuple):
     memory_ind: int
     file_id: int | None
 
+
 class MemoryBlock(NamedTuple):
     size: int
     file_id: int | None
@@ -81,10 +82,14 @@ def stream_block_pairs(diskmap: str) -> Iterator[BlockSizeAndID]:
     for id, (file_size, free_size) in enumerate(diskmap_pairs):
         yield BlockSizeAndID(file_size, free_size, id)
 
-def parse_block_pair_to_blocks(block_pair: BlockSizeAndID) -> tuple[MemoryBlock, MemoryBlock]:
+
+def parse_block_pair_to_blocks(
+    block_pair: BlockSizeAndID,
+) -> tuple[MemoryBlock, MemoryBlock]:
     file_block = MemoryBlock(block_pair.file_block_size, block_pair.file_id)
     free_block = MemoryBlock(block_pair.free_block_size, None)
     return file_block, free_block
+
 
 def stream_blocks(diskmap: str) -> Iterator[MemoryBlock]:
     block_pairs = stream_block_pairs(diskmap)
@@ -101,6 +106,35 @@ def parse_block_pairs_to_memory_stream(
         block = parse_block_pair(pair)
         for unit in block:
             yield unit
+
+
+def block_filled(block: MemoryBlock) -> bool:
+    filled = True
+    if block.file_id is None:
+        filled = False
+
+    return filled
+
+
+def parse_memory_stream_to_blocks(
+    memory_stream: Iterable[int | None],
+) -> Iterable[MemoryBlock]:
+    try:
+        current_value = next(memory_stream) # type: ignore
+    except StopIteration:
+        return
+
+    block: list[int | None] = [current_value]
+    for unit in memory_stream:
+        if unit != current_value:
+            yield MemoryBlock(size=len(block), file_id=current_value)
+
+            current_value = unit
+            block = [current_value]
+        else:
+            block.append(unit)
+
+    yield MemoryBlock(size=len(block), file_id=current_value)
 
 
 def compress_memory_stream(memory_stream: Iterable[int | None]) -> Iterable[int | None]:
