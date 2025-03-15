@@ -164,7 +164,6 @@ def fp_compress_memory(memory_stream: Iterable[int | None]) -> Iterable[int | No
     compressed_buffer: list[int | None] = []
 
     for file in (list(file_id) for _, file_id in groupby(fill_values)):
-        print(file)
         compressed_buffer: list[int | None] = []
         compressed = False
         for memory_block in (list(file_ids) for _, file_ids in groupby(current_buffer)):
@@ -241,4 +240,4 @@ def exercise_two(file_path: Path = DATA_PATH) -> int:
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
-    # print(f"exercise two: {exercise_two()}")
+    print(f"exercise two: {exercise_two()}")
