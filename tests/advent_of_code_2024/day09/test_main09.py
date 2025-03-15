@@ -18,6 +18,7 @@ from advent.advent_of_code_2024.day09.main import (
     parse_block_pairs_to_memory_stream,
     parse_memory_stream_to_blocks,
     compress_memory_stream,
+    fp_compress_memory,
     find_checksum_from_memory_stream,
     find_checksum,
     exercise_one,
@@ -263,6 +264,7 @@ def test_parse_block_pairs_to_memory_stream(simple_block_pair_stream: Iterable[B
 
 
 
+
 def test_compress_memory_stream(
     example_expanded_memory: Iterable[int | None],
     example_compressed_memory: Iterable[int | None]
@@ -288,6 +290,17 @@ def test_find_checksum_from_memory_stream_part_2(
         example_fp_compressed_memory
     )
     assert example_fp_final_checksum == test
+
+def test_fp_compress_memory(
+        example_expanded_memory: Iterable[int | None],
+        example_fp_compressed_memory: Iterable[int | None]
+):
+    reference = list(example_fp_compressed_memory)
+    test = list(
+        fp_compress_memory(example_expanded_memory)
+    )
+
+    assert test == reference
 
 
 def test_find_checksum(example_disk_map: str, example_final_checksum: int):

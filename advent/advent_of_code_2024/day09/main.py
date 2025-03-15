@@ -1,4 +1,4 @@
-from itertools import batched, chain
+from itertools import batched, chain, groupby
 from typing import Iterator, NamedTuple, Iterable
 from pathlib import Path
 
@@ -154,6 +154,57 @@ def compress_memory_stream(memory_stream: Iterable[int | None]) -> Iterable[int 
             except StopIteration:
                 print("Ran out of fill values!")
                 break
+
+
+def fp_compress_memory(memory_stream: Iterable[int | None]) -> Iterable[int | None]:
+    memory_buffer = list(memory_stream)
+    fill_values = filter(lambda x: x is not None, memory_buffer[::-1])
+
+    current_buffer: list[int | None] = memory_buffer
+    compressed_buffer: list[int | None] = []
+
+    for file in (list(file_id) for _, file_id in groupby(fill_values)):
+        print(file)
+        compressed_buffer: list[int | None] = []
+        compressed = False
+        for memory_block in (list(file_ids) for _, file_ids in groupby(current_buffer)):
+            if compressed:
+                if memory_block[0] == file[0]:
+                    for _ in memory_block:
+                        compressed_buffer.append(None)
+                else:
+                    for file_id in memory_block:
+                        compressed_buffer.append(file_id)
+            else:
+                if memory_block[0] is None:
+                    if len(memory_block) < len(file):
+                        for file_id in memory_block:
+                            compressed_buffer.append(file_id)
+                    elif len(memory_block) == len(file):
+                        for file_id in file:
+                            compressed_buffer.append(file_id)
+                        compressed = True
+                    else:
+                        for file_id in file:
+                            compressed_buffer.append(file_id)
+                        for _ in range(len(memory_block) - len(file)):
+                            compressed_buffer.append(None)
+                        compressed = True
+                else:
+                    for file_id in memory_block:
+                            compressed_buffer.append(file_id)
+
+        print(compressed_buffer)
+        if len(compressed_buffer) > len(current_buffer):
+            print("SIZE MISMATCH!")
+            print(current_buffer)
+            print(compressed_buffer)
+            break
+        current_buffer = compressed_buffer
+
+        
+    for unit in compressed_buffer:
+        yield unit
 
 
 # TODO: do with filter, map, and count
