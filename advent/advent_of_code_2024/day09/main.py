@@ -191,15 +191,11 @@ def fp_compress_memory(memory_stream: Iterable[int | None]) -> Iterable[int | No
                             compressed_buffer.append(None)
                         compressed = True
                 else:
+                    if memory_block[0] == file[0]:
+                        compressed = True
                     for file_id in memory_block:
                             compressed_buffer.append(file_id)
 
-        print(compressed_buffer)
-        if len(compressed_buffer) > len(current_buffer):
-            print("SIZE MISMATCH!")
-            print(current_buffer)
-            print(compressed_buffer)
-            break
         current_buffer = compressed_buffer
 
         
@@ -233,6 +229,16 @@ def exercise_one(file_path: Path = DATA_PATH) -> int:
     diskmap = next(file_stream)
     return find_checksum(diskmap)
 
+def exercise_two(file_path: Path = DATA_PATH) -> int:
+    file_stream = stream_lines_from_file(file_path)
+    diskmap = next(file_stream)
+    diskmap_stream = stream_block_pairs(diskmap)
+    memory_stream = parse_block_pairs_to_memory_stream(diskmap_stream)
+    compressed_memory_stream = fp_compress_memory(memory_stream)
+    return find_checksum_from_memory_stream(compressed_memory_stream)
+
+
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
+    # print(f"exercise two: {exercise_two()}")
