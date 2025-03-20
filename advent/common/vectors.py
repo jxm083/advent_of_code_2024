@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import TypeVar, Union, overload, SupportsIndex
+from typing import TypeVar, Union, SupportsIndex
 
 T = TypeVar("T")
 
@@ -10,13 +10,6 @@ class Vector(tuple[int, ...]):
 
     def __sub__(self, other: "Vector") -> "Vector":
         return Vector([x - y for x, y in zip(self, other)])
-
-    @overload
-    def __mul__(self, other: int) -> "Vector": ...
-    @overload
-    def __mul__(self, other: tuple[int, ...]) -> "Vector": ...
-    @overload # Overload needed to satisfy the override of the base class tuple
-    def __mul__(self, other: SupportsIndex) -> "Vector": ...
 
     def __mul__(self, other: Union[int, tuple[int, ...], SupportsIndex]) -> "Vector":
         if isinstance(other, int):
