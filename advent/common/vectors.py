@@ -1,55 +1,48 @@
-from typing import TypeVar
-from dataclasses import dataclass
 from collections.abc import Sequence
+from typing import TypeVar, Union, SupportsIndex
 
-T = TypeVar('T')
+T = TypeVar("T")
 
-@dataclass(frozen=True)
-class Vector(Sequence[int]):
-    components: list[int]
-    def __len__(self):
-        return len(self.components)
 
-    def __getitem__(self, key: slice): # type: ignore
-        return self.components[key]
+class Vector(tuple[int, ...]):
+    def __add__(self, other: tuple[int, ...]) -> "Vector":
+        return Vector([x + y for x, y in zip(self, other)])
 
-    def __add__(self, other): # type: ignore
-        return Vector([x + y for x, y in zip(self.components, other.components)]) # type:ignore
+    def __sub__(self, other: "Vector") -> "Vector":
+        return Vector([x - y for x, y in zip(self, other)])
 
-    def __sub__(self, other): # type: ignore
-        return Vector([x - y for x, y in zip(self.components, other.components)]) # type: ignore
-
-    def __mul__(self, other): # type: ignore
-        if type(other) is int: # type: ignore
-            return Vector([other * x for x in self.components])
+    def __mul__(self, other: Union[int, tuple[int, ...], SupportsIndex]) -> "Vector":
+        if isinstance(other, int):
+            return Vector([other * x for x in self])
+        elif isinstance(other, "Vector"):
+            return Vector([x * y for x, y in zip(self, other)])
         else:
-            return Vector([x * y for x, y in zip(self.components, other.components)]) # type: ignore
+            raise ValueError("Not a valid comparison")
 
-    def __rmul__(self, other): # type: ignore
-        if type(other) is int: # type: ignore
-            return Vector([other * x for x in self.components])
+    def __rmul__(self, other: Union["Vector", int, SupportsIndex]) -> "Vector":
+        if isinstance(other, int):
+            return Vector([other * x for x in self])
+        elif isinstance(other, "Vector"):
+            return Vector([x * y for x, y in zip(self, other)])
         else:
-            return Vector([x * y for x, y in zip(self.components, other.components)]) # type: ignore
+            raise ValueError("Not a valid comparison")
 
-    def __eq__(self, other): # type: ignore
-        equal = True
-        for x, y in zip(self.components, other.components): # type: ignore
-            if x != y:
-                equal = False
+    def __eq__(self, other: Union["Vector", object]) -> bool:
+        if isinstance(other, "Vector"):
+            equal = True
+            for x, y in zip(self, other):
+                if x != y:
+                    equal = False
 
-        return equal
-
-    def __hash__(self): # type:ignore
-        return hash(tuple(self.components))
+            return equal
+        else:
+            raise ValueError("Not a valid comparison")
 
     def __neg__(self):
-        return Vector([-x for x in self.components])
+        return Vector([-x for x in self])
 
     def dot(self, other: Sequence[int]) -> int:
-        return sum(x * y for x, y in zip(self.components, other.components)) # type: ignore
+        return sum(x * y for x, y in zip(self, other))
 
     def magnitude(self) -> int:
-        return sum(n * n for n in self.components)
-
-
-
+        return sum(n * n for n in self)
