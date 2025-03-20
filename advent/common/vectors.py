@@ -26,19 +26,24 @@ class Vector(tuple[int, ...]):
         else:
             raise ValueError("Not a valid comparison")
 
-    def __rmul__(self, other: Union["Vector", int]):  # type: ignore
+    def __rmul__(self, other: Union["Vector", int, SupportsIndex]) -> "Vector":
         if isinstance(other, int):
             return Vector([other * x for x in self])
-        else:
+        elif isinstance(other, "Vector"):
             return Vector([x * y for x, y in zip(self, other)])
+        else:
+            raise ValueError("Not a valid comparison")
 
-    def __eq__(self, other: "Vector"):  # type: ignore
-        equal = True
-        for x, y in zip(self, other):
-            if x != y:
-                equal = False
+    def __eq__(self, other: Union["Vector", object]) -> bool:
+        if isinstance(other, "Vector"):
+            equal = True
+            for x, y in zip(self, other):
+                if x != y:
+                    equal = False
 
-        return equal
+            return equal
+        else:
+            raise ValueError("Not a valid comparison")
 
     def __neg__(self):
         return Vector([-x for x in self])
