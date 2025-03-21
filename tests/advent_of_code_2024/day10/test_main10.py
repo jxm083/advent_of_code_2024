@@ -9,6 +9,3 @@ def test_parse_to_map_point():
     reference = MapPoint(Vector([0, 0]), 5)
     test = parse_to_map_point(CharPosition(Vector([0, 0]), "5"))
     assert test == reference
-
-def test():
-    assert Vector([0, 0]) == Vector([0, 0])
