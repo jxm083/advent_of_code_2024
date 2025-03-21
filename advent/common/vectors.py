@@ -43,6 +43,9 @@ class Vector(tuple[int, ...]):
     def __neg__(self):
         return Vector([-x for x in self])
 
+    def __hash__(self) -> int:
+        return hash(tuple(self))
+
     def dot(self, other: Sequence[int]) -> int:
         return sum(x * y for x, y in zip(self, other))
 
