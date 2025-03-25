@@ -1,4 +1,4 @@
-from typing import NamedTuple, TypeAlias, Iterable
+from typing import NamedTuple, TypeAlias, Iterable, TypeVar, Callable
 from pathlib import Path
 
 from advent.common.vectors import Vector
@@ -43,6 +43,21 @@ def get_height(): ...
 def is_trailhead(): ...
 
 ## solution domain functions
+
+T = TypeVar('T')
+def make_map_boundary_filter(topo_map: Map) -> Callable[[Vector], bool]:
+    map_list = list(topo_map)
+    max_line = max(point.position[0] for point in map_list)
+    max_char = max(point.position[1] for point in map_list)
+
+    def map_boundary_filter(position: Vector) -> bool:
+        in_bounds = False
+        if 0 <= position[0] <= max_line and 0 <= position[1] <= max_char:
+            in_bounds = True
+        return in_bounds
+
+    return map_boundary_filter
+
 
 if __name__ == "__main__":
     pass

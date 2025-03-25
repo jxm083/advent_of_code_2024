@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, Callable
 from itertools import starmap
 
 from advent.common.vectors import Vector
@@ -9,7 +9,8 @@ from advent.advent_of_code_2024.day10.main import (
     Map,
     MapPoint,
     parse_to_map_point,
-    get_map
+    get_map,
+    make_map_boundary_filter
 )
 
 @pytest.fixture
@@ -58,3 +59,9 @@ def test_get_map(simple_file_path: Path, simple_map: Map):
     test = get_map(simple_file_path)
     reference = simple_map
     assert list(test) == list(reference)
+
+def test_make_map_boundary_filter(simple_map: Map):
+    boundary_filter = make_map_boundary_filter(simple_map)
+    assert boundary_filter(Vector([0, 0])) is True
+    assert boundary_filter(Vector([-1, 0])) is False
+    assert boundary_filter(Vector([100, 100])) is False
