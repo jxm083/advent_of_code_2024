@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from typing import Iterator, Iterable, Callable
+from typing import Iterator
 from itertools import starmap
 
 from advent.common.vectors import Vector
@@ -10,7 +10,10 @@ from advent.advent_of_code_2024.day10.main import (
     MapPoint,
     parse_to_map_point,
     get_map,
-    make_map_boundary_filter
+    make_map_boundary_filter,
+    step_directions,
+    potential_next_positions,
+    get_first_segments
 )
 
 @pytest.fixture
@@ -42,7 +45,7 @@ def simple_file_heights() -> list[int]:
 
 @pytest.fixture
 def simple_map(simple_file_vectors: Iterator[Vector], simple_file_heights: list[int]) -> Map:
-    return starmap(MapPoint, zip(simple_file_vectors, simple_file_heights))
+    return list(starmap(MapPoint, zip(simple_file_vectors, simple_file_heights)))
 
 @pytest.fixture
 def simple_file_path(tmp_path: Path, simple_map_file: str):
@@ -65,3 +68,37 @@ def test_make_map_boundary_filter(simple_map: Map):
     assert boundary_filter(Vector([0, 0])) is True
     assert boundary_filter(Vector([-1, 0])) is False
     assert boundary_filter(Vector([100, 100])) is False
+
+def test_step_directions():
+    test = step_directions()
+    reference = [
+        Vector([1, 0]),
+        Vector([0, -1]),
+        Vector([-1, 0]),
+        Vector([0, 1])
+    ]
+
+    assert list(test) == reference
+
+def test_potential_next_positions():
+    position = Vector([0, 0])
+    test = potential_next_positions(position)
+    reference = [
+        Vector([1, 0]),
+        Vector([0, -1]),
+        Vector([-1, 0]),
+        Vector([0, 1])
+    ]
+
+    assert list(test) == list(reference)
+
+def test_get_first_segments(simple_map: Map):
+    trailhead_point = MapPoint(Vector([0, 0]), 0)
+    next_step = MapPoint(Vector([0, 1]), 1)
+    test = get_first_segments(trailhead_point, simple_map)
+    reference = [(
+        trailhead_point,
+        next_step
+    )]
+
+    assert test == reference
