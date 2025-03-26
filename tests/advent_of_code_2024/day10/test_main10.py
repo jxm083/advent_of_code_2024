@@ -88,6 +88,10 @@ def example_map(example_file_path: Path) -> Map:
 def example_trailheads(example_map: Map) -> list[MapPoint]:
     return list(filter(is_trailhead, example_map))
 
+@pytest.fixture
+def example_trailheads_scores() -> list[int]:
+    return [5, 6, 5, 3, 1, 3, 5, 3, 5]
+
 
 def test_parse_to_map_point():
     reference = MapPoint(Vector([0, 0]), 5)
@@ -172,11 +176,7 @@ def test_is_final_segment():
 def test_get_trail_ends_simple(simple_map: Map):
     trailhead = MapPoint(Vector([0,0]), 0)
     test = get_trail_ends(trailhead, simple_map)
-    last_segment = Segment(
-        MapPoint(Vector([2, 2]), 8),
-        MapPoint(Vector([3, 2]), 9)
-    )
-    assert test == [last_segment]
+    assert test == [MapPoint(Vector([3, 2]), 9)]
     
 def test_get_trail_ends_example(example_map: Map):
     ...
@@ -184,5 +184,6 @@ def test_get_trail_ends_example(example_map: Map):
 def test_get_trailhead_score_simple(simple_trailhead: MapPoint, simple_map: Map):
     assert get_trailhead_score(simple_trailhead, simple_map) == 1
 
-def test_get_trailhead_score_example(example_trailheads: list[MapPoint], example_map: Map):
-    assert get_trailhead_score(example_trailheads[0], example_map) == 5
+def test_get_trailhead_score_example(example_trailheads: list[MapPoint], example_trailheads_scores: list[int], example_map: Map):
+    for head, score in zip(example_trailheads, example_trailheads_scores):
+        assert get_trailhead_score(head, example_map) == score

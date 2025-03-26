@@ -105,20 +105,20 @@ def get_next_segments(
 def is_final_segment(segment: Segment) -> bool:
     return segment.end.height == 9
 
-def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[Segment]:
+def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
     current_segments = get_first_segments(trailhead, topo_map)
-    trail_ends: list[Segment] = []
+    trail_ends: list[MapPoint] = []
 
     while len(current_segments) != 0:
         next_segments: list[Segment] = []
         for segment in current_segments:
             next_segments += get_next_segments(segment, topo_map)
 
-        trail_ends += list(filter(is_final_segment, next_segments))
+        trail_ends += [segment.end for segment in filter(is_final_segment, next_segments)]
 
         current_segments = next_segments
 
-    return trail_ends
+    return list(set(trail_ends))
 
         
 
