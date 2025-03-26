@@ -173,4 +173,4 @@ def make_map_boundary_filter(topo_map: Map) -> Callable[[Vector], bool]:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"exercise one: {exercise_one()}")
