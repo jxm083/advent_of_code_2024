@@ -23,7 +23,9 @@ def exercise_one(): ...
 def exercise_two(): ...
 
 
-def get_trailhead_score(): ...
+def get_trailhead_score(trailhead: MapPoint, topo_map: Map) -> int:
+    trail_ends = get_trail_ends(trailhead, topo_map)
+    return len(trail_ends)
 
 
 # "number of 9-height positions reachable from that trailhead via a hiking trail"
@@ -127,7 +129,8 @@ def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[Segment]:
 def get_height(): ...
 
 
-def is_trailhead(): ...
+def is_trailhead(map_point: MapPoint) -> bool:
+    return map_point.height == 0
 
 
 DIRECTIONS = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]

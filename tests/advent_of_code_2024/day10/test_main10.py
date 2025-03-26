@@ -17,7 +17,9 @@ from advent.advent_of_code_2024.day10.main import (
     get_first_segments,
     get_next_segments,
     is_final_segment,
-    get_trail_ends
+    get_trail_ends,
+    is_trailhead,
+    get_trailhead_score
 )
 
 @pytest.fixture
@@ -46,6 +48,10 @@ def simple_file_heights() -> list[int]:
         6, 7, 8,
         9, 0, 9
     ]
+
+@pytest.fixture
+def simple_trailhead() -> MapPoint:
+    return MapPoint(Vector([0, 0]), 0)
 
 @pytest.fixture
 def simple_map(simple_file_vectors: Iterator[Vector], simple_file_heights: list[int]) -> Map:
@@ -77,6 +83,11 @@ def example_file_path(tmp_path: Path, example_map_file: str) -> Path:
 @pytest.fixture
 def example_map(example_file_path: Path) -> Map:
     return get_map(example_file_path)
+
+@pytest.fixture
+def example_trailheads(example_map: Map) -> list[MapPoint]:
+    return list(filter(is_trailhead, example_map))
+
 
 def test_parse_to_map_point():
     reference = MapPoint(Vector([0, 0]), 5)
@@ -116,6 +127,10 @@ def test_potential_next_positions():
     ]
 
     assert list(test) == list(reference)
+
+def test_is_trailhead(simple_trailhead: MapPoint):
+    assert is_trailhead(simple_trailhead) is True
+    assert is_trailhead(MapPoint(Vector([0, 0]), 1)) is False
 
 def test_get_first_segments(simple_map: Map):
     trailhead_point = MapPoint(Vector([0, 0]), 0)
@@ -165,3 +180,9 @@ def test_get_trail_ends_simple(simple_map: Map):
     
 def test_get_trail_ends_example(example_map: Map):
     ...
+
+def test_get_trailhead_score_simple(simple_trailhead: MapPoint, simple_map: Map):
+    assert get_trailhead_score(simple_trailhead, simple_map) == 1
+
+def test_get_trailhead_score_example(example_trailheads: list[MapPoint], example_map: Map):
+    assert get_trailhead_score(example_trailheads[0], example_map) == 5
