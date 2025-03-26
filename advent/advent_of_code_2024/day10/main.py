@@ -10,9 +10,11 @@ class MapPoint(NamedTuple):
     position: Vector
     height: int | None
 
+
 class Segment(NamedTuple):
     start: MapPoint
     end: MapPoint
+
 
 Map: TypeAlias = list[MapPoint]
 
@@ -35,9 +37,6 @@ def exercise_two(): ...
 def get_trailhead_score(trailhead: MapPoint, topo_map: Map) -> int:
     trail_ends = get_trail_ends(trailhead, topo_map)
     return len(trail_ends)
-
-
-# "number of 9-height positions reachable from that trailhead via a hiking trail"
 
 
 ## intermediate functions
@@ -88,7 +87,7 @@ def get_first_segments(
 ) -> list[tuple[MapPoint, MapPoint]]:
     first_segments: list[tuple[MapPoint, MapPoint]] = []
     off_map_position = Vector([-1, -1])
-    # In order to use is_valid_next_step, which takes into 
+    # In order to use is_valid_next_step, which takes into
     # consideration the previous step, we need to create
     # a segment whose previous step is certainly not in the map.
     zeroth_segment = (MapPoint(off_map_position, None), trailhead_point)
@@ -97,22 +96,25 @@ def get_first_segments(
         map_point = find_map_point(position, topo_map)
         if map_point is not None and is_valid_next_step(zeroth_segment, map_point):
             first_segments.append((trailhead_point, map_point))
-    
+
     return first_segments
 
+
 def get_next_segments(
-        current_segment: tuple[MapPoint, MapPoint], topo_map: Map
+    current_segment: tuple[MapPoint, MapPoint], topo_map: Map
 ) -> list[Segment]:
     next_segments: list[Segment] = []
     for position in potential_next_positions(current_segment[1].position):
         map_point = find_map_point(position, topo_map)
         if map_point is not None and is_valid_next_step(current_segment, map_point):
             next_segments.append(Segment(current_segment[1], map_point))
-    
+
     return next_segments
+
 
 def is_final_segment(segment: Segment) -> bool:
     return segment.end.height == 9
+
 
 def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
     current_segments = get_first_segments(trailhead, topo_map)
@@ -123,19 +125,13 @@ def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
         for segment in current_segments:
             next_segments += get_next_segments(segment, topo_map)
 
-        trail_ends += [segment.end for segment in filter(is_final_segment, next_segments)]
+        trail_ends += [
+            segment.end for segment in filter(is_final_segment, next_segments)
+        ]
 
         current_segments = next_segments
 
     return list(set(trail_ends))
-
-        
-
-
-
-    
-
-def get_height(): ...
 
 
 def is_trailhead(map_point: MapPoint) -> bool:
@@ -143,6 +139,8 @@ def is_trailhead(map_point: MapPoint) -> bool:
 
 
 DIRECTIONS = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]
+
+
 def step_directions() -> Iterator[Vector]:
     for vector in DIRECTIONS:
         yield vector
@@ -154,8 +152,6 @@ def potential_next_positions(position: Vector) -> Iterator[Vector]:
 
 
 ## solution domain functions
-
-T = TypeVar("T")
 
 
 def make_map_boundary_filter(topo_map: Map) -> Callable[[Vector], bool]:
