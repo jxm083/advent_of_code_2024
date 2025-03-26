@@ -1,5 +1,6 @@
 from typing import NamedTuple, TypeAlias, TypeVar, Callable, Iterator
 from pathlib import Path
+from functools import partial
 
 from advent.common.vectors import Vector
 from advent.common.data_stream import stream_position_and_char, CharPosition
@@ -15,9 +16,17 @@ class Segment(NamedTuple):
 
 Map: TypeAlias = list[MapPoint]
 
+DATA_DIR = Path(__file__).parent
+EXAMPLE_DATA_PATH = DATA_DIR / "example_data.txt"
+DATA_PATH = DATA_DIR / "data.txt"
+
 
 ## problem domain functions
-def exercise_one(): ...
+def exercise_one(map_file_path: Path = DATA_PATH) -> int:
+    topo_map = get_map(map_file_path)
+    trailheads = filter(is_trailhead, topo_map)
+    get_trailhead_score_part = partial(get_trailhead_score, topo_map=topo_map)
+    return sum(map(get_trailhead_score_part, trailheads))
 
 
 def exercise_two(): ...

@@ -19,7 +19,8 @@ from advent.advent_of_code_2024.day10.main import (
     is_final_segment,
     get_trail_ends,
     is_trailhead,
-    get_trailhead_score
+    get_trailhead_score,
+    exercise_one
 )
 
 @pytest.fixture
@@ -187,3 +188,6 @@ def test_get_trailhead_score_simple(simple_trailhead: MapPoint, simple_map: Map)
 def test_get_trailhead_score_example(example_trailheads: list[MapPoint], example_trailheads_scores: list[int], example_map: Map):
     for head, score in zip(example_trailheads, example_trailheads_scores):
         assert get_trailhead_score(head, example_map) == score
+
+def test_exercise_one_example(example_file_path: Path):
+    assert exercise_one(example_file_path) == 36
