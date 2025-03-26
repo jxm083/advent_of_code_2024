@@ -13,7 +13,8 @@ from advent.advent_of_code_2024.day10.main import (
     make_map_boundary_filter,
     step_directions,
     potential_next_positions,
-    get_first_segments
+    get_first_segments,
+    get_next_segments
 )
 
 @pytest.fixture
@@ -98,6 +99,21 @@ def test_get_first_segments(simple_map: Map):
     test = get_first_segments(trailhead_point, simple_map)
     reference = [(
         trailhead_point,
+        next_step
+    )]
+
+    assert test == reference
+
+def test_get_next_segments(simple_map: Map):
+    segment = (
+        MapPoint(Vector([0, 0]), 0),
+        MapPoint(Vector([0, 1]), 1)
+    )
+    next_step = MapPoint(Vector([0, 2]), 2)
+
+    test = get_next_segments(segment, simple_map)
+    reference = [(
+        segment[1],
         next_step
     )]
 

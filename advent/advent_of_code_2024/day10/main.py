@@ -73,23 +73,34 @@ def get_first_segments(
     trailhead_point: MapPoint, topo_map: Map
 ) -> list[tuple[MapPoint, MapPoint]]:
     first_segments: list[tuple[MapPoint, MapPoint]] = []
+    off_map_position = Vector([-1, -1])
+    # In order to use is_valid_next_step, which takes into 
+    # consideration the previous step, we need to create
+    # a segment whose previous step is certainly not in the map.
+    zeroth_segment = (MapPoint(off_map_position, None), trailhead_point)
 
     for position in potential_next_positions(trailhead_point.position):
         map_point = find_map_point(position, topo_map)
-        if map_point is not None and map_point.height is not None and trailhead_point.height is not None:
-            height_difference = map_point.height - trailhead_point.height
-            if height_difference == 1:
-                first_segments.append((trailhead_point, map_point))
+        if map_point is not None and is_valid_next_step(zeroth_segment, map_point):
+            first_segments.append((trailhead_point, map_point))
     
     return first_segments
+
+def get_next_segments(
+        current_segment: tuple[MapPoint, MapPoint], topo_map: Map
+) -> list[tuple[MapPoint, MapPoint]]:
+    next_segments: list[tuple[MapPoint, MapPoint]] = []
+    for position in potential_next_positions(current_segment[1].position):
+        map_point = find_map_point(position, topo_map)
+        if map_point is not None and is_valid_next_step(current_segment, map_point):
+            next_segments.append((current_segment[1], map_point))
+    
+    return next_segments
 
     
 
 
         
-
-
-def get_next_segments(): ...
 
 
 def get_height(): ...
