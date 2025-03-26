@@ -8,13 +8,16 @@ from advent.common.data_stream import CharPosition
 from advent.advent_of_code_2024.day10.main import (
     Map,
     MapPoint,
+    Segment,
     parse_to_map_point,
     get_map,
     make_map_boundary_filter,
     step_directions,
     potential_next_positions,
     get_first_segments,
-    get_next_segments
+    get_next_segments,
+    is_final_segment,
+    get_trail_ends
 )
 
 @pytest.fixture
@@ -53,6 +56,27 @@ def simple_file_path(tmp_path: Path, simple_map_file: str):
     path = tmp_path / "day10_simple_map.txt"
     path.write_text(simple_map_file)
     return path
+
+@pytest.fixture
+def example_map_file() -> str:
+    return """89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732"""
+
+@pytest.fixture
+def example_file_path(tmp_path: Path, example_map_file: str) -> Path:
+    path = tmp_path / "day10_example_map.txt"
+    path.write_text(example_map_file)
+    return path
+
+@pytest.fixture
+def example_map(example_file_path: Path) -> Map:
+    return get_map(example_file_path)
 
 def test_parse_to_map_point():
     reference = MapPoint(Vector([0, 0]), 5)
@@ -118,3 +142,26 @@ def test_get_next_segments(simple_map: Map):
     )]
 
     assert test == reference
+
+def test_is_final_segment():
+    def temp_segment(height: int) -> Segment:
+        return Segment(
+            MapPoint(Vector([0, 0]), 0), 
+            MapPoint(Vector([99, 99]), height)
+        )
+    
+    assert is_final_segment(temp_segment(9)) is True
+    assert is_final_segment(temp_segment(2)) is False
+    assert is_final_segment(temp_segment(-2)) is False
+
+def test_get_trail_ends_simple(simple_map: Map):
+    trailhead = MapPoint(Vector([0,0]), 0)
+    test = get_trail_ends(trailhead, simple_map)
+    last_segment = Segment(
+        MapPoint(Vector([2, 2]), 8),
+        MapPoint(Vector([3, 2]), 9)
+    )
+    assert test == [last_segment]
+    
+def test_get_trail_ends_example(example_map: Map):
+    ...

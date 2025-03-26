@@ -9,6 +9,9 @@ class MapPoint(NamedTuple):
     position: Vector
     height: int | None
 
+class Segment(NamedTuple):
+    start: MapPoint
+    end: MapPoint
 
 Map: TypeAlias = list[MapPoint]
 
@@ -88,20 +91,38 @@ def get_first_segments(
 
 def get_next_segments(
         current_segment: tuple[MapPoint, MapPoint], topo_map: Map
-) -> list[tuple[MapPoint, MapPoint]]:
-    next_segments: list[tuple[MapPoint, MapPoint]] = []
+) -> list[Segment]:
+    next_segments: list[Segment] = []
     for position in potential_next_positions(current_segment[1].position):
         map_point = find_map_point(position, topo_map)
         if map_point is not None and is_valid_next_step(current_segment, map_point):
-            next_segments.append((current_segment[1], map_point))
+            next_segments.append(Segment(current_segment[1], map_point))
     
     return next_segments
 
-    
+def is_final_segment(segment: Segment) -> bool:
+    return segment.end.height == 9
 
+def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[Segment]:
+    current_segments = get_first_segments(trailhead, topo_map)
+    trail_ends: list[Segment] = []
+
+    while len(current_segments) != 0:
+        next_segments: list[Segment] = []
+        for segment in current_segments:
+            next_segments += get_next_segments(segment, topo_map)
+
+        trail_ends += list(filter(is_final_segment, next_segments))
+
+        current_segments = next_segments
+
+    return trail_ends
 
         
 
+
+
+    
 
 def get_height(): ...
 
@@ -109,10 +130,9 @@ def get_height(): ...
 def is_trailhead(): ...
 
 
+DIRECTIONS = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]
 def step_directions() -> Iterator[Vector]:
-    directions = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]
-
-    for vector in directions:
+    for vector in DIRECTIONS:
         yield vector
 
 
