@@ -1,4 +1,4 @@
-from typing import NamedTuple, TypeAlias, TypeVar, Callable, Iterator
+from typing import NamedTuple, TypeAlias, Callable, Iterator
 from pathlib import Path
 from functools import partial
 
