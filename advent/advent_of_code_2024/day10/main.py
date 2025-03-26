@@ -131,6 +131,7 @@ def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
 
         current_segments = next_segments
 
+    # TODO: PART 2 MIGHT BE JUST REMOVING THIS DEDUPLICATION!
     return list(set(trail_ends))
 
 
