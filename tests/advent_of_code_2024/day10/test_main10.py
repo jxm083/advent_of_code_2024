@@ -221,9 +221,9 @@ def test_exercise_one_example(example_file_path: Path):
 def test_exercise_two_example(example_file_path: Path):
     assert exercise_two(example_file_path) == 81
 
-def test_exercise_two_real():
-    assert exercise_two == 966
-
-
 def test_exercise_one_real():
     assert exercise_one() == 468
+
+def test_exercise_two_real():
+    assert exercise_two() == 966
+
