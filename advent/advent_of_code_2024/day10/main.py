@@ -31,10 +31,18 @@ def exercise_one(map_file_path: Path = DATA_PATH) -> int:
     return sum(map(get_trailhead_score_part, trailheads))
 
 
-def exercise_two(): ...
+def exercise_two(map_file_path: Path = DATA_PATH) -> int:
+    topo_map = get_map(map_file_path)
+    trailheads = filter(is_trailhead, topo_map)
+    get_trailhead_rating_part = partial(get_trailhead_rating, topo_map=topo_map)
+    return sum(map(get_trailhead_rating_part, trailheads))
 
 
 def get_trailhead_score(trailhead: MapPoint, topo_map: Map) -> int:
+    unique_trail_ends = get_unique_trail_ends(trailhead, topo_map)
+    return len(unique_trail_ends)
+
+def get_trailhead_rating(trailhead: MapPoint, topo_map: Map) -> int:
     trail_ends = get_trail_ends(trailhead, topo_map)
     return len(trail_ends)
 
@@ -131,7 +139,10 @@ def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
 
         current_segments = next_segments
 
-    # TODO: PART 2 MIGHT BE JUST REMOVING THIS DEDUPLICATION!
+    return trail_ends
+
+def get_unique_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
+    trail_ends = get_trail_ends(trailhead, topo_map)
     return list(set(trail_ends))
 
 
@@ -171,3 +182,4 @@ def make_map_boundary_filter(topo_map: Map) -> Callable[[Vector], bool]:
 
 if __name__ == "__main__":
     print(f"exercise one: {exercise_one()}")
+    print(f"exercise two: {exercise_two()}")
