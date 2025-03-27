@@ -27,31 +27,32 @@ DATA_PATH = DATA_DIR / "data.txt"
 ## problem domain functions
 def exercise_one(map_file_path: Path = DATA_PATH) -> int:
     topo_map = get_map(map_file_path)
-    trailheads = filter(is_trailhead, topo_map)
-    get_trailhead_score_part = partial(get_trailhead_score, topo_map=topo_map)
-
-    with ProcessPoolExecutor() as executor:
-        scores = executor.map(get_trailhead_score_part, trailheads)
-    return sum(scores)
+    return get_map_metric(topo_map, get_trailhead_score)
 
 
 def exercise_two(map_file_path: Path = DATA_PATH) -> int:
     topo_map = get_map(map_file_path)
+    return get_map_metric(topo_map, get_trailhead_rating)
+
+
+def get_map_metric(
+    topo_map: Map, get_trail_metric: Callable[[Map, MapPoint], int]
+) -> int:
     trailheads = filter(is_trailhead, topo_map)
-    get_trailhead_rating_part = partial(get_trailhead_rating, topo_map=topo_map)
+    get_trail_metric_partial = partial(get_trail_metric, topo_map)
 
     with ProcessPoolExecutor() as executor:
-        ratings = executor.map(get_trailhead_rating_part, trailheads)
+        trail_metrics = executor.map(get_trail_metric_partial, trailheads)
 
-    return sum(ratings)
+    return sum(trail_metrics)
 
 
-def get_trailhead_score(trailhead: MapPoint, topo_map: Map) -> int:
+def get_trailhead_score(topo_map: Map, trailhead: MapPoint) -> int:
     unique_trail_ends = get_unique_trail_ends(trailhead, topo_map)
     return len(unique_trail_ends)
 
 
-def get_trailhead_rating(trailhead: MapPoint, topo_map: Map) -> int:
+def get_trailhead_rating(topo_map: Map, trailhead: MapPoint) -> int:
     trail_ends = get_trail_ends(trailhead, topo_map)
     return len(trail_ends)
 
@@ -85,6 +86,7 @@ def find_map_point(position: Vector, topo_map: Map) -> MapPoint | None:
     return map_point
 
 
+# TODO: reframe in the positive: forward_step, heights_set, proper_height_change
 def is_valid_next_step(
     current_segment: tuple[MapPoint, MapPoint], point: MapPoint
 ) -> bool:
@@ -99,6 +101,7 @@ def is_valid_next_step(
     return not (retraced_step or heights_not_set or wrong_height_change)
 
 
+# TODO: consolidate with get_next_segments
 def get_first_segments(
     trailhead_point: MapPoint, topo_map: Map
 ) -> list[tuple[MapPoint, MapPoint]]:
@@ -160,7 +163,7 @@ def is_trailhead(map_point: MapPoint) -> bool:
     return map_point.height == 0
 
 
-DIRECTIONS = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]
+DIRECTIONS = (Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1]))
 
 
 def step_directions() -> Iterator[Vector]:
@@ -171,23 +174,6 @@ def step_directions() -> Iterator[Vector]:
 def potential_next_positions(position: Vector) -> Iterator[Vector]:
     for step in step_directions():
         yield position + step
-
-
-## solution domain functions
-
-
-def make_map_boundary_filter(topo_map: Map) -> Callable[[Vector], bool]:
-    map_list = list(topo_map)
-    max_line = max(point.position[0] for point in map_list)
-    max_char = max(point.position[1] for point in map_list)
-
-    def map_boundary_filter(position: Vector) -> bool:
-        in_bounds = False
-        if 0 <= position[0] <= max_line and 0 <= position[1] <= max_char:
-            in_bounds = True
-        return in_bounds
-
-    return map_boundary_filter
 
 
 if __name__ == "__main__":

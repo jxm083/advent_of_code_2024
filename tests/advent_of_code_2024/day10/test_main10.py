@@ -11,7 +11,6 @@ from advent.advent_of_code_2024.day10.main import (
     Segment,
     parse_to_map_point,
     get_map,
-    make_map_boundary_filter,
     step_directions,
     potential_next_positions,
     get_first_segments,
@@ -131,13 +130,6 @@ def test_get_map(simple_file_path: Path, simple_map: Map):
     assert list(test) == list(reference)
 
 
-def test_make_map_boundary_filter(simple_map: Map):
-    boundary_filter = make_map_boundary_filter(simple_map)
-    assert boundary_filter(Vector([0, 0])) is True
-    assert boundary_filter(Vector([-1, 0])) is False
-    assert boundary_filter(Vector([100, 100])) is False
-
-
 def test_step_directions():
     test = step_directions()
     reference = [Vector([1, 0]), Vector([0, -1]), Vector([-1, 0]), Vector([0, 1])]
@@ -192,11 +184,8 @@ def test_get_trail_ends_simple(simple_map: Map):
     assert test == [MapPoint(Vector([3, 2]), 9)]
 
 
-def test_get_trail_ends_example(example_map: Map): ...
-
-
 def test_get_trailhead_score_simple(simple_trailhead: MapPoint, simple_map: Map):
-    assert get_trailhead_score(simple_trailhead, simple_map) == 1
+    assert get_trailhead_score(simple_map, simple_trailhead) == 1
 
 
 def test_get_trailhead_score_example(
@@ -205,7 +194,7 @@ def test_get_trailhead_score_example(
     example_map: Map,
 ):
     for head, score in zip(example_trailheads, example_trailheads_scores):
-        assert get_trailhead_score(head, example_map) == score
+        assert get_trailhead_score(example_map, head) == score
 
 
 def test_get_trailhead_rating_example(
@@ -214,7 +203,7 @@ def test_get_trailhead_rating_example(
     example_map: Map,
 ):
     for head, rating in zip(example_trailheads, example_trailheads_ratings):
-        assert get_trailhead_rating(head, example_map) == rating
+        assert get_trailhead_rating(example_map, head) == rating
 
 
 def test_exercise_one_example(example_file_path: Path):
