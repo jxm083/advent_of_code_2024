@@ -22,7 +22,7 @@ from advent.advent_of_code_2024.day10.main import (
     get_trailhead_score,
     get_trailhead_rating,
     exercise_one,
-    exercise_two
+    exercise_two,
 )
 
 
@@ -112,6 +112,7 @@ def example_trailheads(example_map: Map) -> list[MapPoint]:
 @pytest.fixture
 def example_trailheads_scores() -> list[int]:
     return [5, 6, 5, 3, 1, 3, 5, 3, 5]
+
 
 @pytest.fixture
 def example_trailheads_ratings() -> list[int]:
@@ -206,10 +207,11 @@ def test_get_trailhead_score_example(
     for head, score in zip(example_trailheads, example_trailheads_scores):
         assert get_trailhead_score(head, example_map) == score
 
+
 def test_get_trailhead_rating_example(
-        example_trailheads: list[MapPoint],
-        example_trailheads_ratings: list[int],
-        example_map: Map,
+    example_trailheads: list[MapPoint],
+    example_trailheads_ratings: list[int],
+    example_map: Map,
 ):
     for head, rating in zip(example_trailheads, example_trailheads_ratings):
         assert get_trailhead_rating(head, example_map) == rating
@@ -218,12 +220,14 @@ def test_get_trailhead_rating_example(
 def test_exercise_one_example(example_file_path: Path):
     assert exercise_one(example_file_path) == 36
 
+
 def test_exercise_two_example(example_file_path: Path):
     assert exercise_two(example_file_path) == 81
+
 
 def test_exercise_one_real():
     assert exercise_one() == 468
 
+
 def test_exercise_two_real():
     assert exercise_two() == 966
-

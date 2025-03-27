@@ -1,6 +1,7 @@
 from typing import NamedTuple, TypeAlias, Callable, Iterator
 from pathlib import Path
 from functools import partial
+from concurrent.futures import ProcessPoolExecutor
 
 from advent.common.vectors import Vector
 from advent.common.data_stream import stream_position_and_char, CharPosition
@@ -28,19 +29,27 @@ def exercise_one(map_file_path: Path = DATA_PATH) -> int:
     topo_map = get_map(map_file_path)
     trailheads = filter(is_trailhead, topo_map)
     get_trailhead_score_part = partial(get_trailhead_score, topo_map=topo_map)
-    return sum(map(get_trailhead_score_part, trailheads))
+
+    with ProcessPoolExecutor() as executor:
+        scores = executor.map(get_trailhead_score_part, trailheads)
+    return sum(scores)
 
 
 def exercise_two(map_file_path: Path = DATA_PATH) -> int:
     topo_map = get_map(map_file_path)
     trailheads = filter(is_trailhead, topo_map)
     get_trailhead_rating_part = partial(get_trailhead_rating, topo_map=topo_map)
-    return sum(map(get_trailhead_rating_part, trailheads))
+
+    with ProcessPoolExecutor() as executor:
+        ratings = executor.map(get_trailhead_rating_part, trailheads)
+
+    return sum(ratings)
 
 
 def get_trailhead_score(trailhead: MapPoint, topo_map: Map) -> int:
     unique_trail_ends = get_unique_trail_ends(trailhead, topo_map)
     return len(unique_trail_ends)
+
 
 def get_trailhead_rating(trailhead: MapPoint, topo_map: Map) -> int:
     trail_ends = get_trail_ends(trailhead, topo_map)
@@ -140,6 +149,7 @@ def get_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
         current_segments = next_segments
 
     return trail_ends
+
 
 def get_unique_trail_ends(trailhead: MapPoint, topo_map: Map) -> list[MapPoint]:
     trail_ends = get_trail_ends(trailhead, topo_map)
