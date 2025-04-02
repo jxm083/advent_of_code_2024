@@ -88,17 +88,17 @@ def find_map_point(position: Vector, topo_map: Map) -> MapPoint | None:
 
 # TODO: reframe in the positive: forward_step, heights_set, proper_height_change
 def is_valid_next_step(
-    current_segment: tuple[MapPoint, MapPoint], point: MapPoint
+    current_segment: Segment, point: MapPoint
 ) -> bool:
-    retraced_step = point.position == current_segment[0].position
-    heights_not_set = point.height is None or current_segment[1].height is None
+    retraced_step = point.position == current_segment.start.position
+    heights_set = isinstance(point.height, int) and isinstance(current_segment[1].height, int)
 
-    if point.height is not None and current_segment[1].height is not None:
-        wrong_height_change = (point.height - current_segment[1].height) != 1
+    if heights_set:
+        proper_height_change = (point.height - current_segment.end.height) == 1 # type: ignore
     else:
-        wrong_height_change = True
+        proper_height_change = False
 
-    return not (retraced_step or heights_not_set or wrong_height_change)
+    return proper_height_change and not retraced_step
 
 
 # TODO: consolidate with get_next_segments

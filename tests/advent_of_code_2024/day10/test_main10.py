@@ -13,6 +13,7 @@ from advent.advent_of_code_2024.day10.main import (
     get_map,
     step_directions,
     potential_next_positions,
+    is_valid_next_step,
     get_first_segments,
     get_next_segments,
     is_final_segment,
@@ -148,6 +149,13 @@ def test_potential_next_positions():
 def test_is_trailhead(simple_trailhead: MapPoint):
     assert is_trailhead(simple_trailhead) is True
     assert is_trailhead(MapPoint(Vector([0, 0]), 1)) is False
+
+def test_is_valid_next_step():
+    original_point = MapPoint(Vector([0, 0]), 0)
+    another_point = MapPoint(Vector([0, 1]), 1)
+    point_wo_height = MapPoint(Vector([0, 2]), None)
+    segment = Segment(original_point, another_point)
+    assert is_valid_next_step(segment, point_wo_height) is False
 
 
 def test_get_first_segments(simple_map: Map):
