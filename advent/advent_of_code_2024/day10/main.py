@@ -86,43 +86,23 @@ def find_map_point(position: Vector, topo_map: Map) -> MapPoint | None:
     return map_point
 
 
-# TODO: reframe in the positive: forward_step, heights_set, proper_height_change
-def is_valid_next_step(
-    current_segment: Segment, point: MapPoint
-) -> bool:
+def is_valid_next_step(current_segment: Segment, point: MapPoint) -> bool:
     retraced_step = point.position == current_segment.start.position
-    heights_set = isinstance(point.height, int) and isinstance(current_segment[1].height, int)
 
-    if heights_set:
-        proper_height_change = (point.height - current_segment.end.height) == 1 # type: ignore
+    # attempting to rename this condition "heights_set" and passing
+    # that to the if statement results in the type-checker failing
+    # to identify point.height and current_segment.end.height as ints,
+    # resulting in proper_height_change's type being partially unknown
+    if isinstance(point.height, int) and isinstance(current_segment.end.height, int):
+        proper_height_change = (point.height - current_segment.end.height) == 1
     else:
         proper_height_change = False
 
     return proper_height_change and not retraced_step
 
 
-# TODO: consolidate with get_next_segments
-def get_first_segments(
-    trailhead_point: MapPoint, topo_map: Map
-) -> list[Segment]:
-    first_segments: list[Segment] = []
-    off_map_position = Vector([-1, -1])
-    # In order to use is_valid_next_step, which takes into
-    # consideration the previous step, we need to create
-    # a segment whose previous step is certainly not in the map.
-    zeroth_segment = Segment(MapPoint(off_map_position, None), trailhead_point)
-
-    for position in potential_next_positions(trailhead_point.position):
-        map_point = find_map_point(position, topo_map)
-        if map_point is not None and is_valid_next_step(zeroth_segment, map_point):
-            first_segments.append(Segment(trailhead_point, map_point))
-
-    return first_segments
-
-
-def get_next_segments(
-    current_segment: Segment, topo_map: Map
-) -> list[Segment]:
+# TODO: functionalize this; use monad to avoid pyramid of death?
+def get_next_segments(current_segment: Segment, topo_map: Map) -> list[Segment]:
     next_segments: list[Segment] = []
     for position in potential_next_positions(current_segment.end.position):
         map_point = find_map_point(position, topo_map)
@@ -130,6 +110,17 @@ def get_next_segments(
             next_segments.append(Segment(current_segment.end, map_point))
 
     return next_segments
+
+
+def get_first_segments(trailhead_point: MapPoint, topo_map: Map) -> list[Segment]:
+    off_map_position = Vector([-1, -1])
+    # In order to use is_valid_next_step, which takes into
+    # consideration the previous step, we need to create
+    # a segment whose previous step is certainly not in the map.
+    zeroth_segment = Segment(MapPoint(off_map_position, None), trailhead_point)
+    first_segments = get_next_segments(zeroth_segment, topo_map)
+
+    return first_segments
 
 
 def is_final_segment(segment: Segment) -> bool:

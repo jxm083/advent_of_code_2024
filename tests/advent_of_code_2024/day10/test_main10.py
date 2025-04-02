@@ -150,6 +150,7 @@ def test_is_trailhead(simple_trailhead: MapPoint):
     assert is_trailhead(simple_trailhead) is True
     assert is_trailhead(MapPoint(Vector([0, 0]), 1)) is False
 
+
 def test_is_valid_next_step():
     original_point = MapPoint(Vector([0, 0]), 0)
     another_point = MapPoint(Vector([0, 1]), 1)
