@@ -168,7 +168,7 @@ def test_get_first_segments(simple_map: Map):
 
 
 def test_get_next_segments(simple_map: Map):
-    segment = (MapPoint(Vector([0, 0]), 0), MapPoint(Vector([0, 1]), 1))
+    segment = Segment(MapPoint(Vector([0, 0]), 0), MapPoint(Vector([0, 1]), 1))
     next_step = MapPoint(Vector([0, 2]), 2)
 
     test = get_next_segments(segment, simple_map)
